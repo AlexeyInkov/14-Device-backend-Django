@@ -9,7 +9,7 @@ services:
       - dev
     env_file:
       - .env
-    command: python manage.py runserver 0.0.0.0:8000
+    command: gunicorn -b 0.0.0.0:8000 db_device.wsgi:application
 #    ports:
 #      - "8000:8000"
 
