@@ -1,6 +1,6 @@
 import {useState} from "react";
 import './App.css'
-import Header from "./components/header/header.jsx";
+import {Header} from "./components/Header.jsx";
 import {Menu} from "./components/Menu.jsx";
 import {Addresses} from "./components/Addresses.jsx";
 import {Devices} from "./components/Devices.jsx";
@@ -25,7 +25,6 @@ function App() {
                 <aside>
                     <div className="window">
                         <p className="tso" onClick={resetState}>TCO</p>
-                        {/*TODO Развернуть menu сделать слик(позже сворачивать разворачивать)*/}
                         <Menu setTsoId={setTsoId} setCustomerId={setCustomerId} setMeteringUnitId={setMeteringUnitId} className="menu"/>
                     </div>
                 </aside>

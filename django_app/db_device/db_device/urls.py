@@ -22,14 +22,14 @@ urlpatterns = (
     [
         path("admin/", admin.site.urls),
         path(
-            "api/docs/",
+            "docs/",
             schema_view.with_ui("swagger", cache_timeout=0),
             name="schema-swagger-ui",
         ),
         path("auth/", include("my_auth.urls")),
-        path("api/page/", include("for_page.urls")),
-        path("api/metering_unit/", include("metering_unit.urls")),
-        path("api/device/", include("device.urls")),
+        path("v1/page/", include("for_page.urls")),
+        path("v1/metering_unit/", include("metering_unit.urls")),
+        path("v1/device/", include("device.urls")),
     ]
     + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
