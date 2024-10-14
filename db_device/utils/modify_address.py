@@ -1,6 +1,6 @@
 """Модификация адреса и региона при импорте из файла"""
 
-from db_device.wsgi import *
+from config.wsgi import *
 from metering_unit.models import Address, Region, TypeStreet, Street
 
 
