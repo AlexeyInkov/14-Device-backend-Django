@@ -15,7 +15,8 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
 DEBUG = "True" == os.environ.get("DJANGO_DEBUG", True)
 
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "0.0.0.0").split(",")
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(",")
+CSRF_TRUSTED_ORIGINS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(",")
 
 # Application definition
 
