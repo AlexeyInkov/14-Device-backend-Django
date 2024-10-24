@@ -70,6 +70,8 @@ class DeviceVerificationSerializer(MySerializer):
     # device = DeviceSerializer()
     organization = serializers.CharField(required=False)
     verification_date = serializers.DateField(required=False)
+    is_actual = serializers.BooleanField(required=False)
+    is_delete = serializers.BooleanField(required=False)
 
     class Meta:
         model = DeviceVerification
@@ -80,4 +82,5 @@ class DeviceVerificationSerializer(MySerializer):
             "verification_date",
             "valid_date",
             "is_actual",
+            "is_delete",
         )
