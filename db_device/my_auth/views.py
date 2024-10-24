@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpRequest
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import CreateAPIView
@@ -8,9 +9,24 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from metering_unit.models import Organization
-from metering_unit.serializers import OrganizationSerializer
-from .serializers import UserSerializer
+from .serializers import UserSerializer, UserTokenSerializer, UserOrganizationSerializer
+
+
+class UserMeAPIView(APIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = UserOrganizationSerializer
+
+    def get(self, request):
+        # token = request.META.get('Authorization')
+        # if token:
+        #     token = token.split(' ')[1]
+        #     user_id = Token.objects.get(key=token).user
+        user_id = request.user.id
+        user = User.objects.get(pk=user_id)
+        if user.is_authenticated:
+            serializer = self.serializer_class(user)
+            return Response(serializer.data)
+        return Response(status=status.HTTP_403_FORBIDDEN)
 
 
 class UserRegisterAPIView(CreateAPIView):
@@ -18,9 +34,9 @@ class UserRegisterAPIView(CreateAPIView):
 
 
 class UserLoginAPIView(CreateAPIView):
-    serializer_class = UserSerializer
+    serializer_class = UserTokenSerializer
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         if request.method == "POST":
             username = request.data.get("username")
             password = request.data.get("password")
@@ -37,15 +53,11 @@ class UserLoginAPIView(CreateAPIView):
 
             if user:
                 token, _ = Token.objects.get_or_create(user=user)
-                queryset = Organization.objects.prefetch_related("user_to_org").filter(
-                    user_to_org__user=user.id
-                )
+
                 data = {
-                    "id": user.id,
-                    "username": user.username,
                     "token": token.key,
-                    "organizations": OrganizationSerializer(queryset, many=True).data,
                 }
+                # request.META["Authorization"] = f"Token {token}"
                 return Response(data, status=status.HTTP_200_OK)
 
             return Response(
@@ -60,6 +72,7 @@ class UserLogoutAPIView(APIView):
         try:
             # Delete the user's token to logout
             request.user.auth_token.delete()
+            request.headers.pop("Authorization")
             return Response(
                 {"message": "Successfully logged out."}, status=status.HTTP_200_OK
             )
