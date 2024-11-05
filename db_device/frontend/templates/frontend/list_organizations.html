@@ -1,0 +1,7 @@
+{% for org in orgs %}
+    {% if org.id == org_selected %}
+        <li class="selected">{{ org.name }}</li>
+    {% else %}
+        <li><a href="{% url 'frontend:organization' org.id %}">{{ org.name }}</a></li>
+    {% endif %}
+{% endfor %}

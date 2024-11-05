@@ -1,5 +1,5 @@
 {% load static %}
-{#{% load device_tags %}#}
+{% load device_tags %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -21,9 +21,16 @@
         <div class="wrapper">
             <aside>
                 <div class="menu-container">
-                    {% block menu %}
-
-                    {% endblock %}
+                    <div class="menu-container">
+                        <ul>
+                            {% if org_selected == 0 or org_selected is None %}
+                                <li class="selected">Все ТСО</li>
+                            {% else %}
+                                <li><a href="{% url 'frontend:home' %}">Все ТСО</a></li>
+                            {% endif %}
+                            {% show_organizations org_selected %}
+                        </ul>
+                    </div>
                 </div>
             </aside>
             <article>
@@ -40,7 +47,9 @@
             </article>
         </div>
     </main>
-    <footer>2024 © AlexeyInkov</footer>
+    <footer>
+        2024 © AlexeyInkov
+    </footer>
 </div>
 </body>
 </html>
