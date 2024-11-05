@@ -1,0 +1,46 @@
+{% load static %}
+{#{% load device_tags %}#}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{{ title }}</title>
+    <link type="text/css" href="{% static 'frontend/css/base.css' %}" rel="stylesheet"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="{% static 'frontend/images/logo16color.bmp' %}" type="image/x-icon"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<div class="App">
+    <header>
+        {% block header %}
+
+        {% endblock %}
+    </header>
+    <main>
+        <div class="wrapper">
+            <aside>
+                <div class="menu-container">
+                    {% block menu %}
+
+                    {% endblock %}
+                </div>
+            </aside>
+            <article>
+                <section class="address">
+                    {% block addresses %}
+
+                    {% endblock %}
+                </section>
+                <section class="device">
+                    {% block devices %}
+
+                    {% endblock %}
+                </section>
+            </article>
+        </div>
+    </main>
+    <footer>2024 © AlexeyInkov</footer>
+</div>
+</body>
+</html>

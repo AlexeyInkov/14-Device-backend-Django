@@ -1,0 +1,81 @@
+body {
+    display: block;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden; /* отключает горизонтальный скролл */
+    overflow-y: hidden; /* включает вертикальный скролл */
+    justify-content: center;
+}
+
+.App {
+    position: relative;
+    display: flex;
+    height: 100%;
+    width: calc(100vh / 0.75);
+    font-family: SANS-SERIF, sans-serif;
+
+}
+
+header {
+    display: flex;
+    position: fixed;
+    width: calc(100vh / 0.75);
+    height: 30px;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    border-radius: 3px 3px 0 0;
+
+}
+
+main {
+    min-height: calc(100vh - 30px);
+    width: calc(100vh / 0.75);
+    padding-bottom: 30px;
+}
+.wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    height: calc(100vh - 60px);
+    width: calc(100vh / 0.75);
+    margin-top: 30px;
+    border-radius: 0 0 3px 3px;
+    background: linear-gradient(0deg, rgb(188, 177, 183) 0%, rgba(241, 131, 241, 0.71) 100%);
+}
+
+aside {
+    width: calc(20vh / 0.75);
+    height: calc(100vh - 60px);
+}
+
+article {
+    display: flex;
+    flex-direction: column;
+    width: calc(80vh / 0.75);
+}
+
+.address {
+    height: 65%;
+}
+
+.device {
+    height: 35%;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    width: calc(100vh / 0.75);
+    height: 30px;
+   text-align: center;
+
+    background-color: #1a1a1a;
+    color: #ffffff;
+    border-radius: 0 0 3px 3px;
+    opacity: .9;
+
+}
