@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "for_page",
     "metering_unit",
     "device",
+    "frontend",
 ]
 
 MIDDLEWARE = [
