@@ -26,6 +26,7 @@ urlpatterns = (
             schema_view.with_ui("swagger", cache_timeout=0),
             name="schema-swagger-ui",
         ),
+        path("", include('frontend.urls')),
         path("auth/", include("my_auth.urls")),
         path("v1/page/", include("for_page.urls")),
         path("v1/metering_unit/", include("metering_unit.urls")),
