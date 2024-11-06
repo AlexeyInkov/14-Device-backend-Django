@@ -9,9 +9,18 @@ def index(request):
     return render(request, 'frontend/index.html', context=data)
 
 
-def show_organization(request, org_id):
+def show_tso(request, tso_id):
     data = {
-        'title': 'Отображение по организации',
-        'org_selected': org_id,
+        'title': 'Отображение по ТСО',
+        'tso_selected': tso_id,
+    }
+    return render(request, 'frontend/index.html', context=data)
+
+
+def show_customers(request, tso_id, customer_id):
+    data = {
+        'title': 'Отображение по ТСО',
+        'tso_selected': tso_id,
+        'customer_selected': customer_id,
     }
     return render(request, 'frontend/index.html', context=data)
