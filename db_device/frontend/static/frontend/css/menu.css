@@ -1,0 +1,112 @@
+.menu-container {
+
+    height: 100%;
+    /*border-radius: 3px;*/
+    overflow-y: scroll;
+    overflow-x: hidden; /* отключает горизонтальный скролл */
+    /*border: 2px solid black;*/
+}
+
+
+ul li.selected {
+    color: #0059b2;
+    text-decoration: none;
+}
+
+ul li.hided {
+    display: none;
+}
+
+.tso-reset {
+    padding: 5px; /* Поля вокруг текста */
+    margin: 5px auto;
+    font: 0.8rem/1.2 Arial, sans-serif; /* Параметры шрифта */
+    font-weight: bold; /* Жирное начертание */
+}
+
+/*.tso input, .tso-content {*/
+/*    display: none;*/
+/*}*/
+
+/*.tso {*/
+/*    font: 0.8rem/1.2 Arial, sans-serif; !* Параметры шрифта *!*/
+/*    border: 1px solid #e9eaec; !* Параметры рамки *!*/
+/*    border-radius: 3px; !* Скругляем уголки *!*/
+/*    color: #242424; !* Цвет текста *!*/
+/*    margin-bottom: 10px; !* Расстояние между пунктами *!*/
+/*}*/
+
+/*.tso-title {*/
+/*    padding: 5px; !* Поля вокруг текста *!*/
+/*    display: block; !* Блочный элемент *!*/
+/*    text-transform: uppercase; !* Все буквы заглавные *!*/
+/*    font-weight: bold; !* Жирное начертание *!*/
+/*    cursor: pointer; !* Вид курсора *!*/
+/*}*/
+
+/*.tso-title::after {*/
+/*    content: '+'; !* Выводим плюс *!*/
+/*    float: right; !* Размещаем по правому краю *!*/
+/*}*/
+
+/*.tso-content {*/
+/*    padding: 10px 0px 10px 20px; !* Поля вокруг текста *!*/
+/*}*/
+
+/*.tso :checked + .tso-title {*/
+/*    background-color: #50a2de; !* Цвет фона *!*/
+/*    border-radius: 3px 3px 0 0; !* Скругляем уголки *!*/
+/*    color: #fff; !* Цвет текста *!*/
+/*}*/
+
+/*.tso :checked + .tso-title::after {*/
+/*    content: '−'; !* Выводим минус *!*/
+/*}*/
+
+/*.tso :checked ~ .tso-content {*/
+/*    display: block; !* Показываем содержимое *!*/
+/*}*/
+
+
+/*.cus input, .cus-content {*/
+/*    display: none;*/
+/*}*/
+
+/*.cus {*/
+/*    font: 0.7rem/1.2 Arial, sans-serif; !* Параметры шрифта *!*/
+/*    border: 1px solid #e9eaec; !* Параметры рамки *!*/
+/*    border-radius: 3px; !* Скругляем уголки *!*/
+/*    color: #242424; !* Цвет текста *!*/
+/*    margin-bottom: 10px; !* Расстояние между пунктами *!*/
+/*}*/
+
+/*.cus-title {*/
+/*    !*padding: 10px; !* Поля вокруг текста *!*!*/
+/*    display: block; !* Блочный элемент *!*/
+/*    text-transform: uppercase; !* Все буквы заглавные *!*/
+/*    font-weight: bold; !* Жирное начертание *!*/
+/*    cursor: pointer; !* Вид курсора *!*/
+/*}*/
+
+/*.cus-title::after {*/
+/*    content: '+'; !* Выводим плюс *!*/
+/*    float: left; !* Размещаем по правому краю *!*/
+/*}*/
+
+/*.cus-content {*/
+/*    padding: 0 20px; !* Поля вокруг текста *!*/
+/*}*/
+
+/*.cus :checked .cus-title {*/
+/*    background-color: #50a2de; !* Цвет фона *!*/
+/*    border-radius: 3px 3px 0 0; !* Скругляем уголки *!*/
+/*    color: #fff; !* Цвет текста *!*/
+/*}*/
+
+/*.cus :checked + .cus-title::after {*/
+/*    content: '−'; !* Выводим минус *!*/
+/*}*/
+
+/*.cus :checked ~ .cus-content {*/
+/*    display: block; !* Показываем содержимое *!*/
+/*}*/

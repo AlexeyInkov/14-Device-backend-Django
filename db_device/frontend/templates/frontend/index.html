@@ -3,15 +3,14 @@
 
 {% block menu %}
     <div class="menu-container">
-        <div class="menu-container">
-            <ul>
-                {% if tso_selected == 0 or tso_selected is None %}
-                    <li class="selected">Все ТСО</li>
-                {% else %}
-                    <li><a href="{% url 'frontend:home' %}">Все ТСО</a></li>
-                {% endif %}
-                {% show_tso tso_selected %}
-            </ul>
-        </div>
+        <ul>
+            {% if tso_selected == 0 or tso_selected is None %}
+                <li class="selected">Все ТСО</li>
+            {% else %}
+                <li><a href="{% url 'frontend:home' %}">Все ТСО</a></li>
+            {% endif %}
+            {% show_tso tso_selected %}
+        </ul>
     </div>
+
 {% endblock %}
