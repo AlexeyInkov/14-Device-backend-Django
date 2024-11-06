@@ -1,0 +1,28 @@
+{% for device in devices %}
+    {% if device.id == dev_selected %}
+        <li class="selected">{{ device.type_of_file }}</li>
+    {% else %}
+        <li><a href="{% url 'frontend:devices' tso_selected cust_selected mu_selected device.id %}">{{ device.type_of_file }}</a></li>
+    {% endif %}
+{% endfor %}
+{#<table>#}
+{#    <thead>#}
+{#    <tr>#}
+{#        {headerKeys.map((headerKey) =>#}
+{#        <th key={headerKey}>{HEADERS_DEVICE[headerKey]}</th>#}
+{#        )}#}
+{#    </tr>#}
+{#    </thead>#}
+{#    <tbody>#}
+{#    {isSuccess > 0 && data.map(dataItem => (#}
+{#    <tr key={dataItem.id} data-index={dataItem.id} onMouseOver={MouseOver} onMouseOut={MouseOut}#}
+{#        onClick={deviceClick}>#}
+{#        {headerKeys.map((headerKey) =>#}
+{#        <td key={headerKey}#}
+{#            data-index={dataItem.verification}>{dataItem[headerKey]}#}
+{#        </td>#}
+{#        )}#}
+{#    </tr>#}
+{#    ))}#}
+{#    </tbody>#}
+{#</table>#}

@@ -1,5 +1,6 @@
 from django import template
 
+from device.models import Device
 from metering_unit.models import MeteringUnit, Organization
 
 register = template.Library()
@@ -44,3 +45,16 @@ def show_metering_units(tso_selected, cust_selected, mu_selected):
                       )
 
     return {'metering_units': metering_units, 'tso_selected': tso_selected, 'cust_selected': cust_selected, 'mu_selected': mu_selected}
+
+
+@register.inclusion_tag('frontend/list_devices.html')
+def show_devices(tso_selected, cust_selected, mu_selected, dev_selected):
+    filters = {}
+    if mu_selected == '':
+        mu_selected = 0
+    if mu_selected != 0:
+        filters['metering_unit'] = mu_selected
+
+    devices = Device.objects.filter(metering_unit=mu_selected).select_related('type_of_file')
+
+    return {'devices': devices, 'tso_selected': tso_selected, 'cust_selected': cust_selected, 'mu_selected': mu_selected, 'dev_selected': dev_selected}

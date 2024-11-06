@@ -21,3 +21,11 @@
         </div>
     </div>
 {% endblock %}
+{% block devices %}
+    <div class="device-container">
+        {#            <MenuFilter title={"верхнего поля"}/>#}
+        <div class="table-scroll">
+            {% show_devices tso_selected cust_selected mu_selected dev_selected %}
+        </div>
+    </div>
+{% endblock %}

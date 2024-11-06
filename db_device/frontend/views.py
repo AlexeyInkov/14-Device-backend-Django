@@ -39,12 +39,12 @@ def show_metering_units(request, tso_id, customer_id, mu_id):
     return render(request, 'frontend/index.html', context=data)
 
 
-def show_devices(request, tso_id, customer_id, mu_id, device_id):
+def show_devices(request, tso_id, customer_id, mu_id, dev_id):
     data = {
         'title': 'Отображение по УУТЭ',
         'tso_selected': tso_id,
         'cust_selected': customer_id,
         'mu_selected': mu_id,
-        'dev_selected': device_id,
+        'dev_selected': dev_id,
     }
     return render(request, 'frontend/index.html', context=data)
