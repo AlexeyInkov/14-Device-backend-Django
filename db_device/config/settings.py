@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "metering_unit",
     "device",
     "frontend",
+    "debug_toolbar",
 ]
 
 MIDDLEWARE = [
@@ -48,6 +49,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -69,7 +71,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
-
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -97,7 +98,6 @@ else:
         }
     }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
@@ -123,7 +123,6 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
-
 
 if not os.path.exists(BASE_DIR / "static"):
     os.makedirs(BASE_DIR / "static")
@@ -158,4 +157,9 @@ REST_FRAMEWORK = {
 # LOGIN_REDIRECT_URL = "/"
 # LOGOUT_REDIRECT_URL = "/"
 
-#KAFKA_URL = os.environ.get("KAFKA_URL")
+# KAFKA_URL = os.environ.get("KAFKA_URL")
+
+INTERNAL_IPS = [
+    "localhost",
+    "127.0.0.1",
+]
