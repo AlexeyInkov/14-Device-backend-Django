@@ -1,0 +1,30 @@
+.address-container {
+    height: 100%;
+}
+
+.table-scroll {
+    height: calc(100% - 30px);
+    overflow-y: scroll;
+    overflow-x: hidden; /* отключает горизонтальный скролл */
+
+}
+
+/*table {*/
+/*    color: #242424; !* Цвет текста *!*/
+/*    font: 0.8rem/1.2 Arial, sans-serif; !* Параметры шрифта *!*/
+/*    width: 100%;*/
+/*    margin-bottom: 10px; !* Расстояние между пунктами *!*/
+/*}*/
+
+/*table, td, th {*/
+/*    border: 1px solid #e9eaec; !* Параметры рамки *!*/
+/*    border-radius: 3px; !* Скругляем уголки *!*/
+/*}*/
+
+/*th, td {*/
+/*    width: fit-content;*/
+/*}*/
+
+/*td {*/
+/*    width: fit-content;*/
+/*}*/

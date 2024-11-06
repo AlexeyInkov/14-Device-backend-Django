@@ -13,3 +13,11 @@
         </ul>
     </div>
 {% endblock %}
+{% block addresses %}
+    <div class="address-container">
+        {#            <MenuFilter title={"верхнего поля"}/>#}
+        <div class='table-scroll'>
+            {% show_metering_units tso_selected cust_selected mu_selected %}
+        </div>
+    </div>
+{% endblock %}

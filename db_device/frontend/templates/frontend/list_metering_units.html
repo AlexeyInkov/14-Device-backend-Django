@@ -1,0 +1,24 @@
+{% for metering_unit in metering_units %}
+    {% if metering_unit.id == mu_selected %}
+        <li class="selected">{{ metering_unit.address }}</li>
+    {% else %}
+        <li><a href="{% url 'frontend:metering_units' tso_selected cust_selected metering_unit.id %}">{{ metering_unit.address }}</a></li>
+    {% endif %}
+{% endfor %}
+{#                <table>#}
+{#                    <thead>#}
+{#                    <tr>#}
+{#                        {headerKeys.map((headerKey) => <th key={headerKey}>{HEADERS_ADDRESS[headerKey]}</th>)}#}
+{#                    </tr>#}
+{##}
+{#                    </thead>#}
+{#                    <tbody>#}
+{#                    {isSuccess && data.map(dataItem => (#}
+{#                        <tr key={dataItem.id} onMouseOver={MouseOver} onMouseOut={MouseOut}#}
+{#                            onClick={meteringUnitClick}>#}
+{#                            {headerKeys.map((headerKey) => <td key={headerKey}#}
+{#                                                               data-index={dataItem.id}>{dataItem[headerKey]}</td>)}#}
+{#                        </tr>#}
+{#                    ))}#}
+{#                    </tbody>#}
+{#                </table>#}
