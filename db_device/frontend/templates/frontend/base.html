@@ -21,25 +21,27 @@
         {% endblock %}
     </header>
     <main>
-        <div class="wrapper">
-            <aside>
-                {% block menu %}
-
-                {% endblock %}
-            </aside>
-            <article>
-                <section class="address">
-                    {% block addresses %}
+        {% block content %}
+            <div class="wrapper">
+                <aside>
+                    {% block menu %}
 
                     {% endblock %}
-                </section>
-                <section class="device">
-                    {% block devices %}
+                </aside>
+                <article>
+                    <section class="address">
+                        {% block addresses %}
 
-                    {% endblock %}
-                </section>
-            </article>
-        </div>
+                        {% endblock %}
+                    </section>
+                    <section class="device">
+                        {% block devices %}
+
+                        {% endblock %}
+                    </section>
+                </article>
+            </div>
+        {% endblock %}
     </main>
     <footer>
         2024 © AlexeyInkov

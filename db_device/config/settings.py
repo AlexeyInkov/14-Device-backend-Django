@@ -27,17 +27,18 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "rest_framework_swagger",
     "rest_framework",
     "rest_framework.authtoken",
-    "drf_yasg",
     "corsheaders",
     "my_auth",
     "for_page",
     "metering_unit",
     "device",
     "frontend",
+
     "debug_toolbar",
+    "rest_framework_swagger",
+    "drf_yasg",
 ]
 
 MIDDLEWARE = [
@@ -135,14 +136,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "media/"
 
 CORS_ORIGIN_WHITELIST = [
-    "http://127.0.0.1:3001",
-    "http://localhost:3001",
     "http://127.0.0.1:3000",
     "http://localhost:3000",
     "https://inkov.online",
     "https://dev-test.inkov.online",
-    "http://inkov.online",
-    "http://dev-test.inkov.online",
 ]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -153,9 +150,10 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.BasicAuthentication",
     ]
 }
+LOGIN_REDIRECT_URL = 'frontend:index'
+LOGOUT_REDIRECT_URL = 'frontend:login'
+LOGIN_URL = 'frontend:login'
 
-# LOGIN_REDIRECT_URL = "/"
-# LOGOUT_REDIRECT_URL = "/"
 
 # KAFKA_URL = os.environ.get("KAFKA_URL")
 
