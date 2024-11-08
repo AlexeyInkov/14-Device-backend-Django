@@ -35,7 +35,6 @@ INSTALLED_APPS = [
     "metering_unit",
     "device",
     "frontend",
-
     "debug_toolbar",
     "rest_framework_swagger",
     "drf_yasg",
@@ -150,9 +149,9 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.BasicAuthentication",
     ]
 }
-LOGIN_REDIRECT_URL = 'frontend:index'
-LOGOUT_REDIRECT_URL = 'frontend:login'
-LOGIN_URL = 'frontend:login'
+LOGIN_REDIRECT_URL = "frontend:home"
+LOGOUT_REDIRECT_URL = "frontend:login"
+LOGIN_URL = "frontend:login"
 
 
 # KAFKA_URL = os.environ.get("KAFKA_URL")
