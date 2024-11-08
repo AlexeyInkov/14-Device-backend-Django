@@ -1,7 +1,0 @@
-{% for customer in customers %}
-    {% if customer.id == cust_selected %}
-        <li class="selected">{{ customer.name }}</li>
-    {% else %}
-        <li><a href="{% url 'frontend:customers' tso_selected customer.id %}">{{ customer.name }}</a></li>
-    {% endif %}
-{% endfor %}

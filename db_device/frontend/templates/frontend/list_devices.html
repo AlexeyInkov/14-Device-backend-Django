@@ -1,8 +1,8 @@
 {% for device in devices %}
-    {% if device.id == dev_selected %}
+    {% if device.id == dev_selected|add:"0" %}
         <li class="selected">{{ device.type_of_file }}</li>
     {% else %}
-        <li><a href="{% url 'frontend:devices' tso_selected cust_selected mu_selected device.id %}">{{ device.type_of_file }}</a></li>
+        <li><a href="{% url 'frontend:home' %}?tso={{ tso_selected }}&customer={{ cust_selected }}&metering_unit={{ mu_selected }}&device={{ device.id }}">{{ device.type_of_file }}</a></li>
     {% endif %}
 {% endfor %}
 {#<table>#}

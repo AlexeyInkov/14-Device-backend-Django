@@ -1,8 +1,8 @@
 {% for metering_unit in metering_units %}
-    {% if metering_unit.id == mu_selected %}
+    {% if metering_unit.id == mu_selected|add:"0" %}
         <li class="selected">{{ metering_unit.address }}</li>
     {% else %}
-        <li><a href="{% url 'frontend:metering_units' tso_selected cust_selected metering_unit.id %}">{{ metering_unit.address }}</a></li>
+        <li><a href="{% url 'frontend:home' %}?tso={{ tso_selected }}&customer={{ cust_selected }}&metering_unit={{ metering_unit.id }}">{{ metering_unit.address }}</a></li>
     {% endif %}
 {% endfor %}
 {#                <table>#}

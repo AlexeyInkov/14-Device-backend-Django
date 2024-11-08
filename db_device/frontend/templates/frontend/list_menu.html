@@ -1,0 +1,17 @@
+{% load device_tags %}
+
+{% for tso in tso_s %}
+    {% if tso.id == tso_selected|add:"0" %}
+        <li class="selected">{{ tso.name }}</li>
+        {% for customer in customers %}
+            {% if customer.id == cust_selected|add:"0" %}
+                <li class="selected">{{ customer.name }}</li>
+            {% else %}
+                <li><a href="{% url 'frontend:home' %}?tso={{ tso_selected }}&customer={{ customer.id }}">{{ customer.name }}</a></li>
+            {% endif %}
+        {% endfor %}
+        {#       {% show_customers orgs metering_units tso_selected cust_selected %}#}
+    {% else %}
+        <li><a href="{% url 'frontend:home' %}?tso={{ tso.id }}">{{ tso.name }}</a></li>
+    {% endif %}
+{% endfor %}
