@@ -9,6 +9,7 @@
     <link type="text/css" href="{% static 'frontend/css/menu.css' %}" rel="stylesheet"/>
     <link type="text/css" href="{% static 'frontend/css/address.css' %}" rel="stylesheet"/>
     <link type="text/css" href="{% static 'frontend/css/device.css' %}" rel="stylesheet"/>
+    <link type="text/css" href="{% static 'frontend/css/header.css' %}" rel="stylesheet"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <link rel="shortcut icon" href="{% static 'frontend/images/logo16color.bmp' %}" type="image/x-icon"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,6 +17,20 @@
 <body>
 <div class="App">
     <header>
+        <div>
+            <img src="../../static/frontend/images/logo.png" width="30"/>
+            <div>Device Control</div>
+            {% if user.is_authenticated %}
+                <div>{{ user.username }}</div>
+                <form method="post" action="{% url 'frontend:logout' %}">
+                    {% csrf_token %}
+                    <button type="submit">Log Out</button>
+                </form>
+            {% else %}
+                <a href="{% url 'frontend:login' %}">Вход</a>
+            {% endif %}
+
+        </div>
         {% block header %}
 
         {% endblock %}
