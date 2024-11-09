@@ -1,11 +1,11 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.db.models import Q
-from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, ListView, TemplateView
+from django.views.generic import CreateView, TemplateView
 
 from device.models import Device
-from metering_unit.models import Organization, UserToOrganization, MeteringUnit
+from metering_unit.models import Organization, MeteringUnit
 from .forms import LoginUserForm, RegisterUserForm
 from .mixins import DataMixin
 
@@ -23,7 +23,7 @@ class RegisterUserView(CreateView):
     success_url = reverse_lazy("frontend:login")
 
 
-class IndexView(DataMixin, TemplateView):
+class IndexView(DataMixin, LoginRequiredMixin, TemplateView):
     template_name = "frontend/index.html"
     title_page = "Главная страница"
 
