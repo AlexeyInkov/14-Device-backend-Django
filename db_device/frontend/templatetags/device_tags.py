@@ -58,3 +58,28 @@ def show_devices(devices, tso_selected, cust_selected, mu_selected, dev_selected
         "mu_selected": mu_selected,
         "dev_selected": dev_selected,
     }
+
+
+@register.inclusion_tag("frontend/list_verifications.html")
+def show_devices(
+    verifications,
+    tso_selected,
+    cust_selected,
+    mu_selected,
+    dev_selected,
+    verif_selected,
+):
+    filters = {}
+    if dev_selected != "all":
+        filters["device"] = dev_selected
+
+    verifications = verifications.filter(**filters)
+
+    return {
+        "verifications": verifications,
+        "tso_selected": tso_selected,
+        "cust_selected": cust_selected,
+        "mu_selected": mu_selected,
+        "dev_selected": dev_selected,
+        "verif_selected": verif_selected,
+    }
