@@ -4,7 +4,7 @@ from django.db.models import Q
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, TemplateView
 
-from device.models import Device
+from device.models import Device, DeviceVerification
 from metering_unit.models import Organization, MeteringUnit
 from .forms import LoginUserForm, RegisterUserForm
 from .mixins import DataMixin
@@ -41,16 +41,26 @@ class IndexView(DataMixin, LoginRequiredMixin, TemplateView):
             )
             .select_related("address__region")
             .select_related("address__street__type_street")
+            .select_related("customer")
+            .select_related("tso")
         )
 
-        context["devices"] = Device.objects.filter(
-            metering_unit__in=context["metering_units"].values_list("pk", flat=True)
-        ).select_related("type_of_file")
+        context["devices"] = (
+            Device.objects.filter(
+                metering_unit__in=context["metering_units"].values_list("pk", flat=True)
+            )
+            .select_related("type_of_file")
+            .select_related("installation_point")
+        )
+
+        context["verifications"] = DeviceVerification.objects.filter(
+            device__in=context["devices"].values_list("pk", flat=True)
+        )
 
         context["tso_selected"] = self.request.GET.get("tso", "all")
         context["cust_selected"] = self.request.GET.get("customer", "all")
         context["mu_selected"] = self.request.GET.get("metering_unit", "all")
         context["dev_selected"] = self.request.GET.get("device", "all")
-        # context["verif"] = context["devices"].filter(pk=context["dev_selected"])
+        context["verif_selected"] = self.request.GET.get("verification", "all")
 
         return context

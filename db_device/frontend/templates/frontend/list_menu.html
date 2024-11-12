@@ -1,17 +1,26 @@
 {% load device_tags %}
 
-{% for tso in tso_s %}
-    {% if tso.id == tso_selected|add:"0" %}
-        <li class="selected">{{ tso.name }}</li>
-        {% for customer in customers %}
+
+  {% if tso_selected == 'all' %}
+    <div>Все организации</div>
+  {% else %}
+    <a class="link-dark" href="{% url 'frontend:home' %}">Все организации</a>
+  {% endif %}
+  <div class="list-group-flush">
+    {% for tso in tso_s %}
+      {% if tso.id == tso_selected|add:"0" %}
+        <a href="#" class="list-group-item list-group-item-action list-group-item-light active" aria-current="true">{{ tso.name }}</a>
+        <div class="list-group-flush">
+          {% for customer in customers %}
             {% if customer.id == cust_selected|add:"0" %}
-                <li class="selected">{{ customer.name }}</li>
+              <a href="#" class="list-group-item list-group-item-action list-group-item-light active fs-8" aria-current="true">{{ customer.name }}</a>
             {% else %}
-                <li><a href="{% url 'frontend:home' %}?tso={{ tso_selected }}&customer={{ customer.id }}">{{ customer.name }}</a></li>
+              <a class="list-group-item list-group-item-action list-group-item-light fs-8" href="{% url 'frontend:home' %}?tso={{ tso_selected }}&customer={{ customer.id }}">{{ customer.name }}</a>
             {% endif %}
-        {% endfor %}
-        {#       {% show_customers orgs metering_units tso_selected cust_selected %}#}
-    {% else %}
-        <li><a href="{% url 'frontend:home' %}?tso={{ tso.id }}">{{ tso.name }}</a></li>
-    {% endif %}
-{% endfor %}
+          {% endfor %}
+        </div>
+      {% else %}
+        <a class="list-group-item list-group-item-action list-group-item-light" href="{% url 'frontend:home' %}?tso={{ tso.id }}">{{ tso.name }}</a>
+      {% endif %}
+    {% endfor %}
+  </div>

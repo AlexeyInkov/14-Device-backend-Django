@@ -1,0 +1,22 @@
+{% load static %}
+<nav class="navbar  bg-secondary">
+    <div class="container-fluid">
+        <div>
+            <a class="navbar-brand" data-bs-toggle="offcanvas"
+               data-bs-target="#offcanvasWithBackdrop"
+               aria-controls="offcanvasWithBackdrop" href="#offcanvasWithBackdrop">
+                <img src="{% static "frontend/images/align-justify.svg" %}" alt="" width="30" height="30"
+                     class="d-inline-block align-text-top">
+            </a>
+            <a class="navbar-brand text-light" href="#">
+                <img src="{% static "frontend/images/logo.png" %}" alt="" width="30" height="30"
+                     class="d-inline-block align-text-top">
+                Device Control
+            </a>
+        </div>
+        <div>
+            <a class="navbar-brand text-light" href="#">{{ user.username }}</a>
+            <button class="btn btn-dark" type="button">Exit</button>
+        </div>
+    </div>
+</nav>

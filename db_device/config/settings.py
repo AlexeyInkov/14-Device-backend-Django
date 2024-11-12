@@ -160,3 +160,26 @@ INTERNAL_IPS = [
     "localhost",
     "127.0.0.1",
 ]
+
+HEADERS_ADDRESS = {
+    "id": "№ п/п",
+    "customer": "Абонент",
+    "address": "Адрес",
+    "itp": "ИТП",
+    "tso": "Теплоснабжающая организация",
+    "service_organization": "Обслуживающая организация",
+}
+HEADERS_DEVICE = {
+    "id": "№ п/п",
+    "installation_point": "Место установки",
+    "type_of_file": "Тип",
+    "factory_number": "Зав. №",
+}
+HEADERS_VERIFICATION = {
+    "id": "№ п/п",
+    "organization": "Поверитель",
+    "verification_date": "Дата поверки",
+    "valid_date": "Поверка до",
+    "is_actual": "Актуальна",
+    "is_delete": "Будет удалена",
+}

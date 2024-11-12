@@ -1,33 +1,22 @@
-{% extends 'frontend/base.html' %}
+{% extends 'frontend/base_bootstrap.html' %}
 {% load device_tags %}
 
 {% block menu %}
-    <div class="menu-container">
-        <ul>
-            {% if tso_selected == 'all' %}
-                <li class="selected">Все ТСО</li>
-            {% else %}
-                <li><a href="{% url 'frontend:home' %}">Все ТСО</a></li>
-            {% endif %}
-            {% show_menu orgs metering_units tso_selected cust_selected %}
-        </ul>
-    </div>
+  {% show_menu orgs metering_units tso_selected cust_selected %}
 {% endblock %}
+
 
 {% block addresses %}
-    <div class="address-container">
-        {#            <MenuFilter title={"верхнего поля"}/>#}
-        <div class='table-scroll'>
-            {% show_metering_units metering_units tso_selected cust_selected mu_selected %}
-        </div>
-    </div>
+      {% show_metering_units metering_units tso_selected cust_selected mu_selected %}
 {% endblock %}
 
+
 {% block devices %}
-    <div class="device-container">
-        {#            <MenuFilter title={"верхнего поля"}/>#}
-        <div class="table-scroll">
-            {% show_devices devices tso_selected cust_selected mu_selected dev_selected verifi_selected%}
-        </div>
-    </div>
+      {% show_devices devices tso_selected cust_selected mu_selected dev_selected %}
+
+  <!-- Кнопка-триггер модального окна -->
+{#  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">#}
+{#    Запустите демо модального окна#}
+{#  </button>#}
 {% endblock %}
+

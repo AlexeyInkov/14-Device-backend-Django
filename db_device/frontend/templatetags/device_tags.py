@@ -61,7 +61,7 @@ def show_devices(devices, tso_selected, cust_selected, mu_selected, dev_selected
 
 
 @register.inclusion_tag("frontend/list_verifications.html")
-def show_devices(
+def show_verifications(
     verifications,
     tso_selected,
     cust_selected,
