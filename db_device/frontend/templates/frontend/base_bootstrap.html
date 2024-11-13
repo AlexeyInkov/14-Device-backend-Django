@@ -23,21 +23,21 @@
       </div>
     </div>
     <div class="row content">
-      <div class="col-2 ">
+      <div class="col-3 menu-bar">
         {% block menu %}
           <div>nav bar</div> {# left nav bar #}
         {% endblock %}
       </div>     
-      <div class="col-10">
-        <div class="row addresses">
-          <div class="col ">
+      <div class="col-9">
+        <div class="row ">
+          <div class="col addresses">
             {% block addresses %}
               <div>Address</div> {# Addresses #}
             {% endblock %}
           </div>
         </div>
-        <div class="row devices">
-          <div class="col ">
+        <div class="row ">
+          <div class="col devices">
             {% block devices %}
               <div>Device</div> {# Devices #}
             {% endblock %}
