@@ -8,9 +8,9 @@ from loguru import logger
 def generate_superuser(apps, schema_editor):
     from django.contrib.auth import get_user_model
 
-    username = os.environ.get('ADMIN_USERNAME')
-    password = os.environ.get('ADMIN_PASSWORD')
-    email = os.environ.get('ADMIN_EMAIL')
+    username = os.environ.get("ADMIN_USERNAME")
+    password = os.environ.get("ADMIN_PASSWORD")
+    email = os.environ.get("ADMIN_EMAIL")
 
     user = get_user_model()
 

@@ -22,7 +22,10 @@ class UserSerializer(serializers.ModelSerializer):
 class UserTokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = Token
-    fields = ("token", "user")
+        fields = (
+            "token",
+            "user",
+        )
 
 
 class UserOrganizationSerializer(serializers.ModelSerializer):
