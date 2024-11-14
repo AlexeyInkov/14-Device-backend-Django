@@ -44,12 +44,20 @@ def show_metering_units(metering_units, tso_selected, cust_selected, mu_selected
 
 
 @register.inclusion_tag("frontend/list_devices.html")
-def show_devices(devices, tso_selected, cust_selected, mu_selected, dev_selected):
+def show_devices(
+    metering_units, devices, tso_selected, cust_selected, mu_selected, dev_selected
+):
     filters = {}
-    if mu_selected != "all":
-        filters["metering_unit"] = mu_selected
+    if tso_selected != "all":
+        filters["tso"] = tso_selected
+    if cust_selected != "all":
+        filters["customer"] = cust_selected
 
-    devices = devices.filter(**filters)
+    metering_units = metering_units.filter(**filters)
+    if mu_selected and mu_selected != "all":
+        devices = devices.filter(metering_unit__in=[mu_selected])
+    else:
+        devices = devices.filter(metering_unit__in=metering_units)
 
     return {
         "devices": devices,
