@@ -2,9 +2,9 @@
 <nav class="navbar  bg-secondary">
     <div class="container-fluid">
         <div>
-            <a class="navbar-brand" data-bs-toggle="offcanvas"
-               data-bs-target="#offcanvasWithBackdrop"
-               aria-controls="offcanvasWithBackdrop" href="#offcanvasWithBackdrop">
+            <a class="navbar-brand" role="checkbox" data-bs-toggle="collapse"
+               data-bs-target="#menu-bar" aria-expanded="false"
+               aria-controls="menu-bar" href="#menu-bar">
                 <img src="{% static "frontend/images/align-justify.svg" %}" alt="" width="30" height="30"
                      class="d-inline-block align-text-top">
             </a>
@@ -16,7 +16,7 @@
         </div>
         <div>
             <a class="navbar-brand text-light" href="#">{{ user.username }}</a>
-            <button class="btn btn-dark" type="button">Exit</button>
+            <a class="btn btn-dark" type="button" href="{% url "frontend:logout" %}">Exit</a>
         </div>
     </div>
 </nav>

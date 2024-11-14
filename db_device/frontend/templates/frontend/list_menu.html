@@ -9,7 +9,7 @@
   <div class="list-group-flush">
     {% for tso in tso_s %}
       {% if tso.id == tso_selected|add:"0" %}
-        <a href="#" class="list-group-item list-group-item-action list-group-item-light active" aria-current="true">{{ tso.name }}</a>
+        <a href="#" class="list-group-item list-group-item-action list-group-item-light active " aria-current="true">{{ tso.name }}</a>
         <div class="list-group-flush">
           {% for customer in customers %}
             {% if customer.id == cust_selected|add:"0" %}
@@ -20,7 +20,7 @@
           {% endfor %}
         </div>
       {% else %}
-        <a class="list-group-item list-group-item-action list-group-item-light" href="{% url 'frontend:home' %}?tso={{ tso.id }}">{{ tso.name }}</a>
+        <a class="list-group-item list-group-item-action list-group-item-light " href="{% url 'frontend:home' %}?tso={{ tso.id }}">{{ tso.name }}</a>
       {% endif %}
     {% endfor %}
   </div>
