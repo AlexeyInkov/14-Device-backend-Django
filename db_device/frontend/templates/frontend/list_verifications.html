@@ -1,7 +1,0 @@
-{% for verification in verifications %}
-    {% if verification.id == verif_selected|add:"0" %}
-        <li class="selected">{{ verification.valid_data }}</li>
-    {% else %}
-        <li><a href="{% url 'frontend:home' %}?tso={{ tso_selected }}&customer={{ cust_selected }}&metering_unit={{ mu_selected }}&device={{ device.id }}&verification={{ verification.id }}">{{ verification.valid_data }}</a></li>
-    {% endif %}
-{% endfor %}

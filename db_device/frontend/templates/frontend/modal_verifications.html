@@ -1,0 +1,42 @@
+{% load context_tags %}
+
+<div class="modal fade" id="vModal-{{ device.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">{{ device.type_of_file }} #{{ device.factory_number }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+      <div class="modal-body">
+        {% get_headers_verification as HEADERS_VERIFICATION %}
+        {#        <table class="table table-bordered table-hover">#}
+        {#          <thead>#}
+        {#          <tr>#}
+        {#            {% for header in HEADERS_VERIFICATION.values %}#}
+        {#              <th>{{ header }}</th>#}
+        {#            {% endfor %}#}
+        {#          </tr>#}
+        {#          </thead>#}
+        {#          <tbody>#}
+        {#          {% for verification in device.verifications.all %}#}
+        {#            <tr>#}
+        {#              {% for key in HEADERS_DEVICE.keys %}#}
+        {#                <td>#}
+        {#                  {{ verification|attr:key }}#}
+        {#                </td>#}
+        {#              {% endfor %}#}
+        {#            </tr>#}
+        {#          {% endfor %}#}
+        {#          </tbody>#}
+        {#        </table>#}
+       
+        {% for verification in verifications %}
+        {{ verification.valid_date }}
+        {% endfor %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+      </div>
+    </div>
+  </div>
+</div>

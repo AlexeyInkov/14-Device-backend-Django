@@ -1,53 +1,41 @@
 {% load context_tags %}
+{% load device_tags %}
 
 {% if devices %}
   <table class="table table-bordered table-hover">
-  <thead>
-  <tr>
-    {% get_headers_device as HEADERS_DEVICE %}
+    <thead>
+    <tr>
+      {% get_headers_device as HEADERS_DEVICE %}
 
-    {% for header in HEADERS_DEVICE.values %}
-      <th>{{ header }}</th>
+      {% for header in HEADERS_DEVICE.values %}
+        <th>{{ header }}</th>
+      {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+    {% for device in devices %}
+      {% if device.id == dev_selected|add:"0" %}
+        <tr class="table-active">
+          {% for key in HEADERS_DEVICE.keys %}
+
+            <td>{{ device|attr:key }}</td>
+          {% endfor %}
+        </tr>
+      {% else %}
+        <tr>
+          {% for key in HEADERS_DEVICE.keys %}
+            <td><a class="link-dark" data-bs-toggle="modal" data-bs-target="#vModal-{{ device.id }}" href="#vModal-{{ device.id }}">
+              {{ device|attr:key }}
+            </a></td>
+          {% endfor %}
+        </tr>
+      {% endif %}
+
+      <!-- Модальное окно -->
+      {% show_verifications device %}
+    
     {% endfor %}
-  </tr>
-  </thead>
-  <tbody>
-  {% for device in devices %}
-    {% if device.id == dev_selected|add:"0" %}
-      <tr class="table-active">
-        {% for key in HEADERS_DEVICE.keys %}
-          <td>{{ device|attr:key }}</td>
-        {% endfor %}
-      </tr>
-    {% else %}
-      <tr>
-        {% for key in HEADERS_DEVICE.keys %}
-          <td><a class="link-dark" data-bs-toggle="modal" data-bs-target="#exampleModal" href="{% url 'frontend:home' %}?tso={{ tso_selected }}&customer={{ cust_selected }}&metering_unit={{ mu_selected }}&device={{ device.id }}">
-            {{ device|attr:key }}
-          </a></td>
-        {% endfor %}
-      </tr>
-    {% endif %}
-  {% endfor %}
+    </tbody>
+  </table>
 {% endif %}
-</tbody>
-</table>
 
-<!-- Модальное окно -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">{{ verifications }}</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-      </div>
-      <div class="modal-body">
-        {{ verifications }}
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-        <button type="button" class="btn btn-primary">Сохранить изменения</button>
-      </div>
-    </div>
-  </div>
-</div>
