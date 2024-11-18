@@ -1,9 +1,10 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView
 from django.db.models import Q
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, TemplateView
 
+from config.settings import LOGIN_URL
 from device.models import Device, DeviceVerification
 from metering_unit.models import Organization, MeteringUnit
 from .forms import LoginUserForm, RegisterUserForm
@@ -21,6 +22,13 @@ class RegisterUserView(CreateView):
     template_name = "frontend/register.html"
     extra_context = {"title": "Регистрация"}
     success_url = reverse_lazy("frontend:login")
+
+
+class MyLogoutView(LogoutView):
+    http_method_names = ["get", "post", "options"]
+
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
 
 
 class IndexView(DataMixin, LoginRequiredMixin, TemplateView):
