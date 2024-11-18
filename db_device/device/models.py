@@ -118,6 +118,13 @@ class Device(BaseTimeModel):
     class Meta:
         verbose_name_plural = "devices"
 
+    @property
+    def device_type(self):
+        if self.registry_number:
+            return f"{self.type.type}({str(self.mod.mod)})"
+        else:
+            return f"{self.type_of_file.device_type_file}"
+
     def __str__(self):
         return f"{str(self.type_of_file)} №{self.factory_number}"
 
