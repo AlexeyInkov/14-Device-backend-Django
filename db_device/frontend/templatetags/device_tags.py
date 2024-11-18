@@ -68,26 +68,10 @@ def show_devices(
     }
 
 
-@register.inclusion_tag("frontend/list_verifications.html")
-def show_verifications(
-    verifications,
-    tso_selected,
-    cust_selected,
-    mu_selected,
-    dev_selected,
-    verif_selected,
-):
-    filters = {}
-    if dev_selected != "all":
-        filters["device"] = dev_selected
-
-    verifications = verifications.filter(**filters)
-
+@register.inclusion_tag("frontend/modal_verifications.html")
+def show_verifications(device):
+    verifications = device.verifications.all()
     return {
+        "device": device,
         "verifications": verifications,
-        "tso_selected": tso_selected,
-        "cust_selected": cust_selected,
-        "mu_selected": mu_selected,
-        "dev_selected": dev_selected,
-        "verif_selected": verif_selected,
     }
