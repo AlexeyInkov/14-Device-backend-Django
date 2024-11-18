@@ -35,3 +35,7 @@ dist-ssr
 *.sln
 *.sw?
 
+/db_device/frontend/static/frontend/images/logo.svg
+/db_device/frontend/static/frontend/images/палитра.png
+/db_device/frontend/templates/frontend/modal_verifications.html
+/db_device/frontend/templates/frontend/offcanvas.html

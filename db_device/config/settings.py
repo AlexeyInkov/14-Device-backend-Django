@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework.authtoken",
+    "rest_framework_swagger",
     "corsheaders",
     "my_auth",
     "for_page",
@@ -36,7 +37,6 @@ INSTALLED_APPS = [
     "device",
     "frontend",
     "debug_toolbar",
-    "rest_framework_swagger",
     "drf_yasg",
 ]
 
@@ -162,22 +162,30 @@ INTERNAL_IPS = [
 ]
 
 HEADERS_ADDRESS = {
-    "id": "№ п/п",
+    "id": "№",
     "customer": "Абонент",
     "address": "Адрес",
     "itp": "ИТП",
-    "tso": "Теплоснабжающая организация",
-    "service_organization": "Обслуживающая организация",
+    "tso": "ТCO",
+    "service_organization": "ОО",
 }
 HEADERS_DEVICE = {
     "id": "№ п/п",
     "installation_point": "Место установки",
-    "type_of_file": "Тип",
+    "registry_number": "№ в реестре",
+    "device_type": "Тип",
     "factory_number": "Зав. №",
+    "verification_date": "Дата поверки",
+    "verifications.valid_date": "Поверка до",
+    "notes": "Примечание",
 }
 HEADERS_VERIFICATION = {
     "id": "№ п/п",
     "organization": "Поверитель",
+    "registry_number": "№ в реестре",
+    "device_type": "Тип",
+    "device_mod": "Модификация",
+    "factory_number": "Зав. №",
     "verification_date": "Дата поверки",
     "valid_date": "Поверка до",
     "is_actual": "Актуальна",
