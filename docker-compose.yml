@@ -1,50 +1,54 @@
-networks:
-  net:
-
 services:
-  kafka:
-    container_name: kafka_container
-    image: apache/kafka:3.8.0
+  web-app:
+    container_name: web-app
+    build:
+      context: .
+    env_file:
+      - .env
     ports:
-      - "9092:9092"
-    restart: unless-stopped
-    networks:
-      - net
+      - "8000:8000"
+    volumes:
+      - ./db_device:/db_device
 
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
+    depends_on:
+      - postgres
 
+#
   postgres:
-    container_name: postgres_container
-    image: postgres:14.8-alpine3.18
+    container_name: postgres
+    image: postgres:14.8-alpine
     environment:
       POSTGRES_DB: "mydb"
       POSTGRES_USER: "mydbuser"
       POSTGRES_PASSWORD: "mydbpassword"
-      PGDATA: "/var/lib/postgresql/data/pgdata"
-    volumes:
-      - ../2. Init Database:/docker-entrypoint-initdb.d
-      - pg-data:/var/lib/postgresql/data
-    ports:
-      - "15432:5432"
-    restart: unless-stopped
-    networks:
-      - net
-
-  pgadmin:
-    container_name: pgadmin_container
-    image: dpage/pgadmin4:8.10
-    environment:
-      PGADMIN_DEFAULT_EMAIL: "alex0982@mail.ru"
-      PGADMIN_DEFAULT_PASSWORD: "pgadminpassword"
-      PGADMIN_CONFIG_SERVER_MODE: "False"
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin
-    ports:
-      - "5050:80"
-    restart: unless-stopped
-    networks:
-      - net
-
-
-volumes:
-  pg-data:
-  pgadmin-data:
+#      PGDATA: "/var/lib/postgresql/data/pgdata"
+#    volumes:
+#      - ../2. Init Database:/docker-entrypoint-initdb.d
+#      - pg-data:/var/lib/postgresql/data
+#    ports:
+#      - "15432:5432"
+#    restart: unless-stopped
+##    networks:
+#      - net
+#
+#  pgadmin:
+#    container_name: pgadmin_container
+#    image: dpage/pgadmin4:8.10
+#    environment:
+#      PGADMIN_DEFAULT_EMAIL: "alex0982@mail.ru"
+#      PGADMIN_DEFAULT_PASSWORD: "pgadminpassword"
+#      PGADMIN_CONFIG_SERVER_MODE: "False"
+#    volumes:
+#      - pgadmin-data:/var/lib/pgadmin
+#    ports:
+#      - "5050:80"
+#    restart: unless-stopped
+#    networks:
+#      - net
+#
+#
+#volumes:
+#  pg-data:
+#  pgadmin-data:
