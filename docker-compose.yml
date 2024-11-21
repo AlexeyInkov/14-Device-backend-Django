@@ -5,36 +5,52 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - "./nginx.conf:/etc/nginx/nginx.conf"
-      - "/etc/letsencrypt:/etc/letsencrypt"
-    depends_on:
-      - backend
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/cert.pem:/etc/cert.pem
+      - ./nginx/key.pem:/etc/key.pem
+#    depends_on:
+#      - web-app
 
-
-
-  redis:
-    container_name: redis
-    image: redis:7.4.1-alpine
-    restart: always
-
-  web-app:
-    container_name: web-app
-    build:
-      context: .
-    restart: always
+  certbot:
+    ports:
+      - "6000:80"
     env_file:
       - .env
-    ports:
-      - "8000:8000"
+    # и снова мониторуем директорию nginx
     volumes:
-      - ./db_device:/db_device
+      - ./nginx/:/etc/nginx/
+    build:
+      context: ./certbot
+      dockerfile: Dockerfile
+      # задаем переменные среды
+      args:
+        DOMAIN_EMAIL: ${DOMAIN_EMAIL}
+        DOMAIN_URL: ${DOMAIN_URL}
 
-    command: >
-      sh -c "python manage.py runserver 0.0.0.0:8000"
-#    command: gunicorn -b 0.0.0.0:8000 db_device.wsgi:application
-    depends_on:
-      - postgres
-      - redis
+
+#  redis:
+#    container_name: redis
+#    image: redis:7.4.1-alpine
+#    restart: always
+#
+#  web-app:
+#    container_name: web-app
+#    build:
+#      context: .
+#    restart: always
+#    env_file:
+#      - .env
+#    ports:
+#      - "8000:8000"
+#    volumes:
+#      - ./db_device:/db_device
+
+#    command: >
+#      sh -c "python manage.py runserver 0.0.0.0:8000"
+#    command: gunicorn -b 0.0.0.0:8000 config.wsgi:application
+#    depends_on:
+#      - postgres
+#      - redis
 
 #  celery-worker:
 #    container_name: celery-worker
@@ -50,13 +66,13 @@ services:
  #     - redis
 
 #
-  postgres:
-    container_name: postgres
-    image: postgres:14.8-alpine
-    environment:
-      POSTGRES_DB: "mydb"
-      POSTGRES_USER: "mydbuser"
-      POSTGRES_PASSWORD: "mydbpassword"
+#  postgres:
+#    container_name: postgres
+#    image: postgres:14.8-alpine
+#    environment:
+#      POSTGRES_DB: "mydb"
+#      POSTGRES_USER: "mydbuser"
+#      POSTGRES_PASSWORD: "mydbpassword"
 #      PGDATA: "/var/lib/postgresql/data/pgdata"
 #    volumes:
 #      - ../2. Init Database:/docker-entrypoint-initdb.d
