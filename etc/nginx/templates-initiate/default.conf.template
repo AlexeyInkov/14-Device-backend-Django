@@ -1,7 +1,7 @@
 server {
     listen [::]:80;
     listen 80;
-    server_name $DOMAIN_URL;
+    server_name inkov.online;
     location ~/.well-known/acme-challenge {
         allow all;
         root /var/www/certbot;
