@@ -43,7 +43,7 @@ services:
   web-app:
     container_name: web-app
     build:
-      context: ./db_device
+      context: .
     restart: always
     env_file:
       - .env
