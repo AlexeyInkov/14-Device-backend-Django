@@ -4,7 +4,7 @@ RUN apt-get update -y
 RUN apt-get upgrade -y
 RUN pip install --upgrade pip
 
-COPY ../requirements.txt /temp/requirements.txt
+COPY requirements.txt /temp/requirements.txt
 RUN pip install -r /temp/requirements.txt
 
 COPY db_device /db_device
