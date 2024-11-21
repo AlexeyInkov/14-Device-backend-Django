@@ -1,5 +1,6 @@
 services:
   nginx:
+    container_name: nginx
     image: nginx:stable-alpine
     ports:
       - "80:80"
@@ -12,13 +13,11 @@ services:
 #      - web-app
 
   certbot:
+    container_name: certbot
     ports:
       - "6000:80"
     env_file:
       - .env
-    # и снова мониторуем директорию nginx
-    volumes:
-      - ./nginx/:/etc/nginx/
     build:
       context: ./certbot
       dockerfile: Dockerfile
@@ -26,12 +25,14 @@ services:
       args:
         DOMAIN_EMAIL: ${DOMAIN_EMAIL}
         DOMAIN_URL: ${DOMAIN_URL}
+    # и снова мониторуем директорию nginx
+    volumes:
+      - ./nginx/:/etc/nginx/
 
-
-#  redis:
-#    container_name: redis
-#    image: redis:7.4.1-alpine
-#    restart: always
+  redis:
+    container_name: redis
+    image: redis:7.4.1-alpine
+    restart: always
 #
 #  web-app:
 #    container_name: web-app
@@ -70,9 +71,9 @@ services:
 #    container_name: postgres
 #    image: postgres:14.8-alpine
 #    environment:
-#      POSTGRES_DB: "mydb"
-#      POSTGRES_USER: "mydbuser"
-#      POSTGRES_PASSWORD: "mydbpassword"
+#      POSTGRES_DB: ${POSTGRES_DB_NAME}
+#      POSTGRES_USER: ${POSTGRES_DB_USER}
+#      POSTGRES_PASSWORD: ${POSTGRES_DB_USER_PASSWORD}
 #      PGDATA: "/var/lib/postgresql/data/pgdata"
 #    volumes:
 #      - ../2. Init Database:/docker-entrypoint-initdb.d
