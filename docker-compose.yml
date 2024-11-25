@@ -51,9 +51,9 @@ services:
       - ./db_device:/db_device
 
     command: >
-      sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+#      sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
 
-#      sh -c "python manage.py migrate&&gunicorn -b 0.0.0.0:8000 config.wsgi:application"
+      sh -c "python manage.py migrate && python manage.py loaddata fixtures/20241125.json && gunicorn -b 0.0.0.0:8000 config.wsgi:application"
 
     depends_on:
       - postgres
