@@ -58,3 +58,5 @@ dist-ssr
 /etc/letsencrypt/keys/0006_key-certbot.pem
 /etc/letsencrypt/options-ssl-nginx.conf
 /etc/letsencrypt/ssl-dhparams.pem
+/db_device/htmlcov/
+/db_device/.coverage
