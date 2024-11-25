@@ -1,6 +1,3 @@
-{% load device_tags %}
-
-
   {% if tso_selected == 'all' %}
     <div>Все организации</div>
   {% else %}
@@ -15,12 +12,12 @@
             {% if customer.id == cust_selected|add:"0" %}
               <a href="#" class="list-group-item list-group-item-action list-group-item-light active fs-8" aria-current="true">{{ customer.name }}</a>
             {% else %}
-              <a class="list-group-item list-group-item-action list-group-item-light fs-8" href="{% url 'frontend:home' %}?tso={{ tso_selected }}&customer={{ customer.id }}">{{ customer.name }}</a>
+              <a class="list-group-item list-group-item-action list-group-item-light fs-8" href="{% url 'frontend:home' %}?organization={{ org_selected }}&tso={{ tso_selected }}&customer={{ customer.id }}">{{ customer.name }}</a>
             {% endif %}
           {% endfor %}
         </div>
       {% else %}
-        <a class="list-group-item list-group-item-action list-group-item-light " href="{% url 'frontend:home' %}?tso={{ tso.id }}">{{ tso.name }}</a>
+        <a class="list-group-item list-group-item-action list-group-item-light " href="{% url 'frontend:home' %}?organization={{ org_selected }}&tso={{ tso.id }}">{{ tso.name }}</a>
       {% endif %}
     {% endfor %}
   </div>

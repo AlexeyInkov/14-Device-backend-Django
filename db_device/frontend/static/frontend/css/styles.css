@@ -2,6 +2,10 @@ root {
     --height-content: calc(100vh - 54px - 24px)
 }
 
+body {
+    font-size: 12px;
+}
+
 .container {
     height: 100vh;
     overflow: hidden;
@@ -30,6 +34,6 @@ root {
     }
 }
 
-.login{
+.login {
     height: 100%;
 }

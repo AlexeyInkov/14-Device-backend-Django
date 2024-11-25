@@ -1,0 +1,40 @@
+{% load static %}
+
+<nav class="navbar navbar-expand-lg navbar-secondary bg-secondary ">
+  <div class="container-fluid justify-content-between">
+    <div>
+      <a class="navbar-brand" role="checkbox" data-bs-toggle="collapse"
+         data-bs-target="#menu-bar" aria-expanded="false"
+         aria-controls="menu-bar" href="#menu-bar">
+        <img src="{% static "frontend/images/align-justify.svg" %}" alt="" width="30" height="30"
+             class="d-inline-block align-text-top">
+      </a>
+      <a class="navbar-brand text-light" href="#">
+        <img src="{% static "frontend/images/logo.png" %}" alt="" width="30" height="30"
+             class="d-inline-block align-text-top">
+        Device Control
+      </a></div>
+    <div>
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <select class="form-select navbar-brand" aria-label="org-select" title="org-select">
+            <option value="all">Все организации</option>
+            {% for org in orgs %}
+              {% if org.id == org_selected|add:"0" %}
+                <option selected>{{ org.name }}</option>
+              {% else %}
+                <option value="{{ org.pk }}"><a href="{% url 'frontend:home' %}?organization={{ org_selected }}">{{ org.name }}</a></option>
+              {% endif %}
+            {% endfor %}
+          </select>
+        </li>
+        <li class="nav-item">
+          <a class="navbar-brand text-light" href="#">{{ user.username }}</a>
+        </li>
+        <li class="nav-item">
+          <a class="btn btn-dark" type="button" href="{% url "frontend:logout" %}">Exit</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

@@ -22,7 +22,7 @@
     {% else %}
       <tr>
         {% for key in HEADERS_ADDRESS.keys %}
-          <td><a class="link-dark" href="{% url 'frontend:home' %}?tso={{ tso_selected }}&customer={{ cust_selected }}&metering_unit={{ metering_unit.id }}">
+          <td><a class="link-dark" href="{% url 'frontend:home' %}?organization={{ org_selected }}&tso={{ tso_selected }}&customer={{ cust_selected }}&metering_unit={{ metering_unit.id }}">
             {{ metering_unit|attr:key }}
           </a></td>
         {% endfor %}
