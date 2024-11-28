@@ -29,13 +29,15 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework.authtoken",
-    "rest_framework_swagger",
+    "django_celery_beat",
+    "django_celery_results",
     "corsheaders",
     "my_auth",
     "for_page",
     "metering_unit",
     "device",
     "frontend",
+    "rest_framework_swagger",
     "debug_toolbar",
     "drf_yasg",
 ]
@@ -153,6 +155,26 @@ LOGIN_REDIRECT_URL = "frontend:home"
 LOGOUT_REDIRECT_URL = "frontend:login"
 LOGIN_URL = "frontend:login"
 
+# celery setting.
+CELERY_BROKER_URL = "redis://redis:6379/0"
+CELERY_RESULT_BACKEND = "redis://redis:6379/0"
+# CELERY_RESULT_BACKEND = 'django-db'
+
+# CELERY_CACHE_BACKEND = 'django-cache'
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://127.0.0.1:16379/1",
+    }
+}
+
+
+CELERY_CACHE_BACKEND = "default"
+
+# CELERY_TIMEZONE = ""
+# CELERY_TASK_TRACK_STARTED = True
+# CELERY_TASK_TIME_LIMIT = 30 * 60
 
 # KAFKA_URL = os.environ.get("KAFKA_URL")
 
