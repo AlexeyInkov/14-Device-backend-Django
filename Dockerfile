@@ -1,13 +1,17 @@
 FROM python:3.11.9-slim
 LABEL authors="AlexeyInkov"
+RUN apt-get update -y
+RUN apt-get upgrade -y
+RUN pip install --upgrade pip
 
-WORKDIR backend
+COPY requirements.txt /temp/requirements.txt
+RUN pip install -r /temp/requirements.txt
 
-COPY requirements.txt .
+COPY db_device /db_device
 
-RUN pip install -r requirements.txt
+WORKDIR db_device
+EXPOSE 8000
 
-COPY db_device .
+RUN adduser --disabled-password service-user
 
-CMD ["gunicorn", "-b", "0.0.0.0:8000", "db_device.wsgi:application"]
-
+USER service-user

@@ -15,7 +15,7 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
 DEBUG = "True" == os.environ.get("DJANGO_DEBUG", True)
 
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(",")
+ALLOWED_HOSTS = ["*"]  # os.environ.get("DJANGO_ALLOWED_HOSTS").split(",")
 CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS").split(",")
 
 # Application definition
@@ -27,15 +27,19 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "rest_framework_swagger",
     "rest_framework",
     "rest_framework.authtoken",
-    "drf_yasg",
+    "django_celery_beat",
+    "django_celery_results",
     "corsheaders",
     "my_auth",
     "for_page",
     "metering_unit",
     "device",
+    "frontend",
+    "rest_framework_swagger",
+    "debug_toolbar",
+    "drf_yasg",
 ]
 
 MIDDLEWARE = [
@@ -47,6 +51,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -68,7 +73,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
-
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -96,7 +100,6 @@ else:
         }
     }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
@@ -123,7 +126,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 if not os.path.exists(BASE_DIR / "static"):
     os.makedirs(BASE_DIR / "static")
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
@@ -135,14 +137,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "media/"
 
 CORS_ORIGIN_WHITELIST = [
-    "http://127.0.0.1:3001",
-    "http://localhost:3001",
     "http://127.0.0.1:3000",
     "http://localhost:3000",
     "https://inkov.online",
     "https://dev-test.inkov.online",
-    "http://inkov.online",
-    "http://dev-test.inkov.online",
 ]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -153,8 +151,65 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.BasicAuthentication",
     ]
 }
+LOGIN_REDIRECT_URL = "frontend:home"
+LOGOUT_REDIRECT_URL = "frontend:login"
+LOGIN_URL = "frontend:login"
 
-# LOGIN_REDIRECT_URL = "/"
-# LOGOUT_REDIRECT_URL = "/"
+# celery setting.
+CELERY_BROKER_URL = "redis://redis:6379/0"
+CELERY_RESULT_BACKEND = "redis://redis:6379/0"
+# CELERY_RESULT_BACKEND = 'django-db'
 
-#KAFKA_URL = os.environ.get("KAFKA_URL")
+# CELERY_CACHE_BACKEND = 'django-cache'
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://127.0.0.1:16379/1",
+    }
+}
+
+
+CELERY_CACHE_BACKEND = "default"
+
+# CELERY_TIMEZONE = ""
+# CELERY_TASK_TRACK_STARTED = True
+# CELERY_TASK_TIME_LIMIT = 30 * 60
+
+# KAFKA_URL = os.environ.get("KAFKA_URL")
+
+INTERNAL_IPS = [
+    "localhost",
+    "127.0.0.1",
+]
+
+HEADERS_ADDRESS = {
+    "id": "№",
+    "customer": "Абонент",
+    "address": "Адрес",
+    "itp": "ИТП",
+    "tso": "ТCO",
+    "service_organization": "ОО",
+}
+HEADERS_DEVICE = {
+    "id": "№ п/п",
+    "installation_point": "Место установки",
+    "registry_number": "№ в реестре",
+    "device_type": "Тип",
+    "factory_number": "Зав. №",
+    "verification_date": "Дата поверки",
+    "verifications.valid_date": "Поверка до",
+    "notes": "Примечание",
+}
+HEADERS_VERIFICATION = {
+    "id": "№ п/п",
+    "organization": "Поверитель",
+    "registry_number": "№ в реестре",
+    "device_type": "Тип",
+    "device_mod": "Модификация",
+    "factory_number": "Зав. №",
+    "verification_date": "Дата поверки",
+    "valid_date": "Поверка до",
+    "is_actual": "Актуальна",
+    "is_delete": "Будет удалена",
+}
