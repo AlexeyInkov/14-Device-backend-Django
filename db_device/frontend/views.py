@@ -5,7 +5,12 @@ from django.views.generic import CreateView, TemplateView
 
 from .forms import LoginUserForm, RegisterUserForm
 from .mixins import DataMixin
-from .services import get_organizations, get_metering_units, get_devices
+from .db_services import (
+    get_organizations,
+    get_metering_units,
+    get_devices,
+    get_customers,
+)
 
 
 class LoginUserView(LoginView):
@@ -41,34 +46,23 @@ class IndexView(DataMixin, LoginRequiredMixin, TemplateView):
         mu_selected = self.request.GET.get("metering_unit", "all")
         dev_selected = self.request.GET.get("device", "all")
 
-        orgs = get_organizations(org_selected, self.request.user)
+        organizations = get_organizations(org_selected, self.request.user)
 
         filter_metering_units, metering_units = get_metering_units(
-            tso_selected, cust_selected, orgs
+            tso_selected, cust_selected, organizations
         )
 
-        devices = get_devices(mu_selected, filter_metering_units)
-
-        tso_s = orgs.filter(pk__in=(metering_units.values("tso").distinct()))
-
-        filters = {}
-        if tso_selected != "all":
-            filters["tso"] = tso_selected
-        customers = orgs.filter(
-            id__in=(metering_units.filter(**filters).values("customer").distinct())
-        )
-
-        context = {
-            "orgs": orgs,
-            "tso_s": tso_s,
-            "customers": customers,
+        return {
+            "orgs": organizations,
+            "tso_s": organizations.filter(
+                pk__in=(metering_units.values("tso").distinct())
+            ),
+            "customers": get_customers(tso_selected, metering_units, organizations),
             "metering_units": filter_metering_units,
-            "devices": devices,
+            "devices": get_devices(mu_selected, filter_metering_units),
             "org_selected": org_selected,
             "tso_selected": tso_selected,
             "cust_selected": cust_selected,
             "mu_selected": mu_selected,
             "dev_selected": dev_selected,
         }
-
-        return context
