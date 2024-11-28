@@ -28,7 +28,7 @@ def dictitem(dictionary: dict, key: str) -> str:
 @register.filter
 def attr(obj, name):
     value = getattr(obj, name, None)
-    print(f"{name} : {value}")
+    # print(f"{name} : {value}")
     if value is not None:
         return value
     return "пусто"

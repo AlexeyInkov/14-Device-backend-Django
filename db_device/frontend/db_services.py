@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.db.models import Q
 
 from device.models import Device
@@ -66,3 +67,17 @@ def get_organizations(org_selected, user):
     if org_selected != "all":
         return orgs.filter(pk=org_selected)
     return orgs
+
+
+def get_customers(tso_selected, metering_units, orgs):
+    filters = {}
+    if tso_selected != "all":
+        filters["tso"] = tso_selected
+    return orgs.filter(
+        id__in=(metering_units.filter(**filters).values("customer").distinct())
+    )
+
+
+def save_verification(device_id, verification):
+    with transaction.atomic():
+        pass
