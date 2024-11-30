@@ -12,7 +12,6 @@ class BaseTimeModel(models.Model):
 
 
 class DeviceRegistryNumber(BaseTimeModel):
-
     registry_number = models.CharField(unique=True, max_length=10)
 
     class Meta:
@@ -23,7 +22,6 @@ class DeviceRegistryNumber(BaseTimeModel):
 
 
 class DeviceType(BaseTimeModel):
-
     type = models.CharField(max_length=100, unique=True)
 
     class Meta:
@@ -34,7 +32,6 @@ class DeviceType(BaseTimeModel):
 
 
 class DeviceMod(BaseTimeModel):
-
     mod = models.CharField(max_length=100, unique=True)
 
     class Meta:
@@ -45,7 +42,6 @@ class DeviceMod(BaseTimeModel):
 
 
 class DeviceInstallationPoint(BaseTimeModel):
-
     name = models.CharField(max_length=100, unique=True)
 
     class Meta:
@@ -129,14 +125,18 @@ class Device(BaseTimeModel):
 
 
 class DeviceVerification(BaseTimeModel):
-
     device = models.ForeignKey(
         Device,
         on_delete=models.PROTECT,
         null=True,
         related_name="verifications",
     )
-    organization = models.CharField(max_length=100, blank=True, null=True)
+    mi_mititle = models.CharField(max_length=200, blank=True, null=True)
+    mit_mitnumber = models.CharField(max_length=10, blank=True, null=True)
+    mi_mitype = models.CharField(max_length=100, blank=True, null=True)
+    mi_modification = models.CharField(max_length=100, blank=True, null=True)
+    mi_number = models.CharField(max_length=20, blank=True, null=True)
+    org_title = models.CharField(max_length=100, blank=True, null=True)
     verification_date = models.DateField(default="1900-01-01")
     valid_date = models.DateField(default="1900-01-01")
     is_actual = models.BooleanField(default=False)
