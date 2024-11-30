@@ -1,11 +1,13 @@
+from typing import Tuple, Dict
+
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 
 from device.models import Device, DeviceVerification
 from metering_unit.models import Organization, MeteringUnit
 
 
-def get_devices(mu_selected, metering_units):
+def get_devices(mu_selected: str, metering_units: QuerySet) -> QuerySet:
     devices = (
         Device.objects.only(
             "installation_point__name",
@@ -27,7 +29,7 @@ def get_devices(mu_selected, metering_units):
     return devices.filter(metering_unit__in=metering_units.values_list("pk", flat=True))
 
 
-def get_metering_units(tso_selected, cust_selected, orgs):
+def get_metering_units(tso_selected: str, cust_selected: str, orgs: QuerySet) -> Tuple[QuerySet, QuerySet]:
     metering_units = (
         MeteringUnit.objects.only(
             "customer__name",
@@ -60,7 +62,7 @@ def get_metering_units(tso_selected, cust_selected, orgs):
     return metering_units, metering_units
 
 
-def get_organizations(org_selected, user):
+def get_organizations(org_selected: str, user) -> QuerySet:
     orgs = Organization.objects.only("name").filter(user_to_org__user=user)
     print(orgs)
     # Orgs filter
@@ -69,7 +71,7 @@ def get_organizations(org_selected, user):
     return orgs
 
 
-def get_customers(tso_selected, metering_units, orgs):
+def get_customers(tso_selected: str, metering_units: QuerySet, orgs: QuerySet) -> QuerySet:
     filters = {}
     if tso_selected != "all":
         filters["tso"] = tso_selected
@@ -78,19 +80,19 @@ def get_customers(tso_selected, metering_units, orgs):
     )
 
 
-def save_verification(device_id, verification):
+def save_verification(device_id: int, verification: dict) -> None:
     print('run_save_verification')
     model_fields = get_model_field(verification)
     with transaction.atomic():
-        print(DeviceVerification.objects.filter(device=device_id))
+        # print(DeviceVerification.objects.filter(device=device_id))
         verification = DeviceVerification.objects.filter(device=device_id).filter(**model_fields)
-        print(verification)
+        # print(verification)
         if not verification:
             new = DeviceVerification.objects.create(**model_fields)
             print("new=", new)
 
 
-def get_model_field(verification):
+def get_model_field(verification: Dict[str, str]) -> Dict[str, str]:
     convert = {
         "mi_mititle": "mi.mititle",
         "mit_mitnumber": "mi.mitnumber",
