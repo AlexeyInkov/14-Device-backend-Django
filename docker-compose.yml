@@ -1,97 +1,115 @@
 services:
-  nginx:
-    container_name: nginx
-    image: nginx:stable-alpine
-    restart: unless-stopped
-    env_file:
-      - .env
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - ./etc/nginx:/etc/nginx
-      - ./etc/nginx/templates:/etc/etc/templates:ro
-      - ./etc/letsencrypt:/etc/letsencrypt:ro
-      - ./certbot/data:/var/www/certbot
-    depends_on:
-      - web-app
-    networks:
-      - app-network
+#  nginx:
+#    container_name: nginx
+#    image: nginx:stable-alpine
+#    restart: unless-stopped
+#    env_file:
+#      - .env
+#    ports:
+#      - 80:80
+#      - 443:443
+#    volumes:
+#      - ./etc/nginx:/etc/nginx
+#      - ./etc/nginx/templates:/etc/etc/templates:ro
+#      - ./etc/letsencrypt:/etc/letsencrypt:ro
+#      - ./certbot/data:/var/www/certbot
+#    depends_on:
+#      - web-app
+#    networks:
+#      - app-network
 
 
-  certbot:
-    container_name: certbot
-    env_file:
-      - .env
-    build:
-      context: ./certbot
-      dockerfile: Dockerfile
-    command: >-
-      certbot certonly --reinstall --webroot --webroot-path=/var/www/certbot
-      --email ${DOMAIN_EMAIL} --agree-tos --no-eff-email -d ${DOMAIN_URL}
-    volumes:
-      - ./etc/letsencrypt:/etc/letsencrypt
-      - ./certbot/data:/var/www/certbot
-    depends_on:
-      - nginx
+#  certbot:
+#    container_name: certbot
+#    env_file:
+#      - .env
+#    build:
+#      context: ./certbot
+#      dockerfile: Dockerfile
+#    command: >-
+#      certbot certonly --reinstall --webroot --webroot-path=/var/www/certbot
+#      --email ${DOMAIN_EMAIL} --agree-tos --no-eff-email -d ${DOMAIN_URL}
+#    volumes:
+#      - ./etc/letsencrypt:/etc/letsencrypt
+#      - ./certbot/data:/var/www/certbot
+#    depends_on:
+#      - nginx
 
   redis:
     container_name: redis
     image: redis:7.4.1-alpine
-    restart: always
+    restart: unless-stopped
+    networks:
+      - app-network
 
   web-app:
     container_name: web-app
     build:
       context: .
-    restart: always
+    restart: unless-stopped
     env_file:
       - .env
     volumes:
-      - ./db_device:/db_device
-
+      - ./core:/core
+    ports:
+      - 8000:8000
     command: >
       sh -c "python manage.py migrate && python manage.py loaddata fixtures/20241125.json && python manage.py runserver 0.0.0.0:8000"
-
 #      sh -c "python manage.py migrate && python manage.py loaddata fixtures/20241125.json && gunicorn -b 0.0.0.0:8000 config.wsgi:application"
-
     depends_on:
-      - postgres
+#      - postgres
       - redis
     networks:
       - app-network
 
-
-#  celery-worker:
-#    container_name: celery-worker
-#    restart: always
-#    build:
-#      context: .
-#    volumes:
-#      - ./cats:/app/src/cats
-
- #   command: ['celery', '--workdir=./src', '-A', 'proj', 'worker' ]
- #   depends_on:
- #     - postgres
- #     - redis
-
-#
-  postgres:
-    container_name: postgres
-    image: postgres:14.8-alpine
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB_NAME}
-      POSTGRES_USER: ${POSTGRES_DB_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_DB_USER_PASSWORD}
-#      PGDATA: "/var/lib/postgresql/data/pgdata"
-    volumes:
-      - ../2. Init Database:/docker-entrypoint-initdb.d
-#      - pg-data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
+  celery-worker:
+    container_name: celery-worker
     restart: unless-stopped
+    build:
+      context: .
+    env_file:
+      - .env
+    volumes:
+      - ./cats:/app/src/cats
+    command: ['celery', '-A', 'config', 'worker', '-l', 'INFO']
+    depends_on:
+#      - postgres
+      - redis
     networks:
       - app-network
+
+  celery-beat:
+    container_name: celery-beat
+    restart: unless-stopped
+    build:
+      context: .
+    env_file:
+      - .env
+    volumes:
+      - ./cats:/app/src/cats
+    command: ['celery', '-A', 'config', 'beat', '-l', 'INFO']
+    depends_on:
+#      - postgres
+      - redis
+    networks:
+      - app-network
+#
+#  postgres:
+#    container_name: postgres
+#    image: postgres:14.8-alpine
+#    environment:
+#      POSTGRES_DB: ${POSTGRES_DB_NAME}
+#      POSTGRES_USER: ${POSTGRES_DB_USER}
+#      POSTGRES_PASSWORD: ${POSTGRES_DB_USER_PASSWORD}
+##      PGDATA: "/var/lib/postgresql/data/pgdata"
+#    volumes:
+#      - ../2. Init Database:/docker-entrypoint-initdb.d
+##      - pg-data:/var/lib/postgresql/data
+#    ports:
+#      - "5432:5432"
+#    restart: unless-stopped
+#    networks:
+#      - app-network
 
 
 ##    networks:
@@ -112,9 +130,9 @@ services:
 #    networks:
 #      - net
 #
-#
-volumes:
-  pg-data:
+##
+#volumes:
+#  pg-data:
 #  pgadmin-data:
 networks:
   app-network:

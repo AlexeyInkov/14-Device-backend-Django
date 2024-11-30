@@ -10,7 +10,7 @@ from . import settings
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="db_device",
+        title="device_control",
         default_version="v1",
     ),
     public=True,

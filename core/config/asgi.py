@@ -1,5 +1,5 @@
 """
-ASGI config for db_device project.
+ASGI config for core project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 

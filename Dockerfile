@@ -7,11 +7,7 @@ RUN pip install --upgrade pip
 COPY requirements.txt /temp/requirements.txt
 RUN pip install -r /temp/requirements.txt
 
-COPY db_device /db_device
+COPY core /core
 
-WORKDIR db_device
+WORKDIR core
 EXPOSE 8000
-
-RUN adduser --disabled-password service-user
-
-USER service-user

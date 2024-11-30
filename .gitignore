@@ -35,10 +35,10 @@ dist-ssr
 *.sln
 *.sw?
 
-/db_device/frontend/static/frontend/images/logo.svg
-/db_device/frontend/static/frontend/images/палитра.png
-/db_device/frontend/templates/frontend/index/includes/modal_list_verifications.html
-/db_device/frontend/templates/frontend/index/includes/offcanvas.html
+/core/frontend/static/frontend/images/logo.svg
+/core/frontend/static/frontend/images/палитра.png
+/core/frontend/templates/frontend/index/includes/modal_list_verifications.html
+/core/frontend/templates/frontend/index/includes/offcanvas.html
 /etc/letsencrypt/accounts/acme-v02.api.letsencrypt.org/directory/61a7467fe259ff865fda6ed21768c62f/meta.json
 /etc/letsencrypt/accounts/acme-v02.api.letsencrypt.org/directory/61a7467fe259ff865fda6ed21768c62f/private_key.json
 /etc/letsencrypt/accounts/acme-v02.api.letsencrypt.org/directory/61a7467fe259ff865fda6ed21768c62f/regr.json
@@ -58,5 +58,5 @@ dist-ssr
 /etc/letsencrypt/keys/0006_key-certbot.pem
 /etc/letsencrypt/options-ssl-nginx.conf
 /etc/letsencrypt/ssl-dhparams.pem
-/db_device/htmlcov/
-/db_device/.coverage
+/core/htmlcov/
+/core/.coverage

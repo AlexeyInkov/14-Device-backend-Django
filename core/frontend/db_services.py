@@ -80,4 +80,4 @@ def get_customers(tso_selected, metering_units, orgs):
 
 def save_verification(device_id, verification):
     with transaction.atomic():
-        pass
+        print(Device.objects.get(pk=device_id))

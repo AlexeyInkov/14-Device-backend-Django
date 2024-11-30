@@ -145,6 +145,13 @@ CORS_ORIGIN_WHITELIST = [
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://redis:6379/1",
+    }
+}
+
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
@@ -158,20 +165,9 @@ LOGIN_URL = "frontend:login"
 # celery setting.
 CELERY_BROKER_URL = "redis://redis:6379/0"
 CELERY_RESULT_BACKEND = "redis://redis:6379/0"
-# CELERY_RESULT_BACKEND = 'django-db'
-
-# CELERY_CACHE_BACKEND = 'django-cache'
-
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://127.0.0.1:16379/1",
-    }
-}
-
-
 CELERY_CACHE_BACKEND = "default"
-
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 # CELERY_TIMEZONE = ""
 # CELERY_TASK_TRACK_STARTED = True
 # CELERY_TASK_TIME_LIMIT = 30 * 60
