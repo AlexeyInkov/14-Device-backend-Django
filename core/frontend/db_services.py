@@ -1,7 +1,7 @@
 from django.db import transaction
 from django.db.models import Q
 
-from device.models import Device
+from device.models import Device, DeviceVerification
 from metering_unit.models import Organization, MeteringUnit
 
 
@@ -79,5 +79,33 @@ def get_customers(tso_selected, metering_units, orgs):
 
 
 def save_verification(device_id, verification):
+    print('run_save_verification')
+    model_fields = get_model_field(verification)
     with transaction.atomic():
-        print(Device.objects.get(pk=device_id))
+        print(DeviceVerification.objects.filter(device=device_id))
+        verification = DeviceVerification.objects.filter(device=device_id).filter(**model_fields)
+        print(verification)
+        if not verification:
+            new = DeviceVerification.objects.create(**model_fields)
+            print("new=", new)
+
+
+def get_model_field(verification):
+    convert = {
+        "mi_mititle": "mi.mititle",
+        "mit_mitnumber": "mi.mitnumber",
+        "mi_mitype": "mi.mitype",
+        "mi_modification": "mi.modification",
+        "mi_number": "mi.number",
+        "org_title": "org_title",
+        "verification_date": "verification_date",
+        "valid_date": "valid_date"
+    }
+    model_fields = {}
+    for field_name in convert.keys():
+        if verification.get(convert[field_name]):
+            if field_name[-4:] == "date":
+                model_fields[field_name] = verification[convert[field_name]][:10]
+            else:
+                model_fields[field_name] = verification[convert[field_name]]
+    return model_fields
