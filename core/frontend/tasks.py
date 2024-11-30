@@ -17,11 +17,9 @@ def get_device_verifications(device_id):
         print("numbers_registry=", device.type_of_file.numbers_registry.split(","))
         for reg_number in device.type_of_file.numbers_registry.split(","):
             print(reg_number, device.factory_number)
-
             response = request_to_arshin(
                 reg_number, device.factory_number
             )
-
             response = response.json()["response"]
             if response['numFound'] > 0:
                 verifications = response["docs"]
@@ -30,7 +28,6 @@ def get_device_verifications(device_id):
                     for verification in verifications:
                         print("verification=", verification)
                         save_verification(device_id, verification)
-
 
 
 @shared_task(name='tasks.refresh_valid_date')
