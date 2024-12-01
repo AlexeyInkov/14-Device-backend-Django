@@ -82,7 +82,7 @@ def get_customers(tso_selected: str, metering_units: QuerySet, orgs: QuerySet) -
 
 def save_verification(device_id: int, verification: dict) -> None:
     print('run_save_verification')
-    model_fields = get_model_field(verification)
+    model_fields = get_model_field(device_id, verification)
     with transaction.atomic():
         # print(DeviceVerification.objects.filter(device=device_id))
         verification = DeviceVerification.objects.filter(device=device_id).filter(**model_fields)
@@ -92,7 +92,7 @@ def save_verification(device_id: int, verification: dict) -> None:
             print("new=", new)
 
 
-def get_model_field(verification: Dict[str, str]) -> Dict[str, str]:
+def get_model_field(device_id: int, verification: Dict[str, str]) -> Dict[str, str]:
     convert = {
         "mi_mititle": "mi.mititle",
         "mit_mitnumber": "mi.mitnumber",
@@ -110,4 +110,5 @@ def get_model_field(verification: Dict[str, str]) -> Dict[str, str]:
                 model_fields[field_name] = verification[convert[field_name]][:10]
             else:
                 model_fields[field_name] = verification[convert[field_name]]
+    model_fields["device"] = Device.objects.get(pk=device_id)
     return model_fields
