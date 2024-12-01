@@ -29,10 +29,21 @@
         {#          {% endfor %}#}
         {#          </tbody>#}
         {#        </table>#}
-       
-        {% for verification in device.verifications.all %}
-        {{ verification.valid_date }}
-        {% endfor %}
+        <ul>
+          {% for verification in device.verifications.all %}
+            <li>
+{#              {{ verification.mi_mititle }}#}
+              {{ verification.mit_mitnumber }}
+              {{ verification.mi_mitype }}
+              {{ verification.mi_modification }}
+              {{ verification.mi_number }}
+{#              {{ verification.org_title }}#}
+{#              {{ verification.verification_date }}#}
+              {{ verification.valid_date }}
+              {{ verification.is_actual }}
+            </li>
+          {% endfor %}
+        </ul>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
