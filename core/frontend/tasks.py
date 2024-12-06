@@ -1,11 +1,11 @@
 from celery import shared_task
-
+from celery_singleton import Singleton
 from device.models import Device
 from frontend.arshin_servises import request_to_arshin
 from frontend.db_services import save_verification
 
 
-@shared_task(name='tasks.get_device_verifications')
+@shared_task(base=Singleton, name='tasks.get_device_verifications')
 def get_device_verifications(device_id: int) -> str:
     print("run get_device_verifications")
     device = Device.objects.get(id=device_id)
@@ -23,7 +23,7 @@ def get_device_verifications(device_id: int) -> str:
     return "Device not found"
 
 
-@shared_task(name='tasks.refresh_valid_date')
+@shared_task(base=Singleton, name='tasks.refresh_valid_date')
 def refresh_valid_date() -> str:
     print("run refresh_valid_date")
     devices = Device.objects.all().order_by("updated_at").only("id")
@@ -32,3 +32,12 @@ def refresh_valid_date() -> str:
         print("index=", index)
         get_device_verifications.delay(device.pk)
     return "Done"
+
+
+# TODO новые tasks
+def user_organization():
+    pass
+
+
+def device_field():
+    pass
