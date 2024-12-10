@@ -13,8 +13,8 @@ source env/bin/activate
 pip install -U pip
 pip install -r requirements.txt
 
-sed -i "s~dbms_template_path~$project_path~g" etc/nginx/site_dc.conf etc/systemd/gunicorn_dc.service
-sed -i "s~dbms_template_domain~$project_domain~g" etc/nginx/site_dc.conf src/config/settings.py
+sed -i "s~dbms_template_path~$project_path~g" $project_path/etc/nginx/site_dc.conf $project_path/etc/systemd/gunicorn_dc.service
+sed -i "s~dbms_template_domain~$project_domain~g" $project_path/etc/nginx/site_dc.conf $project_path/core/config/settings.py
 
 sudo ln -s $project_path/etc/nginx/site_dc.conf /etc/nginx/sites-enabled/
 sudo ln -s $project_path/etc/systemd/gunicorn_dc.service /etc/systemd/system/

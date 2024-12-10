@@ -6,7 +6,7 @@ After=network.target
 [Service]
 User=www
 Group=www-data
-WorkingDirectory=dbms_template_path/src
+WorkingDirectory=dbms_template_path/core
 ExecStart=dbms_template_path/env/bin/gunicorn \
           --access-logfile dbms_template_path/log/gunicorn/access.log \
           --error-logfile dbms_template_path/log/gunicorn/error.log \
