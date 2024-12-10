@@ -11,7 +11,7 @@ ExecStart=dbms_template_path/env/bin/gunicorn \
           --access-logfile dbms_template_path/log/gunicorn/access.log \
           --error-logfile dbms_template_path/log/gunicorn/error.log \
           --workers 3 \
-          --bind unix:/run/gunicorn.sock \
+          --bind unix:/run/gunicorn_dc.sock \
           config.wsgi:application
 Restart=on-failure
 
