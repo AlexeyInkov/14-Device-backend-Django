@@ -8,12 +8,13 @@ project_path=`pwd`
 source env/bin/activate
 pip install -U pip
 pip install -r requirements.txt
+python -V
 
 sed -i "s~dbms_template_path~$project_path~g" etc/nginx/site_dc.conf etc/systemd/gunicorn.service
 sed -i "s~dbms_template_domain~$project_domain~g" etc/nginx/site_dc.conf core/config/settings.py
 
-`$base_python_interpreter manage.py migrate`
-`$base_python_interpreter manage.py collectstatic`
+python core/manage.py migrate
+python core/manage.py collectstatic
 
 sudo ln -s $project_path/etc/nginx/site_dc.conf /etc/nginx/sites-enabled/
 sudo ln -s $project_path/etc/systemd/gunicorn.service /etc/systemd/system/
