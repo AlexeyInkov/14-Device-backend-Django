@@ -4,6 +4,7 @@ from pathlib import Path
 
 import rest_framework.authentication
 from dotenv.main import load_dotenv
+from tutorial.settings import BASE_DIR
 
 load_dotenv()
 
@@ -167,7 +168,7 @@ LOGGING = {
     "handlers": {
         "file": {
             "class": "logging.FileHandler",
-            "filename": "../log/django_info.log",
+            "filename": BASE_DIR.parent / "log/django_info.log",
         },
         "console": {
             "class": "logging.StreamHandler",
