@@ -1,19 +1,19 @@
-stages:
-#  - build
-#  - test
-  - deploy
-
-#build-job:
-#  stage: build
-#  script:
-#    - docker build -t my-backend-image .
+#stages:
+##  - build
+##  - test
+#  - deploy
 #
-#test-job:
-#  stage: test
+##build-job:
+##  stage: build
+##  script:
+##    - docker build -t my-backend-image .
+##
+##test-job:
+##  stage: test
+##  script:
+##    - docker run --rm my-backend-image pytest -s -v
+#
+#deploy-job:
+#  stage: deploy
 #  script:
-#    - docker run --rm my-backend-image pytest -s -v
-
-deploy-job:
-  stage: deploy
-  script:
-    - docker compose up --build -d
+#    - docker compose up --build -d

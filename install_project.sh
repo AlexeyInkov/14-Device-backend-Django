@@ -13,7 +13,8 @@ if [$choice = "y"]; then
   sudo rm -r /etc/nginx/sites-enabled/*
 fi
 echo "Добавляем переадресацию 80 -> 443 в настройки nginx"
-echo "server { listen 80; return 301 https://$host$request_uri; }" > /etc/nginx/sites-enabled/default
+sudo echo "server { listen 80; return 301 https://$host$request_uri; }" > /etc/nginx/sites-available/default
+sudo ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
 
 echo "restart nginx"
 sudo nginx -t
