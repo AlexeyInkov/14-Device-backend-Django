@@ -1,22 +1,20 @@
 
-- копируем чистую базу с админом
+### Клонируем репозиторий
+```
+git clone https://gitlab.com/device_control/backend-django.git
+cd backend-django
+chmod +x install_project.sh
+mv .env_template .env
+```
+### Настраиваем переменные
+```
+nano .env
+```
+### в install_project.sh
+##### base_python_interpreter=/home/www/.python/bin/python3.11
+##### project_domain=example.com
 
-```python manage.py loaddata fixtures/clean_admin.json```
-
-- копируем приборы на 19/09/2024
-
-```python manage.py loaddata fixtures/db_20240918_new_address_region.json```
-
-- сохранить базу
-
-```python manage.py dumpdata --indent 4 > fixtures/db_20240918_new_address_region.json```
-
--изменить encoding на utf-8
-
-new db
-python manage.py migrate
-
-python manage.py loaddata fixtures/clean_with_superuser.json
-or
-python manage.py createsuperuser
-python manage.py dumpdata --indent 4 > fixtures/clean_with_superuser.json
+### Install project (nginx, sertbot, gunicorn)
+```
+./install_project.sh
+```
