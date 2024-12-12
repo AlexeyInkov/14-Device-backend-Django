@@ -22,6 +22,8 @@ sudo ln -s $project_path/etc/systemd/gunicorn.socket /etc/systemd/system/
 
 
 sudo systemctl daemon-reload
-sudo systemctl start gunicorn
 sudo systemctl enable gunicorn
+sudo systemctl start gunicorn
 sudo service nginx reload
+sudo systemctl daemon-reload
+sudo systemctl restart gunicorn
