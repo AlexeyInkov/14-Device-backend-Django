@@ -4,7 +4,6 @@ from pathlib import Path
 
 import rest_framework.authentication
 from dotenv.main import load_dotenv
-from tutorial.settings import BASE_DIR
 
 load_dotenv()
 
@@ -14,7 +13,7 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
 DEBUG = "True" == os.environ.get("DJANGO_DEBUG", True)
 
-ALLOWED_HOSTS = ["*"]  # os.environ.get("DJANGO_ALLOWED_HOSTS").split(",")
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(",")
 CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS").split(",")
 
 # Application definition
@@ -125,13 +124,13 @@ USE_TZ = True
 
 if not os.path.exists(BASE_DIR / "static"):
     os.makedirs(BASE_DIR / "static")
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
-STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+STATIC_URL = "/static/"
 
 if not os.path.exists(BASE_DIR / "media"):
     os.makedirs(BASE_DIR / "media")
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-MEDIA_URL = "media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
+MEDIA_URL = "/media/"
 
 CORS_ORIGIN_WHITELIST = [
     "http://127.0.0.1:3000",
@@ -145,7 +144,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://redis:6379/1",
+        "LOCATION": os.environ.get("REDIS_URL"),
     }
 }
 
@@ -193,7 +192,7 @@ LOGIN_URL = "frontend:login"
 
 # celery setting.
 CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
-CELERY_RESULT_BACKEND = 'django-db'
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND")
 CELERY_CACHE_BACKEND = "default"
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
