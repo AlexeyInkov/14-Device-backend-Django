@@ -1,7 +1,6 @@
 #!/bin/bash
 base_python_interpreter=/home/www/.python/bin/python3.11
 project_domain=inkov.online
-gunicorn_name=dc
 project_path=`pwd`
 
 sudo apt update && sudo apt upgrade -y
@@ -9,7 +8,7 @@ sudo apt install certbot python3-certbot-nginx
 
 echo -n "Удаляем настройки nginx? : "
 read choice
-if [choice=="y"]; then
+if [$choice=="y"]; then
   echo "Удаляем настройки nginx"
   sudo rm -r /etc/nginx/sites-enabled/*
 fi
@@ -57,4 +56,4 @@ sudo systemctl daemon-reload
 sudo systemctl enable $project_domain
 sudo systemctl start $project_domain
 sudo service nginx reload
-sudosudo systemctl restart $project_domain
+sudo systemctl restart $project_domain
