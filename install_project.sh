@@ -6,9 +6,9 @@ project_path=`pwd`
 sudo apt update && sudo apt upgrade -y
 sudo apt install certbot python3-certbot-nginx
 
-echo -n "Удаляем настройки nginx? : "
+echo -n "Удаляем настройки nginx? y/n : "
 read choice
-if [$choice=="y"]; then
+if [$choice = "y"]; then
   echo "Удаляем настройки nginx"
   sudo rm -r /etc/nginx/sites-enabled/*
 fi
