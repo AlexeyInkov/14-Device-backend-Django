@@ -26,4 +26,4 @@ sudo systemctl enable dev-test
 sudo systemctl start dev-test
 sudo service nginx reload
 sudo systemctl daemon-reload
-sudo systemctl restart gunicorn
+sudo systemctl restart dev-test
