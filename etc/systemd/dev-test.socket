@@ -1,6 +1,0 @@
-[Unit]
-Description=dev-test socket
-[Socket]
-ListenStream=/run/dev-test.sock
-[Install]
-WantedBy=sockets.target

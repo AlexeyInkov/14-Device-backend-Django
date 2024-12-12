@@ -1,6 +1,6 @@
 [Unit]
-Description=gunicorn daemon
-Requires=gunicorn.socket
+Description=dbms_template_domain daemon
+Requires=dbms_template_domain.socket
 After=network.target
 
 [Service]
@@ -11,7 +11,7 @@ ExecStart=dbms_template_path/env/bin/gunicorn \
           --access-logfile dbms_template_path/log/gunicorn/access.log \
           --error-logfile dbms_template_path/log/gunicorn/error.log \
           --workers 3 \
-          --bind unix:/run/gunicorn.sock \
+          --bind unix:/run/dbms_template_domain.sock \
           config.wsgi:application
 
 [Install]
