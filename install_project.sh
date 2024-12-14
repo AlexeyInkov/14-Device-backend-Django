@@ -38,12 +38,13 @@ echo "migrate and static"
 python core/manage.py migrate
 python core/manage.py collectstatic
 
-#echo "Остановка Gunicorn"
-#systemctl stop $project_domain
-#
-#echo "Удаление Gunicorn"
-#sudo rm -r /etc/systemd/system/$project_domain.service
-#sudo rm -r /etc/systemd/system/$project_domain.socket
+echo "Остановка Gunicorn"
+systemctl stop $project_domain
+systemctl stop $project_domain.socket
+
+echo "Удаление Gunicorn"
+sudo rm -r /etc/systemd/system/$project_domain.service
+sudo rm -r /etc/systemd/system/$project_domain.socket
 
 echo "Копирование настроек Nginx и Gunicorn"
 sudo cp -f etc/nginx/my_site.conf /etc/nginx/sites-available/$project_domain.conf
