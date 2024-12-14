@@ -40,7 +40,7 @@ class IndexView(DataMixin, LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        org_selected = self.request.GET.get("org_select", "all")
+        org_selected = self.request.GET.get("organization", "all")
         tso_selected = self.request.GET.get("tso", "all")
         cust_selected = self.request.GET.get("customer", "all")
         mu_selected = self.request.GET.get("metering_unit", "all")
