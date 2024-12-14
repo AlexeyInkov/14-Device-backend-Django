@@ -9,7 +9,7 @@ sudo apt install certbot python3-certbot-nginx
 echo -n "Удаляем настройки nginx? y/n : "
 read choice
 yes="y"
-if [$choice = $yes]; then
+if [ $choice = $yes ]; then
   echo "Удаляем настройки nginx"
   sudo rm -r /etc/nginx/sites-enabled/*
 fi
