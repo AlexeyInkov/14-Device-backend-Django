@@ -44,8 +44,8 @@ sudo cp -f etc/systemd/gunicorn.service /etc/systemd/system/$project_domain.serv
 sudo cp -f etc/systemd/gunicorn.socket /etc/systemd/system/$project_domain.socket
 
 echo "Подготовка настроек Nginx и Gunicorn"
-sed -i "s~dbms_template_path~$project_path~g" /etc/nginx/sites-available/$project_domain.conf /etc/systemd/system/$project_domain.service
-sed -i "s~dbms_template_domain~$project_domain~g" /etc/nginx/sites-available/$project_domain.conf /etc/systemd/system/$project_domain.service /etc/systemd/system/$project_domain.socket
+sudo sed -i "s~dbms_template_path~$project_path~g" /etc/nginx/sites-available/$project_domain.conf /etc/systemd/system/$project_domain.service
+sudo sed -i "s~dbms_template_domain~$project_domain~g" /etc/nginx/sites-available/$project_domain.conf /etc/systemd/system/$project_domain.service /etc/systemd/system/$project_domain.socket
 
 echo "Подключение настроек Nginx"
 sudo ln -s /etc/nginx/sites-available/$project_domain.conf /etc/nginx/sites-enabled/
