@@ -62,10 +62,7 @@ def get_metering_units(tso_selected: str, cust_selected: str, orgs: QuerySet) ->
     return metering_units, metering_units
 
 
-def get_organizations(org_selected: str, user) -> QuerySet:
-    orgs = Organization.objects.only("name").filter(user_to_org__user=user)
-    print(orgs)
-    # Orgs filter
+def get_filter_organization(org_selected: str, orgs: QuerySet) -> QuerySet:
     if org_selected != "all":
         return orgs.filter(pk=org_selected)
     return orgs

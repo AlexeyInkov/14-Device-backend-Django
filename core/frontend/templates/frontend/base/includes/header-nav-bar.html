@@ -11,24 +11,25 @@
              class="d-inline-block align-text-top">
       </a>
       <a class="navbar-brand text-light" href="{% url "frontend:home" %}">
-        <img src="{% static "frontend/images/logo.png" %}" alt="" width="20" height="20"
-             class="d-inline-block align-text-top">
+{#        <img src="{% static "frontend/images/logo.png" %}" alt="" width="20" height="20"#}
+{#             class="d-inline-block align-text-top">#}
         Device Control
-      </a></div>
+      </a>
+    </div>
     <div>
       <ul class="navbar-nav me-auto ">
-        <li class="nav-item">{{ orgs }}</li>
         <li class="nav-item">
           <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuOrganizations" data-bs-toggle="dropdown" aria-expanded="false">
               {% if org_selected == 'all' %}
-                all
+                all_organizations
               {% else %}
-                {{ orgs|query_get_pk:org_selected }}
+                {{ select_org }}
               {% endif %}
             </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-              {% for org in orgs %}
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuOrganizations">
+              <li><a href="{% url 'frontend:home' %}?organization=all&tso={{ tso_selected }}&customer={{ cust_selected }}">all_organizations</a></li>
+              {% for org in all_user_orgs %}
                 {% if org.id == org_selected|add:"0" %}
                   <li>{{ org.name }}</li>
                 {% else %}
@@ -38,23 +39,18 @@
             </ul>
           </div>
         </li>
-        {#        <li class="nav-item">#}
-        {#          <select class="form-select navbar-brand" aria-label="org-select" title="org-select">#}
-        {#            <option value="all">Все организации</option>#}
-        {#            {% for org in orgs %}#}
-        {#              {% if org.id == org_selected|add:"0" %}#}
-        {#                <option selected>{{ org.name }}</option>#}
-        {#              {% else %}#}
-        {#                <option value="{{ org.pk }}"><a href="{% url 'frontend:home' %}?organization={{ org_selected }}">{{ org.name }}</a></option>#}
-        {#              {% endif %}#}
-        {#            {% endfor %}#}
-        {#          </select>#}
-        {#        </li>#}
         <li class="nav-item">
-          <a class="navbar-brand text-light" href="#"> {{ user.username }}</a>
-        </li>
-        <li class="nav-item">
-          <a class="btn btn-dark btn-sm" type="button" href="{% url "frontend:logout" %}">Exit</a>
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownUserMenu" data-bs-toggle="dropdown" aria-expanded="false">
+              {{ user.username }}
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownUserMenu">
+              <li><a href="#">Профиль</a></li>
+              <li><a href="#">Загрузить данные из файла</a></li>
+              <li><a href="#">Другое действие</a></li>
+              <li><a href="{% url "frontend:logout" %}">Выход</a></li>
+            </ul>
+          </div>
         </li>
       </ul>
     </div>

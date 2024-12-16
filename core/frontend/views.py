@@ -3,10 +3,11 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, TemplateView
 
+from metering_unit.models import Organization
 from .forms import LoginUserForm, RegisterUserForm
 from .mixins import DataMixin
 from .db_services import (
-    get_organizations,
+    get_filter_organization,
     get_metering_units,
     get_devices,
     get_customers,
@@ -46,18 +47,21 @@ class IndexView(DataMixin, LoginRequiredMixin, TemplateView):
         mu_selected = self.request.GET.get("metering_unit", "all")
         dev_selected = self.request.GET.get("device", "all")
 
-        organizations = get_organizations(org_selected, self.request.user)
+        all_user_orgs = Organization.objects.only("name").filter(user_to_org__user=self.request.user)
+        filter_org = get_filter_organization(org_selected, all_user_orgs)
+        select_org = filter_org.first()
 
         filter_metering_units, metering_units = get_metering_units(
-            tso_selected, cust_selected, organizations
+            tso_selected, cust_selected, filter_org
         )
 
         return {
-            "orgs": organizations,
-            "tso_s": organizations.filter(
+            "all_user_orgs": all_user_orgs,
+            "select_org": select_org,
+            "tso_s": all_user_orgs.filter(
                 pk__in=(metering_units.values("tso").distinct())
             ),
-            "customers": get_customers(tso_selected, metering_units, organizations),
+            "customers": get_customers(tso_selected, metering_units, all_user_orgs),
             "metering_units": filter_metering_units,
             "devices": get_devices(mu_selected, filter_metering_units),
             "org_selected": org_selected,
