@@ -54,9 +54,9 @@ def get_metering_units(tso_selected: str, cust_selected: str, orgs: QuerySet) ->
     # MeteringUnit filter
     filters = {}
     if tso_selected != "all":
-        filters["tso"] = tso_selected
+        filters["tso__slug"] = tso_selected
     if cust_selected != "all":
-        filters["customer"] = cust_selected
+        filters["customer__slug"] = cust_selected
     if filters:
         return metering_units.filter(**filters), metering_units
     return metering_units, metering_units
@@ -64,14 +64,14 @@ def get_metering_units(tso_selected: str, cust_selected: str, orgs: QuerySet) ->
 
 def get_filter_organization(org_selected: str, orgs: QuerySet) -> QuerySet:
     if org_selected != "all":
-        return orgs.filter(pk=org_selected)
+        return orgs.filter(slug=org_selected)
     return orgs
 
 
 def get_customers(tso_selected: str, metering_units: QuerySet, orgs: QuerySet) -> QuerySet:
     filters = {}
     if tso_selected != "all":
-        filters["tso"] = tso_selected
+        filters["tso__slug"] = tso_selected
     return orgs.filter(
         id__in=(metering_units.filter(**filters).values("customer").distinct())
     )

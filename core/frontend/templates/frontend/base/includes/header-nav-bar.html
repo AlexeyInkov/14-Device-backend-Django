@@ -33,7 +33,7 @@
                 {% if org.id == org_selected|add:"0" %}
                   <li>{{ org.name }}</li>
                 {% else %}
-                  <li><a href="{% url 'frontend:home' %}?organization={{ org.id }}&tso={{ tso_selected }}&customer={{ cust_selected }}">{{ org.name }}</a></li>
+                  <li><a href="{% url 'frontend:home' %}?organization={{ org.slug }}&tso={{ tso_selected }}&customer={{ cust_selected }}">{{ org.name }}</a></li>
                 {% endif %}
               {% endfor %}
             </ul>
