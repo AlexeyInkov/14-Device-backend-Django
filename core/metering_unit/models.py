@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils.text import slugify
 
 
 class BaseTimeModel(models.Model):
@@ -12,6 +13,7 @@ class BaseTimeModel(models.Model):
 
 class Organization(BaseTimeModel):
     name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True)
 
     class Meta:
         verbose_name_plural = "organizations"

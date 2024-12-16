@@ -32,3 +32,9 @@ def attr(obj, name):
     if value is not None:
         return value
     return "пусто"
+
+
+@register.filter()
+def query_get_pk(query, pk):
+    item = query.get(pk=int(pk))
+    return item
