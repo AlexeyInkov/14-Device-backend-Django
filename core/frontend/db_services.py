@@ -62,10 +62,11 @@ def get_metering_units(tso_selected: str, cust_selected: str, orgs: QuerySet) ->
     return metering_units, metering_units
 
 
-def get_filter_organization(org_selected: str, orgs: QuerySet) -> QuerySet:
+def get_filter_organization(org_selected: str, orgs: QuerySet) -> Tuple[QuerySet, Organization | None]:
     if org_selected != "all":
-        return orgs.filter(slug=org_selected)
-    return orgs
+        result = orgs.filter(slug=org_selected)
+        return result, result.first()
+    return orgs, None
 
 
 def get_customers(tso_selected: str, metering_units: QuerySet, orgs: QuerySet) -> QuerySet:

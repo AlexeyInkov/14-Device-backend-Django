@@ -47,9 +47,8 @@ class IndexView(DataMixin, LoginRequiredMixin, TemplateView):
         mu_selected = self.request.GET.get("metering_unit", "all")
         dev_selected = self.request.GET.get("device", "all")
 
-        all_user_orgs = Organization.objects.only("name").filter(user_to_org__user=self.request.user)
-        filter_org = get_filter_organization(org_selected, all_user_orgs)
-        select_org = filter_org.first()
+        all_user_orgs = Organization.objects.only("name", "slug").filter(user_to_org__user=self.request.user)
+        filter_org, select_org = get_filter_organization(org_selected, all_user_orgs)
 
         filter_metering_units, metering_units = get_metering_units(
             tso_selected, cust_selected, filter_org
