@@ -7,7 +7,7 @@ from device.models import (
     Device,
     DeviceVerification,
 )
-from metering_unit.models import (
+from device.models import (
     MeteringUnit,
     Organization,
 )

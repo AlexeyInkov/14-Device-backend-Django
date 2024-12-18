@@ -3,7 +3,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, TemplateView
 
-from metering_unit.models import Organization
+from device.models import Organization
 from .forms import LoginUserForm, RegisterUserForm
 from .mixins import DataMixin
 from .db_services import (

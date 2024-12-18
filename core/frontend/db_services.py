@@ -4,7 +4,7 @@ from django.db import transaction
 from django.db.models import Q, QuerySet
 
 from device.models import Device, DeviceVerification
-from metering_unit.models import Organization, MeteringUnit
+from device.models import Organization, MeteringUnit
 
 
 def get_devices(mu_selected: str, metering_units: QuerySet) -> QuerySet:

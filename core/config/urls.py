@@ -29,8 +29,8 @@ urlpatterns = (
             path("", include("frontend.urls")),
             path("auth/", include("my_auth.urls")),
             path("v1/page/", include("for_page.urls")),
-            path("v1/metering_unit/", include("metering_unit.urls")),
-            path("v1/device/", include("device.urls")),
+            # path("v1/metering_unit/", include("metering_unit.urls")),
+            path("v1/device_control/", include("device.urls")),
         ]
         + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
         + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

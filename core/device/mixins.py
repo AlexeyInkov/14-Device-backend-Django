@@ -1,13 +1,10 @@
 from rest_framework import status
-from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 
 
 class CreateModelViewSetMixin:
     def create(self, request, *args, **kwargs):
-        print(request.data)
-        data = JSONParser().parse(request)
-        instance = self.queryset.filter(**data.dict()).first()
+        instance = self.queryset.filter(**request.data.dict()).first()
         if instance:
             serializer = self.serializer_class(instance)
             headers = self.get_success_headers(serializer.data)

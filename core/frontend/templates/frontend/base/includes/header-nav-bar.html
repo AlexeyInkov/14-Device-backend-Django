@@ -11,8 +11,8 @@
              class="d-inline-block align-text-top">
       </a>
       <a class="navbar-brand text-light" href="{% url "frontend:home" %}">
-{#        <img src="{% static "frontend/images/logo.png" %}" alt="" width="20" height="20"#}
-{#             class="d-inline-block align-text-top">#}
+        {#        <img src="{% static "frontend/images/logo.png" %}" alt="" width="20" height="20"#}
+        {#             class="d-inline-block align-text-top">#}
         Device Control
       </a>
     </div>
@@ -45,10 +45,16 @@
               {{ user.username }}
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownUserMenu">
-              <li><a href="#">Профиль</a></li>
-              <li><a href="#">Загрузить данные из файла</a></li>
+              <li><a class="btn btn-secondary" href="#">
+                Профиль
+              </a></li>
+              <li>
+                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#loadFile">
+                  Загрузить данные из файла
+                </button>
+              </li>
               <li><a href="#">Другое действие</a></li>
-              <li><a href="{% url "frontend:logout" %}">Выход</a></li>
+              <li><a class="btn btn-secondary" href="{% url "frontend:logout" %}">Выход</a></li>
             </ul>
           </div>
         </li>
@@ -56,3 +62,8 @@
     </div>
   </div>
 </nav>
+
+<!-- Модальное окно -->
+{% include "frontend/base/includes/modal-load-file.html" %}
+
+

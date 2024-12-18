@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from .baseserializers import MySerializer
-from .models import (
+from device.models import (
     UserToOrganization,
     Organization,
     Address,
