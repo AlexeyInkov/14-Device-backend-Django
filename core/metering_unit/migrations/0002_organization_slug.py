@@ -4,18 +4,20 @@ from django.db import migrations, models
 from slugify import slugify
 
 
+def delete_organization_61(apps, schema_editor):
+    # TODO костыль удалить на новой fixture
+    if input("Есть проблемы с Organization.slug No/yes? ") == "yes":
+        Organization = apps.get_model('metering_unit', 'Organization')
+        org = Organization.objects.get(pk=61)
+        apps.get_model("metering_unit", 'MeteringUnit').objects.filter(customer=org.pk).update(customer=Organization.objects.get(pk=65).pk)
+        for uto in apps.get_model('metering_unit', 'UserToOrganization').objects.filter(organization=org):
+            uto.delete()
+        org.delete()
+
+
 def create_organization_slug(apps, schema_editor):
     Organization = apps.get_model("metering_unit", 'Organization')
     for org in Organization.objects.all():
-        # -----------------------------------
-        # TODO костыль удалить на новой fixture
-        if org.pk == 61:
-            if input("Есть проблемы с Organization.slug No/yes") == "yes":
-                apps.get_model("metering_unit", 'MeteringUnit').objects.filter(customer=org.pk).update(customer=Organization.objects.get(pk=65).pk)
-                for uto in apps.get_model('metering_unit', 'UserToOrganization').objects.filter(organization=org):
-                    uto.delete()
-                org.delete()
-        # -----------------------------------
         org.slug = slugify(org.name)
         org.save()
 
@@ -27,6 +29,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunPython(delete_organization_61),
         migrations.AddField(
             model_name="organization",
             name="slug",
