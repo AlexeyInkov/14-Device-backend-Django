@@ -19,7 +19,7 @@ class Organization(BaseTimeModel):
         verbose_name_plural = "organizations"
 
     def save(self, *args, **kwargs):
-        if not self.id:
+        if not self.id and not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
