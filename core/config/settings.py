@@ -32,7 +32,6 @@ INSTALLED_APPS = [
     "corsheaders",
     "my_auth",
     "for_page",
-    "metering_unit",
     "device",
     "frontend",
     "rest_framework_swagger",
@@ -75,12 +74,12 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 if DEBUG:
     print("sqlite")
-    if not os.path.exists(BASE_DIR / "db"):
-        os.makedirs(BASE_DIR / "db")
+    if not os.path.exists(BASE_DIR.parent / "db"):
+        os.makedirs(BASE_DIR.parent / "db")
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db/db.sqlite3",
+            "NAME": BASE_DIR.parent / "db/db.sqlite3",
         }
     }
 else:
