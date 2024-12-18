@@ -8,10 +8,12 @@ def create_organization_slug(apps, schema_editor):
     Organization = apps.get_model("metering_unit", 'Organization')
     for org in Organization.objects.all():
         # -----------------------------------
-        # TODO удалить на новой fixture
+        # TODO костыль удалить на новой fixture
         if org.pk == 61:
             if input("Есть проблемы с Organization.slug No/yes") == "yes":
-                org.user_to_org.delete()
+                apps.get_model("metering_unit", 'MeteringUnit').objects.filter(customer=org.pk).update(customer=Organization.objects.get(pk=65).pk)
+                for uto in apps.get_model('metering_unit', 'UserToOrganization').objects.filter(organization=org):
+                    uto.delete()
                 org.delete()
         # -----------------------------------
         org.slug = slugify(org.name)
@@ -19,6 +21,7 @@ def create_organization_slug(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
+
     dependencies = [
         ("metering_unit", "0001_initial"),
     ]
