@@ -3,7 +3,11 @@
 from django.db import migrations, models
 from slugify import slugify
 
-from metering_unit.models import Organization
+def create_organization_slug(apps, schema_editor):
+    Organization = apps.get_model("metering_unit", 'Organization')
+    for org in Organization.objects.all():
+        org.slug = slugify(org.name)
+        org.save()
 
 
 class Migration(migrations.Migration):
@@ -18,9 +22,12 @@ class Migration(migrations.Migration):
             name="slug",
             field=models.SlugField(default="", max_length=100),
         ),
+        migrations.RunPython(create_organization_slug),
+        migrations.AlterField(
+            model_name="organization",
+            name="slug",
+            field=models.SlugField(max_length=100, unique=True),
+        ),
     ]
 
 
-for org in Organization.objects.all():
-    org.slug = slugify(org.name)
-    org.save()
