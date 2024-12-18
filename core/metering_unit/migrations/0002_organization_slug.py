@@ -3,15 +3,22 @@
 from django.db import migrations, models
 from slugify import slugify
 
+
 def create_organization_slug(apps, schema_editor):
     Organization = apps.get_model("metering_unit", 'Organization')
     for org in Organization.objects.all():
+        # -----------------------------------
+        # TODO удалить на новой fixture
+        if org.pk == 61:
+            if input("Есть проблемы с Organization.slug No/yes") == "yes":
+                org.user_to_org.delete()
+                org.delete()
+        # -----------------------------------
         org.slug = slugify(org.name)
         org.save()
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("metering_unit", "0001_initial"),
     ]
@@ -29,5 +36,3 @@ class Migration(migrations.Migration):
             field=models.SlugField(max_length=100, unique=True),
         ),
     ]
-
-
