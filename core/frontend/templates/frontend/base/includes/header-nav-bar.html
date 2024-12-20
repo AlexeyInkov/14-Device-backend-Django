@@ -41,20 +41,14 @@
         </li>
         <li class="nav-item">
           <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownUserMenu" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="btn btn-secondary dropdown-toggle" href="#" type="button" id="dropdownUserMenu" data-bs-toggle="dropdown" aria-expanded="false">
               {{ user.username }}
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownUserMenu">
-              <li><a class="btn btn-secondary" href="#">
-                Профиль
-              </a></li>
-              <li>
-                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#loadFile">
-                  Загрузить данные из файла
-                </button>
-              </li>
-              <li><a href="#">Другое действие</a></li>
-              <li><a class="btn btn-secondary" href="{% url "frontend:logout" %}">Выход</a></li>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownUserMenu">
+              <li><a class="dropdown-item btn btn-secondary" href="#"> Профиль </a></li>
+              <li><a class="dropdown-item btn btn-secondary" href="#" type="button" data-bs-toggle="modal" data-bs-target="#loadFile"> Загрузить данные из файла </a></li>
+              <li><a class="dropdown-item btn btn-secondary" href="#">Другое действие</a></li>
+              <li><a class="dropdown-item btn btn-secondary" href="{% url "frontend:logout" %}">Выход</a></li>
             </ul>
           </div>
         </li>
