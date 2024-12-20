@@ -131,6 +131,10 @@ if not os.path.exists(BASE_DIR / "media"):
 MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 MEDIA_URL = "/media/"
 
+if not os.path.exists(BASE_DIR.parent / "files"):
+    os.makedirs(BASE_DIR.parent / "files")
+FILE_UPLOAD_DIR = os.path.join(BASE_DIR.parent, "files/")
+
 CORS_ORIGIN_WHITELIST = [
     "http://127.0.0.1:3000",
     "http://localhost:3000",
