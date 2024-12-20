@@ -4,14 +4,13 @@ from config.settings import LOGIN_URL
 from .views import (
     LoginUserView,
     RegisterUserView,
-    IndexView,
     MyLogoutView,
+    IndexView,
 )
 
 app_name = "frontend"
 
 urlpatterns = [
-    # path("", index, name="home"),
     path("register/", RegisterUserView.as_view(), name="login"),
     path("login/", LoginUserView.as_view(), name="login"),
     path(
@@ -20,4 +19,5 @@ urlpatterns = [
         name="logout",
     ),
     path("", IndexView.as_view(), name="home"),
+
 ]
