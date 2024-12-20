@@ -1,8 +1,8 @@
 from celery import shared_task
 from celery_singleton import Singleton
 from device.models import Device
-from frontend.arshin_servises import request_to_arshin
-from frontend.db_services import save_verification
+from frontend.servises.arshin_servises import request_to_arshin
+from frontend.servises.db_services import save_verification
 
 
 @shared_task(base=Singleton, name='tasks.get_device_verifications')
