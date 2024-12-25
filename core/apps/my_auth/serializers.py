@@ -2,8 +2,8 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 
-from device.models import Organization
-from device.serializers import OrganizationSerializer
+from apps.device.models import Organization
+from apps.device.serializers import OrganizationSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):

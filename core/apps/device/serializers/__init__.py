@@ -18,7 +18,7 @@ __all__ = [
     'DeviceVerificationSerializer',
 ]
 
-from device.serializers.device import (
+from apps.device.serializers.device import (
     DeviceInstallationPointSerializer,
     DeviceRegistryNumberSerializer,
     DeviceTypeSerializer,

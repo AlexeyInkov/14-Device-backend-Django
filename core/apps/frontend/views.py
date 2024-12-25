@@ -3,8 +3,8 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, TemplateView, FormView
 
-from device.models import Organization
-from frontend.servises.db_services import (
+from apps.device.models import Organization
+from apps.frontend.servises.db_services import (
     get_filter_organization,
     get_metering_units,
     get_devices,
@@ -17,13 +17,13 @@ from .servises.file_services import handle_uploaded_file
 
 class LoginUserView(LoginView):
     form_class = LoginUserForm
-    template_name = "frontend/auth/login.html"
+    template_name = "frontend/auth/templates/frontend/auth/login.html"
     extra_context = {"title": "Авторизация"}
 
 
 class RegisterUserView(CreateView):
     form_class = RegisterUserForm
-    template_name = "frontend/auth/register.html"
+    template_name = "frontend/auth/templates/frontend/auth/register.html"
     extra_context = {"title": "Регистрация"}
     success_url = reverse_lazy("frontend:login")
 
@@ -36,7 +36,7 @@ class MyLogoutView(LogoutView):
 
 
 class IndexView(DataMixin, LoginRequiredMixin, TemplateView, FormView):
-    template_name = "frontend/index/index.html"
+    template_name = "frontend/index/templates/frontend/index/index.html"
     title_page = "Главная страница"
 
     form_class = UploadFileForm

@@ -25,15 +25,19 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # DRF
     "rest_framework",
     "rest_framework.authtoken",
+    # Celery
     "django_celery_beat",
     "django_celery_results",
     "corsheaders",
-    "my_auth",
-    "for_page",
-    "device",
-    "frontend",
+    # App
+    "apps.my_auth",
+    "apps.for_page",
+    "apps.device",
+    "apps.frontend",  # django template
+    # dev
     "rest_framework_swagger",
     "debug_toolbar",
     "drf_yasg",

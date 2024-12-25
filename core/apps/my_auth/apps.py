@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class ForPageConfig(AppConfig):
+class MyAuthConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "for_page"
+    name = "apps.my_auth"

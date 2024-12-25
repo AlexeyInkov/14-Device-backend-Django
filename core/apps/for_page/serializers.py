@@ -1,13 +1,11 @@
-from django.contrib.auth.models import User
 from rest_framework import serializers
 
-from device.serializers import OrganizationSerializer
-from device.serializers import MySerializer
-from device.models import (
+from apps.device.serializers import MySerializer
+from apps.device.models import (
     Device,
     DeviceVerification,
 )
-from device.models import MeteringUnit, Organization, Address
+from apps.device.models import MeteringUnit, Organization, Address
 
 
 class MenuCustomerSerializer(MySerializer):

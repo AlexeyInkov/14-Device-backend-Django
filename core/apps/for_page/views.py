@@ -1,13 +1,11 @@
-from django.contrib.auth.models import User
 from django.db.models import Prefetch
 from rest_framework.generics import ListAPIView
-from rest_framework.permissions import IsAuthenticated
 
-from device.models import (
+from apps.device.models import (
     Device,
     DeviceVerification,
 )
-from device.models import (
+from apps.device.models import (
     MeteringUnit,
     Organization,
 )

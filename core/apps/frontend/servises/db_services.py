@@ -3,8 +3,8 @@ from typing import Tuple, Dict
 from django.db import transaction
 from django.db.models import Q, QuerySet
 
-from device.models import Device, DeviceVerification
-from device.models import Organization, MeteringUnit
+from apps.device.models import Device, DeviceVerification
+from apps.device.models import Organization, MeteringUnit
 
 
 def get_devices(mu_selected: str, metering_units: QuerySet) -> QuerySet:

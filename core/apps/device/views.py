@@ -1,8 +1,8 @@
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.viewsets import ModelViewSet
 
-from device.mixins import CreateModelViewSetMixin
-from device.models import (
+from apps.device.mixins import CreateModelViewSetMixin
+from apps.device.models import (
     # metering_unit
     Organization,
     UserToOrganization,

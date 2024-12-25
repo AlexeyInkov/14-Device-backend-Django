@@ -1,7 +1,7 @@
 """Модификация адреса и региона при импорте из файла"""
 
 from config.wsgi import *
-from metering_unit.models import Address, Region, TypeStreet, Street
+from core.apps.device.models import Address, Region, TypeStreet, Street
 
 
 def change_street(address, street, tp):
