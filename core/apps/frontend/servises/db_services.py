@@ -1,6 +1,6 @@
 from typing import Tuple, Dict
 
-from django.db import transaction
+from django.db import transaction, models
 from django.db.models import Q, QuerySet
 
 from apps.device.models import Device, DeviceVerification
@@ -110,3 +110,15 @@ def get_model_field(device_id: int, verification: Dict[str, str]) -> Dict[str, s
                 model_fields[field_name] = verification[convert[field_name]]
     model_fields["device"] = Device.objects.get(pk=device_id)
     return model_fields
+
+
+def get_or_create_instance(model: models, data: dict) -> models.Model:
+    instance = model.objects.get_or_create().filter(**data)
+    if len(instance) > 1:
+        # log
+        raise Exception("Duplicate instance")
+    instance = instance.first()
+    if not instance:
+        instance = model.objects.create(**data)
+        # log
+    return instance
