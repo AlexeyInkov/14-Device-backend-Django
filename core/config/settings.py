@@ -246,3 +246,13 @@ HEADERS_VERIFICATION = {
     "is_actual": "Актуальна",
     "is_delete": "Будет удалена",
 }
+CONVERT_VERIF_FIELDS = {
+        "mi_mititle": "mi.mititle",
+        "mit_mitnumber": "mi.mitnumber",
+        "mi_mitype": "mi.mitype",
+        "mi_modification": "mi.modification",
+        "mi_number": "mi.number",
+        "org_title": "org_title",
+        "verification_date": "verification_date",
+        "valid_date": "valid_date"
+    }
