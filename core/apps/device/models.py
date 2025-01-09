@@ -57,7 +57,7 @@ class Region(BaseTimeModel):
 
     def __str__(self):
         if self.parent_region:
-            return f"{self.parent_region}, {self.name}"
+            return f"{self.parent_region.name}, {self.name}"
         return f"{self.name}"
 
 
