@@ -5,6 +5,7 @@ from django.db.models import Q, QuerySet
 
 from apps.device.models import Device, DeviceVerification
 from apps.device.models import Organization, MeteringUnit
+from config.settings import CONVERT_VERIF_FIELDS
 
 
 def get_devices(mu_selected: str, metering_units: QuerySet) -> QuerySet:
@@ -80,7 +81,7 @@ def get_customers(tso_selected: str, metering_units: QuerySet, orgs: QuerySet) -
 
 def save_verification(device_id: int, verification: dict) -> None:
     print('run_save_verification')
-    model_fields = get_model_field(device_id, verification)
+    model_fields = convert_verification_field(device_id, verification)
     with transaction.atomic():
         # print(DeviceVerification.objects.filter(device=device_id))
         verification = DeviceVerification.objects.filter(device=device_id).filter(**model_fields)
@@ -90,24 +91,15 @@ def save_verification(device_id: int, verification: dict) -> None:
             print("new=", new)
 
 
-def get_model_field(device_id: int, verification: Dict[str, str]) -> Dict[str, str]:
-    convert = {
-        "mi_mititle": "mi.mititle",
-        "mit_mitnumber": "mi.mitnumber",
-        "mi_mitype": "mi.mitype",
-        "mi_modification": "mi.modification",
-        "mi_number": "mi.number",
-        "org_title": "org_title",
-        "verification_date": "verification_date",
-        "valid_date": "valid_date"
-    }
+def convert_verification_field(device_id: int, verification: Dict[str, str]) -> Dict[str, str]:
+
     model_fields = {}
-    for field_name in convert.keys():
-        if verification.get(convert[field_name]):
+    for field_name in CONVERT_VERIF_FIELDS.keys():
+        if verification.get(CONVERT_VERIF_FIELDS[field_name]):
             if field_name[-4:] == "date":
-                model_fields[field_name] = verification[convert[field_name]][:10]
+                model_fields[field_name] = verification[CONVERT_VERIF_FIELDS[field_name]][:10]
             else:
-                model_fields[field_name] = verification[convert[field_name]]
+                model_fields[field_name] = verification[CONVERT_VERIF_FIELDS[field_name]]
     model_fields["device"] = Device.objects.get(pk=device_id)
     return model_fields
 
