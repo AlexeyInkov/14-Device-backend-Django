@@ -47,7 +47,7 @@ def get_metering_units(tso_selected: str, cust_selected: str, orgs: QuerySet) ->
             "tso__name",
             "service_organization__name",
         )
-        .select_related("address__region")
+        .select_related("address__region__parent_region")
         .select_related("address__street__type_street")
         .select_related("customer")
         .select_related("tso")
