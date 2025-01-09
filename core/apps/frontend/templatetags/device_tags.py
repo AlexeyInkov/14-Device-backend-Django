@@ -1,7 +1,7 @@
-# from django import template
-#
-#
-# register = template.Library()
+from django import template
+
+
+register = template.Library()
 #
 #
 # @register.inclusion_tag("frontend/list_menu.html")
@@ -66,12 +66,12 @@
 #         "mu_selected": mu_selected,
 #         "dev_selected": dev_selected,
 #     }
-#
-#
-# @register.inclusion_tag("frontend/modal_list_verifications.html")
-# def show_verifications(device):
-#     verifications = device.verifications.all()
-#     return {
-#         "device": device,
-#         "verifications": verifications,
-#     }
+
+
+@register.inclusion_tag("frontend/index/includes/modal_list_verifications.html")
+def show_modal_verifications(device):
+    verifications = device.verifications.all()
+    return {
+        "device": device,
+        "verifications": verifications,
+    }

@@ -1,7 +1,8 @@
 {% load context_tags %}
+{% load device_tags %}
 
 {% if devices %}
-  <table class="table table-bordered table-hover">
+  <table class="table table-bordered table-hover" id="devices">
     <thead>
     <tr>
       {% get_headers_device as HEADERS_DEVICE %}
@@ -13,6 +14,10 @@
     </thead>
     <tbody>
     {% for device in devices %}
+
+      <!-- Модальное окно -->
+      {% show_modal_verifications device %}
+
       {% if device.id == dev_selected|add:"0" %}
         <tr class="table-active">
           {% for key in HEADERS_DEVICE.keys %}
@@ -31,7 +36,7 @@
       {% endif %}
 
       <!-- Модальное окно -->
-      {% include "frontend/index/includes/modal_list_verifications.html" %}
+{#      {% include "frontend/index/includes/modal_list_verifications.html" %}#}
     
     {% endfor %}
     </tbody>
