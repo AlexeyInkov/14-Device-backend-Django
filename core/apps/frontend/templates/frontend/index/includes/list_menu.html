@@ -1,4 +1,4 @@
-  {% if tso_selected == 'all' %}
+  {% if tso_selected == 'all' and mu_selected == 'all' %}
     <div>Все организации</div>
   {% else %}
     <a class="link-dark" href="{% url 'frontend:home' %}">Все организации</a>
