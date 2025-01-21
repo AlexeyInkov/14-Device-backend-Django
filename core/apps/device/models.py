@@ -191,6 +191,11 @@ class TypeToRegistry(BaseTimeModel):
         return f"{self.device_type_file} - ({self.numbers_registry})"
 
 
+class TypeToRegistryImport(models.Model):
+    csv_file = models.FileField(upload_to='uploads/')
+    date_added = models.DateTimeField(auto_now_add=True)
+
+
 class Device(BaseTimeModel):
     metering_unit = models.ForeignKey(
         MeteringUnit,
