@@ -26,6 +26,13 @@ from .models import (
     DeviceVerification,
 )
 
+admin.site.register(UserToOrganization)
+admin.site.register(Address)
+admin.site.register(MeteringUnit)
+admin.site.register(Region)
+admin.site.register(TypeStreet)
+admin.site.register(Street)
+
 
 class OrganizationAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'slug')
@@ -34,14 +41,7 @@ class OrganizationAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
 
 
-admin.site.register(UserToOrganization)
-admin.site.register(Address)
-admin.site.register(MeteringUnit)
-admin.site.register(Region)
-admin.site.register(TypeStreet)
-admin.site.register(Street)
 admin.site.register(Organization, OrganizationAdmin)
-
 
 admin.site.register(DeviceInstallationPoint)
 admin.site.register(DeviceRegistryNumber)
