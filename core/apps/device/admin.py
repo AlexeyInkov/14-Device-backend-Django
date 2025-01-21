@@ -35,7 +35,8 @@ admin.site.register(Street)
 
 
 class OrganizationAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'slug')
+    list_display = ('id', 'name', 'slug', 'created_at', 'updated_at',)
+
     list_display_links = ('id', 'name')
     search_fields = ('name',)
     prepopulated_fields = {'slug': ('name',)}
@@ -48,11 +49,31 @@ admin.site.register(DeviceRegistryNumber)
 admin.site.register(DeviceType)
 admin.site.register(DeviceMod)
 admin.site.register(Device)
-admin.site.register(DeviceVerification)
+
+
+class DeviceVerificationAdmin(admin.ModelAdmin):
+    list_display = ('id',
+                    'device',
+                    'mi_mititle',
+                    'mit_mitnumber',
+                    'mi_mitype',
+                    'mi_modification',
+                    'mi_number',
+                    'org_title',
+                    'verification_date',
+                    'valid_date',
+                    'is_actual',
+                    'is_delete',
+                    'created_at',
+                    'updated_at',
+                    )
+
+
+admin.site.register(DeviceVerification, DeviceVerificationAdmin)
 
 
 class TypeToRegistryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'device_type_file', 'numbers_registry')
+    list_display = ('id', 'device_type_file', 'numbers_registry', 'created_at', 'updated_at',)
 
     def get_urls(self):
         urls = super().get_urls()
@@ -92,7 +113,7 @@ class TypeToRegistryAdmin(admin.ModelAdmin):
                             else:
                                 cur = set(map(int, instance.numbers_registry.split(',')))
 
-                                new = list(map(int,data['numbers_registry'].split(',')))
+                                new = list(map(int, data['numbers_registry'].split(',')))
 
                                 cur = cur.union(new)
 
