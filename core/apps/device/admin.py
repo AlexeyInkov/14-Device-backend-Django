@@ -1,4 +1,6 @@
 import csv
+import logging
+import os
 
 from django.contrib import admin, messages
 from django.db import transaction
@@ -6,6 +8,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import path, reverse
 
+from config import settings
 from .forms import TypeToRegistryImportForm
 from .models import (
     # metering_unit
@@ -25,6 +28,9 @@ from .models import (
     Device,
     DeviceVerification,
 )
+from ..frontend.servises.file_services import check_csv_file
+
+logger = logging.getLogger(__name__)
 
 admin.site.register(UserToOrganization)
 admin.site.register(Address)
@@ -85,25 +91,27 @@ class TypeToRegistryAdmin(admin.ModelAdmin):
     # который работает с формой
     def upload_csv(self, request):
         if request.method == 'POST':
-            # т.к. это метод POST проводим валидацию данных
+            #  т.к. это метод POST проводим валидацию данных
             form = TypeToRegistryImportForm(request.POST, request.FILES)
             if form.is_valid():
                 # сохраняем загруженный файл и делаем запись в базу
                 form_object = form.save()
+                # TODO разобраться с кодировкой
+                if not check_csv_file(form_object.csv_file.path, settings.FIELDNAMES_FILE_TYPE, encoding='utf-8'):
+                    # обновляем страницу пользователя
+                    # с информацией о какой-то ошибке
+                    messages.warning(request, 'Неверные заголовки у файла')
+                    return HttpResponseRedirect(request.path_info)
 
                 # обработка csv файла
                 with open(form_object.csv_file.path, mode='r', encoding='utf-8', newline='') as csv_file:
-                    rows = csv.reader(csv_file, delimiter=';')
-                    if next(rows) != ['Тип', 'Номер в госреестре']:
-                        # обновляем страницу пользователя
-                        # с информацией о какой-то ошибке
-                        messages.warning(request, 'Неверные заголовки у файла')
-                        return HttpResponseRedirect(request.path_info)
+                    rows = csv.DictReader(csv_file, delimiter=';')
+                    messages.success(request, 'File loading ...')
                     for row in rows:
                         print(row)
                         data = {
-                            "device_type_file": row[0],
-                            "numbers_registry": row[1]
+                            "device_type_file": row[settings.FIELDNAMES_FILE_TYPE[0]],
+                            "numbers_registry": row[settings.FIELDNAMES_FILE_TYPE[1]]
                         }
                         with transaction.atomic():
                             instance, created = TypeToRegistry.objects.get_or_create(device_type_file=data['device_type_file'])
@@ -119,14 +127,15 @@ class TypeToRegistryAdmin(admin.ModelAdmin):
 
                                 instance.numbers_registry = ','.join(map(str, cur))
                             if created:
-                                messages.info(request, f'{instance} create')
+                                logger.info(f'{instance} create')
                             else:
-                                messages.info(request, f'{instance} update')
+                                logger.info(f'{instance} update')
                             instance.save()
-
+                os.remove(form_object.csv_file.path)
             # возвращаем пользователя на главную с сообщением об успехе
             url = reverse('admin:index')
             messages.success(request, 'Файл успешно импортирован')
+
             return HttpResponseRedirect(url)
 
         # если это не метод POST, то возвращается форма с шаблоном
