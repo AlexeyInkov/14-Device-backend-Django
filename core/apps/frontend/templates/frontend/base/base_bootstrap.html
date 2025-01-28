@@ -3,11 +3,15 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html"
       xmlns="http://www.w3.org/1999/html">
-<head>
+
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+{#  bootstrap#}
   <link href="{% static "frontend/css/bootstrap.min.css" %}" rel="stylesheet"/>
+{#  htmx#}
+  <script src="{% static "frontend/js/htmx.min.js" %}" defer></script>
   <link rel="shortcut icon" href="{% static 'frontend/images/logo16color.bmp' %}" type="image/x-icon"/>
+{#  my styles#}
   <link type="text/css" href="{% static 'frontend/css/styles.css' %}" rel="stylesheet"/>
 
   <title>{{ title }}</title>

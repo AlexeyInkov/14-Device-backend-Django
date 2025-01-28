@@ -32,6 +32,8 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "django_celery_results",
     "corsheaders",
+    # htmx
+    "django_htmx",
     # App
     "apps.my_auth",
     "apps.for_page",
@@ -129,6 +131,7 @@ if not os.path.exists(BASE_DIR / "static"):
     os.makedirs(BASE_DIR / "static")
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 STATIC_URL = "/static/"
+STATICFILES_DIRS = [BASE_DIR / "static"]
 
 if not os.path.exists(BASE_DIR / "media"):
     os.makedirs(BASE_DIR / "media")
