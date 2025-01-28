@@ -48,7 +48,7 @@
               <li><a class="dropdown-item btn btn-secondary" href="#"> Профиль </a></li>
               <li><a class="dropdown-item btn btn-secondary" href="#" type="button" data-bs-toggle="modal" data-bs-target="#loadFile"> Загрузить данные из файла </a></li>
               <li><a class="dropdown-item btn btn-secondary" href="#">Другое действие</a></li>
-              <li><a class="dropdown-item btn btn-secondary" href="{% url "frontend:logout" %}">Выход</a></li>
+              <li><a class="dropdown-item btn btn-secondary" href="{% url "my_auth:logout" %}">Выход</a></li>
             </ul>
           </div>
         </li>
@@ -58,6 +58,6 @@
 </nav>
 
 <!-- Модальное окно -->
-{% include "frontend/base/includes/modal-load-file.html" %}
+{% include "frontend/includes/modal-load-file.html" %}
 
 

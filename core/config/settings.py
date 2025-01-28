@@ -201,8 +201,8 @@ LOGGING = {
 }
 
 LOGIN_REDIRECT_URL = "frontend:home"
-LOGOUT_REDIRECT_URL = "frontend:login"
-LOGIN_URL = "frontend:login"
+LOGOUT_REDIRECT_URL = "my_auth:login"
+LOGIN_URL = "my_auth:login"
 
 # celery setting.
 CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
