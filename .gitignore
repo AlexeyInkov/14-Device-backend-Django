@@ -36,7 +36,7 @@ dist-ssr
 
 /core/apps/frontend/static/frontend/images/logo.svg
 /core/apps/frontend/static/frontend/images/палитра.png
-/core/apps/frontend/templates/frontend/index/includes/offcanvas.html
+/core/apps/frontend/templates/frontend/includes/offcanvas.html
 
 /core/htmlcov/
 /core/.coverage

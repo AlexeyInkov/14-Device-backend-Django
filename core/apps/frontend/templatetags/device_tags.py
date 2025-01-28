@@ -68,7 +68,7 @@ register = template.Library()
 #     }
 
 
-@register.inclusion_tag("frontend/index/includes/modal_list_verifications.html")
+@register.inclusion_tag("frontend/includes/modal_list_verifications.html")
 def show_modal_verifications(device):
     verifications = device.verifications.all()
     return {

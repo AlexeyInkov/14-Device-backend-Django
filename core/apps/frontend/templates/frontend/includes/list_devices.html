@@ -28,7 +28,7 @@
       {% else %}
         <tr>
           {% for key in HEADERS_DEVICE.keys %}
-            <td><a class="link-dark"  href="{% url 'frontend:detail_device' device.id %}"> {#  data-bs-toggle="modal" data-bs-target="#vModal-{{ device.id }}"#}
+            <td><a class="link-dark"  href="" data-bs-toggle="modal" data-bs-target="#vModal-{{ device.id }}">
               {{ device|attr:key }}
             </a></td>
           {% endfor %}
