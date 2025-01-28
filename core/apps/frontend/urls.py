@@ -6,6 +6,7 @@ from .views import (
     RegisterUserView,
     MyLogoutView,
     IndexView,
+    DeviceDetailView,
 )
 
 app_name = "frontend"
@@ -19,5 +20,6 @@ urlpatterns = [
         name="logout",
     ),
     path("", IndexView.as_view(), name="home"),
+    path("device/<int:pk>/", DeviceDetailView.as_view(), name="detail_device"),
 
 ]
