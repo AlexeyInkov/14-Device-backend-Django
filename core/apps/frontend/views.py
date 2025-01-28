@@ -1,9 +1,10 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, TemplateView, FormView
+from django.views.generic import CreateView, TemplateView, FormView, DetailView
 
-from apps.device.models import Organization
+
+from apps.device.models import Organization, Device
 from apps.frontend.servises.db_services import (
     get_filter_organization,
     get_metering_units,
@@ -84,4 +85,19 @@ class IndexView(DataMixin, LoginRequiredMixin, TemplateView, FormView):
             }
         )
 
+        return context
+
+
+class DeviceDetailView(DataMixin, LoginRequiredMixin, DetailView):
+    model = Device
+    template_name = "frontend/index/includes/modal_list_verifications.html"
+    title_page = "Поверки"
+
+    # def get_queryset(self):
+    #     return Device.objects.filter(pk=self.kwargs.get('device_id'))
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # context['verifications'] = Device.objects.get(pk=self.kwargs.get('pk')).verifications
         return context
