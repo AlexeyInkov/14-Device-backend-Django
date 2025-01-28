@@ -1,3 +1,4 @@
+import csv
 import os
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
@@ -13,5 +14,9 @@ def handle_uploaded_file(f: InMemoryUploadedFile):
             destination.write(chunk)
 
 
-def check_file(f: InMemoryUploadedFile):
-    pass
+def check_csv_file(filename: str, fieldnames: list, encoding: str = "cp1251") -> bool:
+    with open(filename, "r", encoding=encoding) as file:
+        reader = csv.DictReader(file, delimiter=";")
+        if reader.fieldnames != fieldnames:
+            return False
+        return True
