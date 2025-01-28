@@ -1,8 +1,8 @@
 *.env
 /.idea/
 *.sqlite3
-*staticfiles/
-*django_app/db_device/staticfiles/
+
+
 
 /__pycache__/
 *.pyc
@@ -46,3 +46,4 @@ dist-ssr
 /files/
 /core/media/
 /core/static/
+/core/staticfiles/

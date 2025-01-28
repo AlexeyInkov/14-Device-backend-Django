@@ -2,8 +2,12 @@ root {
     --height-content: calc(100vh - 54px - 24px)
 }
 
+/*переопределение размера шрифта*/
+.navbar-brand {
+    font-size: 1rem;
+}
 body {
-    font-size: 12px;
+    --bs-body-font-size: 0.75rem;
 }
 
 .container {
