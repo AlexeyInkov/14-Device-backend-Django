@@ -247,12 +247,17 @@ HEADERS_VERIFICATION = {
     "is_delete": "Будет удалена",
 }
 CONVERT_VERIF_FIELDS = {
-        "mi_mititle": "mi.mititle",
-        "mit_mitnumber": "mi.mitnumber",
-        "mi_mitype": "mi.mitype",
-        "mi_modification": "mi.modification",
-        "mi_number": "mi.number",
-        "org_title": "org_title",
-        "verification_date": "verification_date",
-        "valid_date": "valid_date"
-    }
+    "mi_mititle": "mi.mititle",
+    "mit_mitnumber": "mi.mitnumber",
+    "mi_mitype": "mi.mitype",
+    "mi_modification": "mi.modification",
+    "mi_number": "mi.number",
+    "org_title": "org_title",
+    "verification_date": "verification_date",
+    "valid_date": "valid_date"
+}
+
+FIELDNAMES_FILE_MU = [
+    'Наименование абонента', 'Город', 'Наименование улицы', 'Тип улицы', '№ дома', 'Корп', 'Лит', 'ТЦ', 'Труба', 'Тип', 'Ду', 'Номер', 'Дата', 'МПИ', 'ТСО', '№ Тотэм'
+]
+FIELDNAMES_FILE_TYPE = ['Тип', 'Номер в госреестре']
