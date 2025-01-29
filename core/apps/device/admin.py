@@ -54,7 +54,18 @@ admin.site.register(DeviceInstallationPoint)
 admin.site.register(DeviceRegistryNumber)
 admin.site.register(DeviceType)
 admin.site.register(DeviceMod)
-admin.site.register(Device)
+
+
+class DeviceAdmin(admin.ModelAdmin):
+    list_display = ('id', 'type_of_file', 'factory_number', 'notes', 'created_at', 'updated_at', 'metering_unit',
+                    'installation_point',
+                    'registry_number',
+                    'type',
+                    'mod',
+                    )
+
+
+admin.site.register(Device, DeviceAdmin)
 
 
 class DeviceVerificationAdmin(admin.ModelAdmin):
