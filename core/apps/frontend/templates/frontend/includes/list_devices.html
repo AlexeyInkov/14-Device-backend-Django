@@ -28,7 +28,11 @@
       {% else %}
         <tr>
           {% for key in HEADERS_DEVICE.keys %}
-            <td><a class="link-dark"  href="" data-bs-toggle="modal" data-bs-target="#vModal-{{ device.id }}">
+            <td><a class="link-dark show-modal"
+                   
+                   href=""
+                   hx-get="{% url 'frontend:detail_device' device.pk %}"
+                   hx-target="#dialog">  {# data-bs-toggle="modal" data-bs-target="#verificationsModal">#}
               {{ device|attr:key }}
             </a></td>
           {% endfor %}
@@ -41,6 +45,14 @@
     
     {% endfor %}
     </tbody>
-  </table>
+  </table> 
+  
+  <!-- Модальное окно -->
+  <div class="modal fade" id="verificationsModal" >
+    <div id="dialog" class="modal-dialog modal-xl" hx-target="this"></div>
+  </div>
+  
+  
+
 {% endif %}
 

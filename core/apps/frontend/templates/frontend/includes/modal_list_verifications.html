@@ -1,58 +1,56 @@
 {% load context_tags %}
 
-<div class="modal fade" id="vModal-{{ device.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">{{ device.type_of_file }} #{{ device.factory_number }}</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-      </div>
-      <div class="modal-body">
 
-        {% get_headers_verification as HEADERS_VERIFICATION %}
-        <table class="table table-bordered table-hover">
-          <thead>
-          <tr>
-            {% for header in HEADERS_VERIFICATION.values %}
-              <th>{{ header }}</th>
-            {% endfor %}
-          </tr>
-          </thead>
-          <tbody>
-          {% for verification in device.verifications.all %}
-            <tr>
-              {% for key in HEADERS_DEVICE.keys %}
-                <td>
-                  {{ verification|attr:key }}
-                </td>
-              {% endfor %}
-            </tr>
+<div class="modal-content">
+  <div class="modal-header">
+    <h5 class="modal-title" id="verificationsModalLabel">{{ device.type_of_file }} #{{ device.factory_number }}</h5>
+    <button type="button" class="close-dialog btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+  </div>
+  <div class="modal-body">
+
+    {% get_headers_verification as HEADERS_VERIFICATION %}
+    <table class="table table-bordered table-hover">
+      <thead>
+      <tr>
+        {% for header in HEADERS_VERIFICATION.values %}
+          <th>{{ header }}</th>
+        {% endfor %}
+      </tr>
+      </thead>
+      <tbody>
+      {% for verification in device.verifications.all %}
+        <tr>
+          {% for key in HEADERS_VERIFICATION.keys %}
+            <td>
+              {{ verification|attr:key }}
+            </td>
           {% endfor %}
-          </tbody>
-        </table>
-        <ul>
-          <li>{% for header in HEADERS_VERIFICATION.values %}
-              | {{ header }} |
-            {% endfor %}
-          </li>
-          {% for verification in device.verifications.all %}
-            <li>
-              {{ verification.mi_mititle }}
-              {{ verification.mit_mitnumber }}
-              {{ verification.mi_mitype }}
-              {{ verification.mi_modification }}
-              {{ verification.mi_number }}
-              {{ verification.org_title }}
-              {{ verification.verification_date }}
-              {{ verification.valid_date }}
-              {{ verification.is_actual }}
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-      </div>
-    </div>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+{#    <ul>#}
+{#      <li>{% for header in HEADERS_VERIFICATION.values %}#}
+{#        | {{ header }} |#}
+{#      {% endfor %}#}
+{#      </li>#}
+{#      {% for verification in device.verifications.all %}#}
+{#        <li>#}
+{#          {{ verification.mi_mititle }}#}
+{#          {{ verification.mit_mitnumber }}#}
+{#          {{ verification.mi_mitype }}#}
+{#          {{ verification.mi_modification }}#}
+{#          {{ verification.mi_number }}#}
+{#          {{ verification.org_title }}#}
+{#          {{ verification.verification_date }}#}
+{#          {{ verification.valid_date }}#}
+{#          {{ verification.is_actual }}#}
+{#        </li>#}
+{#      {% endfor %}#}
+{#    </ul>#}
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="close-dialog btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
   </div>
 </div>
+
