@@ -16,7 +16,7 @@
     {% for device in devices %}
 
       <!-- Модальное окно -->
-      {% show_modal_verifications device %}
+{#      {% show_modal_verifications device %}#}
 
       {% if device.id == dev_selected|add:"0" %}
         <tr class="table-active">
@@ -37,6 +37,7 @@
 
       <!-- Модальное окно -->
 {#      {% include "frontend/index/includes/modal_list_verifications.html" %}#}
+     
     
     {% endfor %}
     </tbody>

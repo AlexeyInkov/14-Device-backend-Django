@@ -1,64 +1,69 @@
-{% load static %}
-
 <!DOCTYPE html>
 <html lang="ru" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html"
       xmlns="http://www.w3.org/1999/html">
+
+{% load static %}
+
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 {#  bootstrap#}
-  <link href="{% static "frontend/css/bootstrap.min.css" %}" rel="stylesheet"/>
+  <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet"/>
 {#  htmx#}
-  <script src="{% static "frontend/js/htmx.min.js" %}" defer></script>
+{#  <script src="{% static "js/htmx.min.js" %}" defer></script>#}
   <link rel="shortcut icon" href="{% static 'frontend/images/logo16color.bmp' %}" type="image/x-icon"/>
 {#  my styles#}
   <link type="text/css" href="{% static 'frontend/css/styles.css' %}" rel="stylesheet"/>
-
+{#  title#}
   <title>{{ title }}</title>
-
 </head>
 <body>
 <div class="container" style="height: 100vh">
-  {% block content %}
+  
     <div class="row top_bar">
       <div class="col-12">
         {% include 'frontend/includes/header-nav-bar.html' %}
       </div>
     </div>
     <div class="row content">
-      <div class="col-3 menu-bar">
-        {% block menu %}
-          <div>nav bar</div> {# left nav bar #}
-        {% endblock %}
+      <div id="sidebar-content" class="col-3 menu-bar">
+        
+        {# left nav bar #}
+        {% include "frontend/includes/sidebarMenu.html" %}
+      
       </div>     
       <div class="col-9">
         <div class="row ">
-          <div class="col addresses">
-            {% block addresses %}
-              <div>Address</div> {# Addresses #}
-            {% endblock %}
+          <div id="addresses-content" class="col addresses">
+            
+            {# Addresses #}
+            {% include "frontend/includes/list_metering_units.html" %}
+            
           </div>
         </div>
         <div class="row ">
-          <div class="col devices">
-            {% block devices %}
-              <div>Device</div> {# Devices #}
-            {% endblock %}
+          <div id="devices-content" class="col devices">
+            
+            {# Devices #}
+            {% include "frontend/includes/list_devices.html" %}
+            
           </div>
         </div>
       </div>
     </div>
-    <div class="row footer">
+    <footer class="row footer">
       <div class="col-12">
         {% block footer %}
           <div class="bg-secondary text-center text-light">2024 © AlexeyInkov</div>
         {% endblock %}
       </div>
-    </div>
-  {% endblock %}
+    </footer>
+  
 </div>
 
-<script src="{% static "frontend/js/bootstrap.bundle.min.js" %}"></script>
+<script src="{% static "js/bootstrap.bundle.min.js" %}"></script>
+<script src="https://unpkg.com/htmx.org@1.8.2" integrity="sha384-+8ISc/waZcRdXCLxVgbsLzay31nCdyZXQxnsUy++HJzJliTzxKWr0m1cIEMyUzQu" crossorigin="anonymous"></script>
+<script src="{% static 'frontend/js/dialog.js' %}"></script>
 
 </body>
 </html>
