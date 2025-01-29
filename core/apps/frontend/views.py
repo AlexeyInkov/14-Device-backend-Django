@@ -20,6 +20,7 @@ class IndexView(DataMixin, LoginRequiredMixin, TemplateView, FormView):
     template_name = "frontend/index.html"
     title_page = "Главная страница"
 
+    # TODO: сделать форму для загрузки файла через HTMX
     form_class = UploadFileForm
     success_url = reverse_lazy("frontend:home")
 

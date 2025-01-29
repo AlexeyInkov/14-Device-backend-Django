@@ -279,5 +279,16 @@ class DeviceVerification(BaseTimeModel):
     class Meta:
         verbose_name_plural = "device_verifications"
 
+    def save(self, *args, **kwargs):
+        '''
+        device have single is_actual verification
+        '''
+        if self.is_actual:
+            for verification in DeviceVerification.objects.filter(device=self.device):
+                verification.is_actual = False
+                verification.save()
+            self.is_actual = True
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.valid_date}"
