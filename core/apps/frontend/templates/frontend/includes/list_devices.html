@@ -16,7 +16,9 @@
     {% for device in devices %}
 
       <!-- Модальное окно -->
+
 {#      {% show_modal_verifications device %}#}
+
 
       {% if device.id == dev_selected|add:"0" %}
         <tr class="table-active">
@@ -28,11 +30,13 @@
       {% else %}
         <tr>
           {% for key in HEADERS_DEVICE.keys %}
+
             <td><a class="link-dark show-modal"
                    
                    href=""
                    hx-get="{% url 'frontend:detail_device' device.pk %}"
                    hx-target="#dialog">  {# data-bs-toggle="modal" data-bs-target="#verificationsModal">#}
+
               {{ device|attr:key }}
             </a></td>
           {% endfor %}
@@ -41,6 +45,7 @@
 
       <!-- Модальное окно -->
 {#      {% include "frontend/index/includes/modal_list_verifications.html" %}#}
+
      
     
     {% endfor %}
@@ -53,6 +58,7 @@
   </div>
   
   
+
 
 {% endif %}
 

@@ -72,11 +72,9 @@ class DeviceDetailView(DataMixin, LoginRequiredMixin, DetailView):
     template_name = "frontend/includes/modal_list_verifications.html"
     title_page = "Поверки"
 
-    # def get_queryset(self):
-    #     return Device.objects.filter(pk=self.kwargs.get('device_id'))
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # context['verifications'] = Device.objects.get(pk=self.kwargs.get('pk')).verifications
+
         context['verifications'] = DeviceVerification.objects.filter(device=self.object).filter(is_delete=False).order_by('-is_actual', '-valid_date')
+
         return context

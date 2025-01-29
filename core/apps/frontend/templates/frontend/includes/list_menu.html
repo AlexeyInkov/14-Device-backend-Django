@@ -1,0 +1,23 @@
+  {% if tso_selected == 'all' and mu_selected == 'all' %}
+    <div>Все организации</div>
+  {% else %}
+    <a class="link-dark" href="{% url 'frontend:home' %}">Все организации</a>
+  {% endif %}
+  <div class="list-group-flush">
+    {% for tso in tso_s %}
+      {% if tso.slug == tso_selected %}
+        <a href="#" class="list-group-item list-group-item-action list-group-item-light active " aria-current="true">{{ tso.name }}</a>
+        <div class="list-group-flush">
+          {% for customer in customers %}
+            {% if customer.id == cust_selected|add:"0" %}
+              <a href="#" class="list-group-item list-group-item-action list-group-item-light active fs-8" aria-current="true">{{ customer.name }}</a>
+            {% else %}
+              <a class="list-group-item list-group-item-action list-group-item-light fs-8" href="{% url 'frontend:home' %}?organization={{ org_selected }}&tso={{ tso_selected }}&customer={{ customer.slug }}">{{ customer.name }}</a>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% else %}
+        <a class="list-group-item list-group-item-action list-group-item-light " href="{% url 'frontend:home' %}?organization={{ org_selected }}&tso={{ tso.slug }}">{{ tso.name }}</a>
+      {% endif %}
+    {% endfor %}
+  </div>
