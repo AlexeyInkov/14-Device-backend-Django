@@ -22,7 +22,6 @@ def get_devices(mu_selected: str, metering_units: QuerySet) -> QuerySet:
         )
         .select_related("type_of_file")
         .select_related("installation_point")
-        .prefetch_related("verifications")  # TODO убрать после модернизации modal_verifications
     )
     # Device filter
     if mu_selected and mu_selected != "all":

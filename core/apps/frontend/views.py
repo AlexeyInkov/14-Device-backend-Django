@@ -3,7 +3,7 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView, FormView, DetailView
 
 
-from apps.device.models import Organization, Device
+from apps.device.models import Organization, Device, DeviceVerification
 from apps.frontend.servises.db_services import (
     get_filter_organization,
     get_metering_units,
@@ -37,7 +37,7 @@ class IndexView(DataMixin, LoginRequiredMixin, TemplateView, FormView):
         tso_selected = self.request.GET.get("tso", "all")
         cust_selected = self.request.GET.get("customer", "all")
         mu_selected = self.request.GET.get("metering_unit", "all")
-        dev_selected = self.request.GET.get("device", "all")
+        # dev_selected = self.request.GET.get("device", "all")
 
         all_user_orgs = Organization.objects.only("name", "slug").filter(user_to_org__user=self.request.user)
         filter_org, select_org = get_filter_organization(org_selected, all_user_orgs)
@@ -60,7 +60,7 @@ class IndexView(DataMixin, LoginRequiredMixin, TemplateView, FormView):
                 "tso_selected": tso_selected,
                 "cust_selected": cust_selected,
                 "mu_selected": mu_selected,
-                "dev_selected": dev_selected,
+                # "dev_selected": dev_selected,
             }
         )
 
@@ -78,4 +78,5 @@ class DeviceDetailView(DataMixin, LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # context['verifications'] = Device.objects.get(pk=self.kwargs.get('pk')).verifications
+        context['verifications'] = DeviceVerification.objects.filter(device=self.object).filter(is_delete=False).order_by('valid_date')
         return context
