@@ -1,16 +1,3 @@
-{% extends 'base_bootstrap.html' %}
 
-{% block menu %}
-  {% include "frontend/includes/list_menu.html" %}
-{% endblock %}
-
-
-{% block addresses %}
-      {% include "frontend/includes/list_metering_units.html" %}
-{% endblock %}
-
-
-{% block devices %}
-      {% include "frontend/includes/list_devices.html" %}
-{% endblock %}
+{% extends 'base_bootstrap_htmx.html' %}
 
