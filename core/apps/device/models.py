@@ -283,11 +283,19 @@ class DeviceVerification(BaseTimeModel):
         '''
         device have single is_actual verification
         '''
+        # TODO перенести в celery tasks и atomic transactions
         if self.is_actual:
             for verification in DeviceVerification.objects.filter(device=self.device):
                 verification.is_actual = False
                 verification.save()
             self.is_actual = True
+            # device_type, _ = DeviceType.objects.get_or_create(type=self.mi_mitype)
+            if self.mi_modification:
+                self.device.mod = DeviceMod.objects.get_or_create(mod=self.mi_modification)[0]
+            if self.mi_mitype:
+                self.device.type = DeviceType.objects.get_or_create(type=self.mi_mitype)[0]
+            self.device.save()
+
         super().save(*args, **kwargs)
 
     def __str__(self):
