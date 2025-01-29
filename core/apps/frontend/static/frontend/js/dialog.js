@@ -3,6 +3,8 @@ document.body.addEventListener('htmx:configRequest', (event) => {
     event.detail.headers['X-CSRFToken'] = CSRF_TOKEN;
 })
 
+// https://blog.benoitblanchon.fr/django-htmx-modal-form/
+
 const modal = new bootstrap.Modal(document.getElementById("verificationsModal"))
 
 htmx.on("htmx:afterSwap", (e) => {
