@@ -7,19 +7,20 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-{#  bootstrap#}
+  {#  bootstrap#}
   <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet"/>
-{#  htmx#}
-{#  <script src="{% static "js/htmx.min.js" %}" defer></script>#}
+  {#  htmx#}
+  {#  <script src="{% static "js/htmx.min.js" %}" defer></script>#}
   <link rel="shortcut icon" href="{% static 'frontend/images/logo16color.bmp' %}" type="image/x-icon"/>
-{#  my styles#}
+  {#  my styles#}
   <link type="text/css" href="{% static 'frontend/css/styles.css' %}" rel="stylesheet"/>
-{#  title#}
+  {#  title#}
   <title>{{ title }}</title>
 </head>
 <body>
 <div class="container" style="height: 100vh">
-  
+  <!--- auth windows --->
+  {% block auth %}
     <div class="row top_bar">
       <div class="col-12">
         {% include 'frontend/includes/header-nav-bar.html' %}
@@ -27,26 +28,26 @@
     </div>
     <div class="row content">
       <div id="sidebar-content" class="col-3 menu-bar">
-        
-        {# left nav bar #}
+
+        <!--- sidebar menu --->
         {% include "frontend/includes/sidebarMenu.html" %}
-      
-      </div>     
+
+      </div>
       <div class="col-9">
         <div class="row ">
           <div id="addresses-content" class="col addresses">
-            
-            {# Addresses #}
+
+            <!--- Addresses --->
             {% include "frontend/includes/list_metering_units.html" %}
-            
+
           </div>
         </div>
         <div class="row ">
           <div id="devices-content" class="col devices">
-            
-            {# Devices #}
+
+            <!--- Devices --->
             {% include "frontend/includes/list_devices.html" %}
-            
+
           </div>
         </div>
       </div>
@@ -58,11 +59,13 @@
         {% endblock %}
       </div>
     </footer>
-  
+  {% endblock %}
 </div>
-
+<!-- script bootstrap -->
 <script src="{% static "js/bootstrap.bundle.min.js" %}"></script>
+<!-- script htmx -->
 <script src="https://unpkg.com/htmx.org@1.8.2" integrity="sha384-+8ISc/waZcRdXCLxVgbsLzay31nCdyZXQxnsUy++HJzJliTzxKWr0m1cIEMyUzQu" crossorigin="anonymous"></script>
+<!-- my script -->
 <script src="{% static 'frontend/js/dialog.js' %}"></script>
 
 </body>
