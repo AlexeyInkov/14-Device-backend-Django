@@ -1,6 +1,5 @@
 {% load context_tags %}
 
-
 <div class="modal-content">
   <div class="modal-header">
     <h5 class="modal-title" id="verificationsModalLabel">{{ device.type_of_file }} #{{ device.factory_number }}</h5>
@@ -18,7 +17,7 @@
       </tr>
       </thead>
       <tbody>
-      {% for verification in device.verifications.all %}
+      {% for verification in verifications %}
         <tr>
           {% for key in HEADERS_VERIFICATION.keys %}
             <td>
@@ -29,25 +28,6 @@
       {% endfor %}
       </tbody>
     </table>
-{#    <ul>#}
-{#      <li>{% for header in HEADERS_VERIFICATION.values %}#}
-{#        | {{ header }} |#}
-{#      {% endfor %}#}
-{#      </li>#}
-{#      {% for verification in device.verifications.all %}#}
-{#        <li>#}
-{#          {{ verification.mi_mititle }}#}
-{#          {{ verification.mit_mitnumber }}#}
-{#          {{ verification.mi_mitype }}#}
-{#          {{ verification.mi_modification }}#}
-{#          {{ verification.mi_number }}#}
-{#          {{ verification.org_title }}#}
-{#          {{ verification.verification_date }}#}
-{#          {{ verification.valid_date }}#}
-{#          {{ verification.is_actual }}#}
-{#        </li>#}
-{#      {% endfor %}#}
-{#    </ul>#}
   </div>
   <div class="modal-footer">
     <button type="button" class="close-dialog btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
