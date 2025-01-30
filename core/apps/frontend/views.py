@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, FormView, DetailView
 
@@ -13,7 +14,7 @@ from apps.frontend.servises.db_services import (
 from .forms import UploadFileForm
 from .mixins import DataMixin
 from .servises.file_services import handle_uploaded_file
-from .tasks import download_file_to_db
+from .tasks import download_file_to_db, refresh_valid_date
 
 
 class IndexView(DataMixin, LoginRequiredMixin, TemplateView, FormView):
@@ -79,3 +80,8 @@ class DeviceDetailView(DataMixin, LoginRequiredMixin, DetailView):
         context['verifications'] = DeviceVerification.objects.filter(device=self.object).filter(is_delete=False).order_by('-is_actual', '-valid_date')
 
         return context
+
+
+def refresh_valid_date_view(request):
+    refresh_valid_date.delay()
+    return redirect("frontend:home")
