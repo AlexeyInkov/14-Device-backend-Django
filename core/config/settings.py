@@ -243,11 +243,11 @@ HEADERS_DEVICE = {
 }
 HEADERS_VERIFICATION = {
     "id": "№ п/п",
-    "organization": "Поверитель",
-    "registry_number": "№ в реестре",
-    "device_type": "Тип",
-    "device_mod": "Модификация",
-    "factory_number": "Зав. №",
+    "org_title": "Поверитель",
+    "mit_mitnumber": "№ в реестре",
+    "mi_mitype": "Тип",
+    "mi_modification": "Модификация",
+    "mi_number": "Зав. №",
     "verification_date": "Дата поверки",
     "valid_date": "Поверка до",
     "is_actual": "Актуальна",
