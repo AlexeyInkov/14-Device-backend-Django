@@ -77,7 +77,7 @@ class DeviceDetailView(DataMixin, LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['verifications'] = DeviceVerification.objects.filter(device=self.object).filter(is_delete=False).order_by('-is_actual', '-valid_date')
+        context['verifications'] = DeviceVerification.objects.filter(device=self.object).filter(is_delete=False).order_by('-is_actual', '-verification_date')
 
         return context
 
