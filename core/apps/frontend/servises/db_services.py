@@ -1,3 +1,4 @@
+import logging
 from typing import Tuple, Dict
 
 from django.db import transaction, models
@@ -7,6 +8,8 @@ from apps.device.models import Device, DeviceVerification
 from apps.device.models import Organization, MeteringUnit
 from config.settings import CONVERT_VERIF_FIELDS
 
+
+logger = logging.getLogger(__name__)
 
 def get_devices(mu_selected: str, metering_units: QuerySet) -> QuerySet:
     devices = (
@@ -78,28 +81,26 @@ def get_customers(tso_selected: str, metering_units: QuerySet, orgs: QuerySet) -
     )
 
 
-def save_verification(device_id: int, verification: dict) -> None:
-    print('run_save_verification')
-    model_fields = convert_verification_field(device_id, verification)
+def save_verification(device_id: int, verification_fields: dict) -> None:
+    logger.info('run_save_verification')
+    model_fields = convert_verification_field(device_id, verification_fields)
     with transaction.atomic():
         # print(DeviceVerification.objects.filter(device=device_id))
-        verification = DeviceVerification.objects.filter(device=device_id).filter(**model_fields)
-        # print(verification)
-        if not verification:
-            new = DeviceVerification.objects.create(**model_fields)
-            print("new=", new)
+        verification = DeviceVerification.objects.get_or_create(**model_fields)
+        logger.debug(f"{verification=}")
 
 
-def convert_verification_field(device_id: int, verification: Dict[str, str]) -> Dict[str, str]:
-
+def convert_verification_field(device_id: int, verification_fields: Dict[str, str]) -> Dict[str, str]:
+    logger.debug(f'{verification_fields=}')
     model_fields = {}
     for field_name in CONVERT_VERIF_FIELDS.keys():
-        if verification.get(CONVERT_VERIF_FIELDS[field_name]):
+        if verification_fields.get(CONVERT_VERIF_FIELDS[field_name], None) is not None:
             if field_name[-4:] == "date":
-                model_fields[field_name] = verification[CONVERT_VERIF_FIELDS[field_name]][:10]
+                model_fields[field_name] = verification_fields[CONVERT_VERIF_FIELDS[field_name]][:10]
             else:
-                model_fields[field_name] = verification[CONVERT_VERIF_FIELDS[field_name]]
+                model_fields[field_name] = verification_fields[CONVERT_VERIF_FIELDS[field_name]]
     model_fields["device"] = Device.objects.get(pk=device_id)
+    logger.debug(f'{model_fields=}')
     return model_fields
 
 
