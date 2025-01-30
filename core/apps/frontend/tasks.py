@@ -3,9 +3,8 @@ import logging
 import os.path
 
 from celery import shared_task
-from celery_singleton import Singleton
 from django.contrib.auth import get_user_model
-from django.db import transaction
+from django.db.models import Max
 
 from apps.device.models import (
     Organization,
@@ -25,27 +24,36 @@ from apps.frontend.servises.db_services import save_verification, get_or_create_
 from apps.frontend.servises.file_services import check_csv_file
 from config import settings
 
-
 logger = logging.getLogger(__name__)
 
 
-@shared_task(base=Singleton, name='tasks.refresh_all_valid_date')
+@shared_task(name='tasks.refresh_all_valid_date')
 def refresh_valid_date() -> str:
     logger.info("run refresh_valid_date")
-    devices = Device.objects.all().order_by("updated_at").only("id")
-    for index, device in enumerate(devices):
-        logger.info("index=", index)
+
+    devices = DeviceVerification.objects.values('device').annotate(updated=Max('updated_at')).order_by('updated')[:50]
+    logger.debug(devices)
+    # devices = Device.objects.all().order_by("updated_at").only("id")[:10]
+
+    for index, item in enumerate(devices):
+        logger.info(f"index={index}, device_id={item['device']}")
+        device = Device.objects.get(pk=item['device'])
+        logger.info(f"device={device}")
         # get_device_verifications.delay(device.pk)
-        logger.info("run get_device_verifications")
+        # logger.info("run get_device_verifications")
         for reg_number in device.type_of_file.numbers_registry.split(","):
+            logger.info("request_to_arshin")
             response = request_to_arshin(reg_number, device.factory_number)
             if response.status_code == 200:
+                logger.info(f"response={response.status_code}")
                 response = response.json()["response"]
+                logger.info(f"Found verifications in response: {response['numFound']}")
                 if response['numFound'] > 0:
                     verifications = response["docs"]
                     if verifications:
                         for verification in verifications:
                             save_verification(device.id, verification)
+                            logger.info("verification saved")
     return "Done"
 
 
@@ -60,7 +68,6 @@ def download_file_to_db(filename: str, user_id: str):
     logger.info(error_filename)
 
     if not check_csv_file(filename, settings.FIELDNAMES_FILE_MU):
-
         logger.info('bad format file')
 
         raise ValueError
