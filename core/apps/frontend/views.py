@@ -41,7 +41,9 @@ class IndexView(DataMixin, LoginRequiredMixin, TemplateView, FormView):
         mu_selected = self.request.GET.get("metering_unit", "all")
         # dev_selected = self.request.GET.get("device", "all")
 
-        all_user_orgs = Organization.objects.only("name", "slug").filter(user_to_org__user=self.request.user)
+        all_user_orgs = Organization.objects.only("name", "slug").filter(
+            user_to_org__user=self.request.user
+        )
         filter_org, select_org = get_filter_organization(org_selected, all_user_orgs)
 
         filter_metering_units, metering_units = get_metering_units(
@@ -77,7 +79,11 @@ class DeviceDetailView(DataMixin, LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['verifications'] = Verification.objects.filter(device=self.object).filter(is_delete=False).order_by('-is_actual', '-verification_date')
+        context["verifications"] = (
+            Verification.objects.filter(device=self.object)
+            .filter(is_delete=False)
+            .order_by("-is_actual", "-verification_date")
+        )
 
         return context
 

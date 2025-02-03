@@ -6,4 +6,4 @@ from apps.device.models import TypeToRegistryImport
 class TypeToRegistryImportForm(ModelForm):
     class Meta:
         model = TypeToRegistryImport
-        fields = ('csv_file',)
+        fields = ("csv_file",)

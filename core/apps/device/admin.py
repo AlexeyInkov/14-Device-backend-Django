@@ -34,54 +34,74 @@ logger = logging.getLogger(__name__)
 
 
 class OrganizationAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'slug', 'created_at', 'updated_at',)
+    list_display = (
+        "id",
+        "name",
+        "slug",
+        "created_at",
+        "updated_at",
+    )
 
-    list_display_links = ('id', 'name')
-    search_fields = ('name',)
-    prepopulated_fields = {'slug': ('name',)}
+    list_display_links = ("id", "name")
+    search_fields = ("name",)
+    prepopulated_fields = {"slug": ("name",)}
 
 
 class DeviceAdmin(admin.ModelAdmin):
-    list_display = ('id',
-                    'metering_unit',
-                    'type_of_file',
-                    'registry_number',
-                    'type',
-                    'mod',
-                    'factory_number',
-                    'notes',
-                    'created_at',
-                    'updated_at',
-                    'installation_point',
-                    )
+    list_display = (
+        "id",
+        "metering_unit",
+        "type_of_file",
+        "registry_number",
+        "type",
+        "mod",
+        "factory_number",
+        "notes",
+        "created_at",
+        "updated_at",
+        "installation_point",
+    )
     # TODO добавить список поверок
 
 
 class DeviceVerificationAdmin(admin.ModelAdmin):
-    list_display = ('id',
-                    'device',
-                    'mi_mititle',
-                    'mit_mitnumber',
-                    'mi_mitype',
-                    'mi_modification',
-                    'mi_number',
-                    'org_title',
-                    'verification_date',
-                    'valid_date',
-                    'is_actual',
-                    'is_delete',
-                    'created_at',
-                    'updated_at',
-                    )
+    list_display = (
+        "id",
+        "device",
+        "mi_mititle",
+        "mit_mitnumber",
+        "mi_mitype",
+        "mi_modification",
+        "mi_number",
+        "org_title",
+        "verification_date",
+        "valid_date",
+        "is_actual",
+        "is_delete",
+        "created_at",
+        "updated_at",
+    )
 
 
 class TypeToRegistryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'device_type_file', 'numbers_registry', 'created_at', 'updated_at',)
-    ordering = ('id', 'device_type_file', 'numbers_registry', 'created_at', 'updated_at',)
+    list_display = (
+        "id",
+        "device_type_file",
+        "numbers_registry",
+        "created_at",
+        "updated_at",
+    )
+    ordering = (
+        "id",
+        "device_type_file",
+        "numbers_registry",
+        "created_at",
+        "updated_at",
+    )
 
     def get_urls(self):
         urls = super().get_urls()
-        urls.insert(-1, path('csv-upload/', self.upload_csv))
+        urls.insert(-1, path("csv-upload/", self.upload_csv))
         return urls
 
     # если пользователь открыл url 'csv-upload/',
@@ -89,57 +109,69 @@ class TypeToRegistryAdmin(admin.ModelAdmin):
     # который работает с формой
     # TODO перенести в task
     def upload_csv(self, request):
-        if request.method == 'POST':
+        if request.method == "POST":
             #  т.к. это метод POST проводим валидацию данных
             form = TypeToRegistryImportForm(request.POST, request.FILES)
             if form.is_valid():
                 # сохраняем загруженный файл и делаем запись в базу
                 form_object = form.save()
                 # TODO разобраться с кодировкой
-                if not check_csv_file(form_object.csv_file.path, settings.FIELDNAMES_FILE_TYPE, encoding='utf-8'):
+                if not check_csv_file(
+                    form_object.csv_file.path,
+                    settings.FIELDNAMES_FILE_TYPE,
+                    encoding="utf-8",
+                ):
                     # обновляем страницу пользователя
                     # с информацией о какой-то ошибке
-                    messages.warning(request, 'Неверные заголовки у файла')
+                    messages.warning(request, "Неверные заголовки у файла")
                     return HttpResponseRedirect(request.path_info)
 
                 # обработка csv файла
-                with open(form_object.csv_file.path, mode='r', encoding='utf-8', newline='') as csv_file:
-                    rows = csv.DictReader(csv_file, delimiter=';')
-                    messages.success(request, 'File loading ...')
+                with open(
+                    form_object.csv_file.path, mode="r", encoding="utf-8", newline=""
+                ) as csv_file:
+                    rows = csv.DictReader(csv_file, delimiter=";")
+                    messages.success(request, "File loading ...")
                     for row in rows:
                         print(row)
                         data = {
                             "device_type_file": row[settings.FIELDNAMES_FILE_TYPE[0]],
-                            "numbers_registry": row[settings.FIELDNAMES_FILE_TYPE[1]]
+                            "numbers_registry": row[settings.FIELDNAMES_FILE_TYPE[1]],
                         }
                         with transaction.atomic():
-                            instance, created = TypeToRegistry.objects.get_or_create(device_type_file=data['device_type_file'])
+                            instance, created = TypeToRegistry.objects.get_or_create(
+                                device_type_file=data["device_type_file"]
+                            )
 
                             if not instance.numbers_registry:
-                                instance.numbers_registry = data['numbers_registry']
+                                instance.numbers_registry = data["numbers_registry"]
                             else:
-                                cur = set(map(int, instance.numbers_registry.split(',')))
+                                cur = set(
+                                    map(int, instance.numbers_registry.split(","))
+                                )
 
-                                new = list(map(int, data['numbers_registry'].split(',')))
+                                new = list(
+                                    map(int, data["numbers_registry"].split(","))
+                                )
 
                                 cur = cur.union(new)
 
-                                instance.numbers_registry = ','.join(map(str, cur))
+                                instance.numbers_registry = ",".join(map(str, cur))
                             if created:
-                                logger.info(f'{instance} create')
+                                logger.info(f"{instance} create")
                             else:
-                                logger.info(f'{instance} update')
+                                logger.info(f"{instance} update")
                             instance.save()
                 os.remove(form_object.csv_file.path)
             # возвращаем пользователя на главную с сообщением об успехе
-            url = reverse('admin:index')
-            messages.success(request, 'Файл успешно импортирован')
+            url = reverse("admin:index")
+            messages.success(request, "Файл успешно импортирован")
 
             return HttpResponseRedirect(url)
 
         # если это не метод POST, то возвращается форма с шаблоном
         form = TypeToRegistryImportForm()
-        return render(request, 'admin/csv_import_page.html', {'form': form})
+        return render(request, "admin/csv_import_page.html", {"form": form})
 
 
 admin.site.register(UserToOrganization)

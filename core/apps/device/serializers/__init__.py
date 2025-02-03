@@ -1,21 +1,21 @@
 __all__ = [
-    'MySerializer',
+    "MySerializer",
     # metering_unit
-    'UserToOrganizationSerializer',
-    'OrganizationSerializer',
-    'RegionSerializer',
-    'TypeStreetSerializer',
-    'StreetSerializer',
-    'AddressSerializer',
-    'MeteringUnitSerializer',
+    "UserToOrganizationSerializer",
+    "OrganizationSerializer",
+    "RegionSerializer",
+    "TypeStreetSerializer",
+    "StreetSerializer",
+    "AddressSerializer",
+    "MeteringUnitSerializer",
     # device
-    'DeviceInstallationPointSerializer',
-    'DeviceRegistryNumberSerializer',
-    'DeviceTypeSerializer',
-    'DeviceModSerializer',
-    'TypeToRegistrySerializer',
-    'DeviceSerializer',
-    'DeviceVerificationSerializer',
+    "DeviceInstallationPointSerializer",
+    "DeviceRegistryNumberSerializer",
+    "DeviceTypeSerializer",
+    "DeviceModSerializer",
+    "TypeToRegistrySerializer",
+    "DeviceSerializer",
+    "DeviceVerificationSerializer",
 ]
 
 from apps.device.serializers.device import (

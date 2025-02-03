@@ -192,7 +192,7 @@ class TypeToRegistry(BaseTimeModel):
 
 
 class TypeToRegistryImport(models.Model):
-    csv_file = models.FileField(upload_to='uploads/')
+    csv_file = models.FileField(upload_to="uploads/")
     date_added = models.DateTimeField(auto_now_add=True)
 
 
@@ -280,9 +280,9 @@ class Verification(BaseTimeModel):
         verbose_name_plural = "device_verifications"
 
     def save(self, *args, **kwargs):
-        '''
+        """
         device have single is_actual verification
-        '''
+        """
         # TODO перенести в celery tasks и atomic transactions
         if self.is_actual:
             for verification in Verification.objects.filter(device=self.device):
@@ -291,9 +291,13 @@ class Verification(BaseTimeModel):
             self.is_actual = True
             # device_type, _ = DeviceType.objects.get_or_create(type=self.mi_mitype)
             if self.mi_modification:
-                self.device.mod = Modification.objects.get_or_create(mod=self.mi_modification)[0]
+                self.device.mod = Modification.objects.get_or_create(
+                    mod=self.mi_modification
+                )[0]
             if self.mi_mitype:
-                self.device.type = TypeName.objects.get_or_create(type=self.mi_mitype)[0]
+                self.device.type = TypeName.objects.get_or_create(type=self.mi_mitype)[
+                    0
+                ]
             self.device.save()
 
         super().save(*args, **kwargs)

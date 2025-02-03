@@ -2,7 +2,6 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView, LogoutView
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpRequest
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from rest_framework import status
@@ -12,8 +11,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .serializers import UserSerializer, UserTokenSerializer, UserOrganizationSerializer
 from .forms import LoginUserForm, RegisterUserForm
+from .serializers import UserSerializer, UserTokenSerializer, UserOrganizationSerializer
 
 
 class UserMeAPIView(APIView):
@@ -89,13 +88,13 @@ class UserLogoutAPIView(APIView):
 class LoginUserView(LoginView):
     form_class = LoginUserForm
     template_name = "my_auth/auth.html"
-    extra_context = {"title": "Авторизация", 'button_name': "Войти"}
+    extra_context = {"title": "Авторизация", "button_name": "Войти"}
 
 
 class RegisterUserView(CreateView):
     form_class = RegisterUserForm
     template_name = "my_auth/auth.html"
-    extra_context = {"title": "Регистрация", 'button_name': "Ok"}
+    extra_context = {"title": "Регистрация", "button_name": "Ok"}
     success_url = reverse_lazy("apps.frontend:home")
 
 

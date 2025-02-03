@@ -11,7 +11,6 @@ from apps.device.models import (
     Region,
     TypeStreet,
     Street,
-
     # device
     Device,
     InstallationPoint,
@@ -81,6 +80,7 @@ class MeteringUnitViewSet(CreateModelViewSetMixin, ModelViewSet):
     queryset = MeteringUnit.objects.all()
     serializer_class = MeteringUnitSerializer
     permission_classes = [IsAuthenticated, IsAdminUser]
+
 
 class DeviceViewSet(CreateModelViewSetMixin, ModelViewSet):
     queryset = Device.objects.all()

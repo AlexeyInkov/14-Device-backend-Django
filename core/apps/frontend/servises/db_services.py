@@ -1,15 +1,26 @@
 import logging
 from typing import Tuple, Dict
 
-from django.db import transaction, models
+from django.db import transaction
 from django.db.models import Q, QuerySet
 
-from apps.device.models import Device, Verification, Organization, UserToOrganization, Region, TypeStreet, Street, Address, MeteringUnit, InstallationPoint, TypeToRegistry
-from apps.frontend.tasks import logger
+from apps.device.models import (
+    Device,
+    Verification,
+    Organization,
+    UserToOrganization,
+    Region,
+    TypeStreet,
+    Street,
+    Address,
+    MeteringUnit,
+    InstallationPoint,
+    TypeToRegistry,
+)
 from config.settings import CONVERT_VERIF_FIELDS
 
-
 logger = logging.getLogger(__name__)
+
 
 def get_devices(mu_selected: str, metering_units: QuerySet) -> QuerySet:
     devices = (
@@ -32,7 +43,9 @@ def get_devices(mu_selected: str, metering_units: QuerySet) -> QuerySet:
     return devices.filter(metering_unit__in=metering_units.values_list("pk", flat=True))
 
 
-def get_metering_units(tso_selected: str, cust_selected: str, orgs: QuerySet) -> Tuple[QuerySet, QuerySet]:
+def get_metering_units(
+        tso_selected: str, cust_selected: str, orgs: QuerySet
+) -> Tuple[QuerySet, QuerySet]:
     metering_units = (
         MeteringUnit.objects.only(
             "customer__name",
@@ -65,14 +78,18 @@ def get_metering_units(tso_selected: str, cust_selected: str, orgs: QuerySet) ->
     return metering_units, metering_units
 
 
-def get_filter_organization(org_selected: str, orgs: QuerySet) -> Tuple[QuerySet, Organization | None]:
+def get_filter_organization(
+        org_selected: str, orgs: QuerySet
+) -> Tuple[QuerySet, Organization | None]:
     if org_selected != "all":
         result = orgs.filter(slug=org_selected)
         return result, result.first()
     return orgs, None
 
 
-def get_customers(tso_selected: str, metering_units: QuerySet, orgs: QuerySet) -> QuerySet:
+def get_customers(
+        tso_selected: str, metering_units: QuerySet, orgs: QuerySet
+) -> QuerySet:
     filters = {}
     if tso_selected != "all":
         filters["tso__slug"] = tso_selected
@@ -82,7 +99,7 @@ def get_customers(tso_selected: str, metering_units: QuerySet, orgs: QuerySet) -
 
 
 def save_verification(device_id: int, verification_fields: dict) -> None:
-    logger.info('run_save_verification')
+    logger.info("run_save_verification")
     model_fields = convert_verification_field(device_id, verification_fields)
     with transaction.atomic():
         # print(DeviceVerification.objects.filter(device=device_id))
@@ -90,17 +107,23 @@ def save_verification(device_id: int, verification_fields: dict) -> None:
         logger.debug(f"{verification=}")
 
 
-def convert_verification_field(device_id: int, verification_fields: Dict[str, str]) -> Dict[str, str]:
-    logger.debug(f'{verification_fields=}')
+def convert_verification_field(
+        device_id: int, verification_fields: Dict[str, str]
+) -> Dict[str, str]:
+    logger.debug(f"{verification_fields=}")
     model_fields = {}
     for field_name in CONVERT_VERIF_FIELDS.keys():
         if verification_fields.get(CONVERT_VERIF_FIELDS[field_name], None) is not None:
             if field_name[-4:] == "date":
-                model_fields[field_name] = verification_fields[CONVERT_VERIF_FIELDS[field_name]][:10]
+                model_fields[field_name] = verification_fields[
+                                               CONVERT_VERIF_FIELDS[field_name]
+                                           ][:10]
             else:
-                model_fields[field_name] = verification_fields[CONVERT_VERIF_FIELDS[field_name]]
+                model_fields[field_name] = verification_fields[
+                    CONVERT_VERIF_FIELDS[field_name]
+                ]
     model_fields["device"] = Device.objects.get(pk=device_id)
-    logger.debug(f'{model_fields=}')
+    logger.debug(f"{model_fields=}")
     return model_fields
 
 
@@ -112,7 +135,7 @@ def write_row_to_db(row, user):
         logger.debug(customer)
         customer_id, _ = Organization.objects.get_or_create(**customer)
 
-        user_to_organization = {'user': user, 'organization': customer_id}
+        user_to_organization = {"user": user, "organization": customer_id}
         logger.debug(user_to_organization)
         UserToOrganization.objects.get_or_create(**user_to_organization)
 
@@ -120,7 +143,7 @@ def write_row_to_db(row, user):
         logger.debug(tso)
         tso_id, _ = Organization.objects.get_or_create(**tso)
 
-        user_to_organization = {'user': user, 'organization': tso_id}
+        user_to_organization = {"user": user, "organization": tso_id}
         logger.debug(user_to_organization)
         UserToOrganization.objects.get_or_create(**user_to_organization)
 
@@ -128,7 +151,7 @@ def write_row_to_db(row, user):
         logger.debug(region)
         region_id, _ = Region.objects.get_or_create(**region)
 
-        type_street = {"name": row['Тип улицы'].strip()}
+        type_street = {"name": row["Тип улицы"].strip()}
         if not type_street:
             type_street = " "
             print("-------------------------------Васька---------------------------")
@@ -147,26 +170,27 @@ def write_row_to_db(row, user):
             "house_number": row["№ дома"].strip(),
             "corp": row["Корп"].strip(),
             "liter": row["Лит"].strip(),
-
         }
         logger.debug(address)
         address_id, _ = Address.objects.get_or_create(**address)
 
         metering_unit = {
-            'customer': customer_id,
-            'tso': tso_id,
-            'address': address_id,
-            'itp': row["ТЦ"].strip(),
-            'totem_number': row["№ Тотэм"].strip(),
+            "customer": customer_id,
+            "tso": tso_id,
+            "address": address_id,
+            "itp": row["ТЦ"].strip(),
+            "totem_number": row["№ Тотэм"].strip(),
         }
         logger.debug(metering_unit)
         metering_unit_id, _ = MeteringUnit.objects.get_or_create(**metering_unit)
 
-        installation_point = {'name': row["Труба"].strip()}
+        installation_point = {"name": row["Труба"].strip()}
         logger.debug(installation_point)
-        installation_point_id, _ = InstallationPoint.objects.get_or_create(**installation_point)
+        installation_point_id, _ = InstallationPoint.objects.get_or_create(
+            **installation_point
+        )
 
-        type_of_file = {'device_type_file': row["Тип"].strip()}
+        type_of_file = {"device_type_file": row["Тип"].strip()}
         logger.debug(type_of_file)
         type_of_file_id, _ = TypeToRegistry.objects.get_or_create(**type_of_file)
 
@@ -174,21 +198,21 @@ def write_row_to_db(row, user):
         # mod_id = req_api('device/mod/', body=mod, headers=headers)['id']
 
         device = {
-            'metering_unit': metering_unit_id,
-            'installation_point': installation_point_id,
-            'type_of_file': type_of_file_id,
-            'factory_number': row["Номер"].strip(),
+            "metering_unit": metering_unit_id,
+            "installation_point": installation_point_id,
+            "type_of_file": type_of_file_id,
+            "factory_number": row["Номер"].strip(),
         }
         logger.debug(device)
         device_id, _ = Device.objects.get_or_create(**device)
 
         data = row["Дата"].strip()
         if data:
-            data = data.split('.')
+            data = data.split(".")
 
             device_verification = {
-                'device': device_id,
-                'valid_date': '-'.join((data[2], data[1], data[0])),
+                "device": device_id,
+                "valid_date": "-".join((data[2], data[1], data[0])),
             }
             logger.debug(device_verification)
             Verification.objects.create(**device_verification)

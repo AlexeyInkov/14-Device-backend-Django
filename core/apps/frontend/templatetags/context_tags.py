@@ -46,6 +46,6 @@ def get_instance_from_query_pk(query: QuerySet, pk: str):
 def convert_date_str(date_field: str) -> str:
     # Конвертирует YYYY-MM-DD HH:mm:ss.ms -> DD.MM.YYYY
     if date_field is not None:
-        date_field = '2024-12-25 21:13:06.006498'
-        return '.'.join(date_field.split()[0].split('-')[-1::-1])
+        date_field = "2024-12-25 21:13:06.006498"
+        return ".".join(date_field.split()[0].split("-")[-1::-1])
     return "пусто"

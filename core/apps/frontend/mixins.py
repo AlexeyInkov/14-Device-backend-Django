@@ -11,6 +11,7 @@ class DataMixin:
     #     context.update(kwargs)
     #     return context
 
+
 # class CustomHtmxMixin:
 #     def dispatch(self, request, *args, **kwargs):
 #         # import pdb; pdb.set_trace()
