@@ -3,7 +3,7 @@ from rest_framework import serializers
 from apps.device.serializers import MySerializer
 from apps.device.models import (
     Device,
-    DeviceVerification,
+    Verification,
 )
 from apps.device.models import MeteringUnit, Organization, Address
 
@@ -93,7 +93,7 @@ class AddressesSerializer(MySerializer):
 
 class ShortDeviceVerificationSerializer(MySerializer):
     class Meta:
-        model = DeviceVerification
+        model = Verification
         fields = (
             "id",
             "organization",

@@ -2,37 +2,37 @@ from rest_framework import serializers
 
 from .baseserializers import MySerializer
 from apps.device.models import (
-    DeviceInstallationPoint,
-    DeviceRegistryNumber,
-    DeviceType,
-    DeviceMod,
+    InstallationPoint,
+    RegistryNumber,
+    TypeName,
+    Modification,
     Device,
-    DeviceVerification,
+    Verification,
     TypeToRegistry,
 )
 
 
 class DeviceInstallationPointSerializer(MySerializer):
     class Meta:
-        model = DeviceInstallationPoint
+        model = InstallationPoint
         fields = "id", "name"
 
 
 class DeviceRegistryNumberSerializer(MySerializer):
     class Meta:
-        model = DeviceRegistryNumber
+        model = RegistryNumber
         fields = "id", "registry_number"
 
 
 class DeviceTypeSerializer(MySerializer):
     class Meta:
-        model = DeviceType
+        model = TypeName
         fields = "id", "type"
 
 
 class DeviceModSerializer(MySerializer):
     class Meta:
-        model = DeviceMod
+        model = Modification
         fields = "id", "mod"
 
 
@@ -74,7 +74,7 @@ class DeviceVerificationSerializer(MySerializer):
     is_delete = serializers.BooleanField(required=False)
 
     class Meta:
-        model = DeviceVerification
+        model = Verification
         fields = (
             "id",
             "device",

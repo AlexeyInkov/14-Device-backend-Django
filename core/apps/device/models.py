@@ -140,7 +140,7 @@ class MeteringUnit(BaseTimeModel):
         return f"{self.address} {self.itp}"
 
 
-class DeviceRegistryNumber(BaseTimeModel):
+class RegistryNumber(BaseTimeModel):
     registry_number = models.CharField(unique=True, max_length=10)
 
     class Meta:
@@ -150,7 +150,7 @@ class DeviceRegistryNumber(BaseTimeModel):
         return str(self.registry_number)
 
 
-class DeviceType(BaseTimeModel):
+class TypeName(BaseTimeModel):
     type = models.CharField(max_length=100, unique=True)
 
     class Meta:
@@ -160,7 +160,7 @@ class DeviceType(BaseTimeModel):
         return self.type
 
 
-class DeviceMod(BaseTimeModel):
+class Modification(BaseTimeModel):
     mod = models.CharField(max_length=100, unique=True)
 
     class Meta:
@@ -170,7 +170,7 @@ class DeviceMod(BaseTimeModel):
         return self.mod
 
 
-class DeviceInstallationPoint(BaseTimeModel):
+class InstallationPoint(BaseTimeModel):
     name = models.CharField(max_length=100, unique=True)
 
     class Meta:
@@ -201,40 +201,40 @@ class Device(BaseTimeModel):
         MeteringUnit,
         on_delete=models.PROTECT,
         null=True,
-        related_name="device",
+        related_name="devices",
     )
     installation_point = models.ForeignKey(
-        DeviceInstallationPoint,
+        InstallationPoint,
         on_delete=models.PROTECT,
         null=True,
-        related_name="device",
+        related_name="devices",
     )
     registry_number = models.ForeignKey(
-        DeviceRegistryNumber,
+        RegistryNumber,
         on_delete=models.PROTECT,
         null=True,
         blank=True,
-        related_name="device",
+        related_name="devices",
     )
     type = models.ForeignKey(
-        DeviceType,
+        TypeName,
         on_delete=models.PROTECT,
         null=True,
         blank=True,
-        related_name="device",
+        related_name="devices",
     )
     mod = models.ForeignKey(
-        DeviceMod,
+        Modification,
         on_delete=models.PROTECT,
         null=True,
         blank=True,
-        related_name="device",
+        related_name="devices",
     )
     type_of_file = models.ForeignKey(
         TypeToRegistry,
         on_delete=models.PROTECT,
         null=True,
-        related_name="device",
+        related_name="devices",
     )
     factory_number = models.CharField(max_length=100, unique=True)
 
@@ -258,7 +258,7 @@ class Device(BaseTimeModel):
         return f"{str(self.type_of_file)} №{self.factory_number}"
 
 
-class DeviceVerification(BaseTimeModel):
+class Verification(BaseTimeModel):
     device = models.ForeignKey(
         Device,
         on_delete=models.PROTECT,
@@ -285,15 +285,15 @@ class DeviceVerification(BaseTimeModel):
         '''
         # TODO перенести в celery tasks и atomic transactions
         if self.is_actual:
-            for verification in DeviceVerification.objects.filter(device=self.device):
+            for verification in Verification.objects.filter(device=self.device):
                 verification.is_actual = False
                 verification.save()
             self.is_actual = True
             # device_type, _ = DeviceType.objects.get_or_create(type=self.mi_mitype)
             if self.mi_modification:
-                self.device.mod = DeviceMod.objects.get_or_create(mod=self.mi_modification)[0]
+                self.device.mod = Modification.objects.get_or_create(mod=self.mi_modification)[0]
             if self.mi_mitype:
-                self.device.type = DeviceType.objects.get_or_create(type=self.mi_mitype)[0]
+                self.device.type = TypeName.objects.get_or_create(type=self.mi_mitype)[0]
             self.device.save()
 
         super().save(*args, **kwargs)

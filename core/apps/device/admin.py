@@ -21,23 +21,16 @@ from .models import (
     Street,
     Organization,
     # device
-    DeviceInstallationPoint,
-    DeviceRegistryNumber,
-    DeviceType,
-    DeviceMod,
+    InstallationPoint,
+    RegistryNumber,
+    TypeName,
+    Modification,
     Device,
-    DeviceVerification,
+    Verification,
 )
 from ..frontend.servises.file_services import check_csv_file
 
 logger = logging.getLogger(__name__)
-
-admin.site.register(UserToOrganization)
-admin.site.register(Address)
-admin.site.register(MeteringUnit)
-admin.site.register(Region)
-admin.site.register(TypeStreet)
-admin.site.register(Street)
 
 
 class OrganizationAdmin(admin.ModelAdmin):
@@ -48,24 +41,20 @@ class OrganizationAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
 
 
-admin.site.register(Organization, OrganizationAdmin)
-
-admin.site.register(DeviceInstallationPoint)
-admin.site.register(DeviceRegistryNumber)
-admin.site.register(DeviceType)
-admin.site.register(DeviceMod)
-
-
 class DeviceAdmin(admin.ModelAdmin):
-    list_display = ('id', 'type_of_file', 'factory_number', 'notes', 'created_at', 'updated_at', 'metering_unit',
-                    'installation_point',
+    list_display = ('id',
+                    'metering_unit',
+                    'type_of_file',
                     'registry_number',
                     'type',
                     'mod',
+                    'factory_number',
+                    'notes',
+                    'created_at',
+                    'updated_at',
+                    'installation_point',
                     )
-
-
-admin.site.register(Device, DeviceAdmin)
+    # TODO добавить список поверок
 
 
 class DeviceVerificationAdmin(admin.ModelAdmin):
@@ -86,11 +75,9 @@ class DeviceVerificationAdmin(admin.ModelAdmin):
                     )
 
 
-admin.site.register(DeviceVerification, DeviceVerificationAdmin)
-
-
 class TypeToRegistryAdmin(admin.ModelAdmin):
     list_display = ('id', 'device_type_file', 'numbers_registry', 'created_at', 'updated_at',)
+    ordering = ('id', 'device_type_file', 'numbers_registry', 'created_at', 'updated_at',)
 
     def get_urls(self):
         urls = super().get_urls()
@@ -100,6 +87,7 @@ class TypeToRegistryAdmin(admin.ModelAdmin):
     # если пользователь открыл url 'csv-upload/',
     # то он выполнит этот метод,
     # который работает с формой
+    # TODO перенести в task
     def upload_csv(self, request):
         if request.method == 'POST':
             #  т.к. это метод POST проводим валидацию данных
@@ -154,4 +142,17 @@ class TypeToRegistryAdmin(admin.ModelAdmin):
         return render(request, 'admin/csv_import_page.html', {'form': form})
 
 
+admin.site.register(UserToOrganization)
+admin.site.register(Address)
+admin.site.register(MeteringUnit)
+admin.site.register(Region)
+admin.site.register(TypeStreet)
+admin.site.register(Street)
+admin.site.register(Organization, OrganizationAdmin)
+admin.site.register(InstallationPoint)
+admin.site.register(RegistryNumber)
+admin.site.register(TypeName)
+admin.site.register(Modification)
+admin.site.register(Device, DeviceAdmin)
+admin.site.register(Verification, DeviceVerificationAdmin)
 admin.site.register(TypeToRegistry, TypeToRegistryAdmin)

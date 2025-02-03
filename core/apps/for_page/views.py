@@ -3,7 +3,7 @@ from rest_framework.generics import ListAPIView
 
 from apps.device.models import (
     Device,
-    DeviceVerification,
+    Verification,
 )
 from apps.device.models import (
     MeteringUnit,
@@ -68,7 +68,7 @@ class DeviceListAPIView(ListAPIView):
             .prefetch_related(  # "verifications")
                 Prefetch(
                     "verifications",
-                    queryset=DeviceVerification.objects.filter(
+                    queryset=Verification.objects.filter(
                         is_actual=False, is_delete=False
                     ),
                 )
