@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView, FormView, DetailView
 
 
-from apps.device.models import Organization, Device, DeviceVerification
+from apps.device.models import Organization, Device, Verification
 from apps.frontend.servises.db_services import (
     get_filter_organization,
     get_metering_units,
@@ -77,7 +77,7 @@ class DeviceDetailView(DataMixin, LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['verifications'] = DeviceVerification.objects.filter(device=self.object).filter(is_delete=False).order_by('-is_actual', '-verification_date')
+        context['verifications'] = Verification.objects.filter(device=self.object).filter(is_delete=False).order_by('-is_actual', '-verification_date')
 
         return context
 

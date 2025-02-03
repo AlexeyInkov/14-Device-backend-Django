@@ -7,20 +7,11 @@ from django.contrib.auth import get_user_model
 from django.db.models import Max
 
 from apps.device.models import (
-    Organization,
-    UserToOrganization,
-    Region,
-    TypeStreet,
-    Street,
-    Address,
-    MeteringUnit,
-    DeviceInstallationPoint,
-    TypeToRegistry,
     Device,
-    DeviceVerification
+    Verification
 )
 from apps.frontend.servises.arshin_servises import request_to_arshin
-from apps.frontend.servises.db_services import save_verification, get_or_create_instance
+from apps.frontend.servises.db_services import save_verification, write_row_to_db
 from apps.frontend.servises.file_services import check_csv_file
 from config import settings
 
@@ -31,8 +22,8 @@ logger = logging.getLogger(__name__)
 def refresh_valid_date() -> str:
     logger.info("run refresh_valid_date")
 
-    devices = DeviceVerification.objects.values('device').annotate(updated=Max('updated_at')).order_by('updated')[:50]
-    logger.debug(devices)
+    devices = Verification.objects.values('device').annotate(updated=Max('updated_at')).order_by('updated')[:50]
+    logger.debug(f"{devices=}")
     # devices = Device.objects.all().order_by("updated_at").only("id")[:10]
 
     for index, item in enumerate(devices):
@@ -87,84 +78,10 @@ def download_file_to_db(filename: str, user_id: str):
             writer = csv.DictWriter(csv_file, fieldnames=fieldnames, delimiter=";")
             writer.writeheader()
             count_error = 0
-
+            user = get_user_model().objects.get(id=user_id)
             for row in reader:
                 try:
-                    user = get_user_model().objects.get(id=user_id)
-                    customer = {
-                        "name": row["Наименование абонента"].strip(),
-                    }
-                    customer_id = get_or_create_instance(Organization, data=customer)
-
-                    user_to_organization = {'user': user, 'organization': customer_id}
-                    get_or_create_instance(UserToOrganization, data=user_to_organization)
-
-                    tso = {"name": row["ТСО"].strip()}
-                    tso_id = get_or_create_instance(Organization, data=tso)
-
-                    user_to_organization = {'user': user, 'organization': tso_id}
-                    get_or_create_instance(UserToOrganization, data=user_to_organization)
-
-                    region = {"name": row["Город"].strip()}
-                    region_id = get_or_create_instance(Region, data=region)
-
-                    type_street = {"name": row['Тип улицы'].strip()}
-                    if not type_street:
-                        type_street = " "
-                        print("-------------------------------Васька---------------------------")
-                    type_street_id = get_or_create_instance(TypeStreet, data=type_street)
-
-                    street = {"name": row["Наименование улицы"].strip()}
-                    if type_street_id:
-                        street.update({"type_street": type_street_id})
-                    street_id = get_or_create_instance(Street, data=street)
-
-                    address = {
-                        "region": region_id,
-                        "street": street_id,
-                        "house_number": row["№ дома"].strip(),
-                        "corp": row["Корп"].strip(),
-                        "liter": row["Лит"].strip(),
-
-                    }
-                    address_id = get_or_create_instance(Address, data=address)
-
-                    metering_unit = {
-                        'customer': customer_id,
-                        'tso': tso_id,
-                        'address': address_id,
-                        'itp': row["ТЦ"].strip(),
-                        'totem_number': row["№ Тотэм"].strip(),
-                    }
-                    metering_unit_id = get_or_create_instance(MeteringUnit, data=metering_unit)
-
-                    installation_point = {'name': row["Труба"].strip()}
-                    installation_point_id = get_or_create_instance(DeviceInstallationPoint, data=installation_point)
-
-                    type_of_file = {'device_type_file': row["Тип"].strip()}
-                    type_of_file_id = get_or_create_instance(TypeToRegistry, data=type_of_file)
-
-                    # mod = row["Ду"]
-                    # mod_id = req_api('device/mod/', body=mod, headers=headers)['id']
-
-                    device = {
-                        'metering_unit': metering_unit_id,
-                        'installation_point': installation_point_id,
-                        'type_of_file': type_of_file_id,
-                        'factory_number': row["Номер"].strip(),
-                    }
-                    device_id = get_or_create_instance(Device, data=device)
-
-                    data = row["Дата"].strip()
-                    if data:
-                        data = data.split('.')
-
-                        device_verification = {
-                            'device': device_id,
-                            'valid_date': '-'.join((data[2], data[1], data[0])),
-                        }
-                        print(device_verification)
-                        get_or_create_instance(DeviceVerification, data=device_verification)
+                    write_row_to_db(row, user)
                 except BaseException as e:
                     logger.info(e)
                     writer.writerow(row)
@@ -176,6 +93,7 @@ def download_file_to_db(filename: str, user_id: str):
     if count_error == 0:
         os.remove(filename)
         os.remove(error_filename)
+        return "Done"
 
 
 # TODO новые tasks
