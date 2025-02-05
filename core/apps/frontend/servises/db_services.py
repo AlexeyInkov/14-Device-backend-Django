@@ -26,6 +26,8 @@ def get_devices(mu_selected: str, metering_units: QuerySet) -> QuerySet:
     devices = (
         Device.objects.only(
             "installation_point__name",
+            "installation_point__order",
+            "si_name__order",
             "registry_number__registry_number",
             "type__type",
             "mod__mod",
@@ -33,9 +35,12 @@ def get_devices(mu_selected: str, metering_units: QuerySet) -> QuerySet:
             "type_of_file__numbers_registry",
             "factory_number",
             "notes",
+            "metering_unit_id"
         )
         .select_related("type_of_file")
         .select_related("installation_point")
+        .select_related("si_name")
+        .order_by("metering_unit_id", "installation_point__order", "si_name__order")
     )
     # Device filter
     if mu_selected and mu_selected != "all":
