@@ -173,7 +173,7 @@ LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "verbose": {
+        "django.server": {
             "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
             "style": "{",
         },
@@ -181,9 +181,11 @@ LOGGING = {
     "handlers": {
         "file": {
             "class": "logging.FileHandler",
+            "level": "INFO",
             "filename": BASE_DIR.parent / "log/django_info.log",
         },
         "console": {
+            "level": "DEBUG",
             "class": "logging.StreamHandler",
         },
     },
@@ -193,9 +195,9 @@ LOGGING = {
     },
     "loggers": {
         "django": {
-            "handlers": ["file"],
-            "level": "INFO",
-            "propagate": True,
+            "handlers": ["file", "console"],
+            # "level": "DEBUG",
+            "propagate": False,
         },
     },
 }
