@@ -180,14 +180,21 @@ def write_row_to_db(row, user):
         address_id, _ = Address.objects.get_or_create(**address)
 
         metering_unit = {
-            "customer": customer_id,
-            "tso": tso_id,
             "address": address_id,
             "itp": row["ТЦ"].strip(),
+        }
+        default = {
+            "customer": customer_id,
+            "tso": tso_id,
             "totem_number": row["№ Тотэм"].strip(),
         }
         logger.debug(metering_unit)
-        metering_unit_id, _ = MeteringUnit.objects.get_or_create(**metering_unit)
+        metering_unit_id, create = MeteringUnit.objects.get_or_create(**metering_unit, defaults=default)
+        if not create:
+            metering_unit_id.customer = customer_id
+            metering_unit_id.tso = tso_id
+            metering_unit_id.totem_number = row["№ Тотэм"].strip()
+            metering_unit_id.save()
 
         installation_point = {"name": row["Труба"].strip()}
         logger.debug(installation_point)
@@ -206,10 +213,17 @@ def write_row_to_db(row, user):
             "metering_unit": metering_unit_id,
             "installation_point": installation_point_id,
             "type_of_file": type_of_file_id,
-            "factory_number": row["Номер"].strip(),
         }
+        factory_number = row["Номер"].strip()
+        # TODO обработать номер для СПТ, КТПТР, СДВ-И
+
         logger.debug(device)
-        device_id, _ = Device.objects.get_or_create(**device)
+        device_id, create = Device.objects.get_or_create(factory_number=factory_number, defaults=device)
+        if not create:
+            device_id.metering_unit = metering_unit_id
+            device_id.installation_point = installation_point_id
+            device_id.type_of_file = type_of_file_id
+            device_id.save()
 
         data = row["Дата"].strip()
         if data:
@@ -220,4 +234,7 @@ def write_row_to_db(row, user):
                 "valid_date": "-".join((data[2], data[1], data[0])),
             }
             logger.debug(device_verification)
-            Verification.objects.create(**device_verification)
+            try:
+                Verification.objects.get_or_create(**device_verification)
+            except Exception as e:
+                logger.error(e)
