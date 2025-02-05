@@ -110,7 +110,6 @@ class TypeToRegistryAdmin(admin.ModelAdmin):
     # если пользователь открыл url 'csv-upload/',
     # то он выполнит этот метод,
     # который работает с формой
-    # TODO перенести в task
     def upload_csv(self, request):
         if request.method == "POST":
             #  т.к. это метод POST проводим валидацию данных
@@ -118,11 +117,12 @@ class TypeToRegistryAdmin(admin.ModelAdmin):
             if form.is_valid():
                 # сохраняем загруженный файл и делаем запись в базу
                 form_object = form.save()
-                # TODO разобраться с кодировкой
+                file_path = form_object.csv_file.path
+                file_encoding = get_file_encoding(form_object.csv_file.path)
                 if not check_csv_file(
-                    form_object.csv_file.path,
-                    settings.FIELDNAMES_FILE_TYPE,
-                    encoding="utf-8",
+                        file_path,
+                        settings.FIELDNAMES_FILE_TYPE,
+                        encoding=file_encoding,
                 ):
                     # обновляем страницу пользователя
                     # с информацией о какой-то ошибке
@@ -130,45 +130,10 @@ class TypeToRegistryAdmin(admin.ModelAdmin):
                     return HttpResponseRedirect(request.path_info)
 
                 # обработка csv файла
-                with open(
-                    form_object.csv_file.path, mode="r", encoding="utf-8", newline=""
-                ) as csv_file:
-                    rows = csv.DictReader(csv_file, delimiter=";")
-                    messages.success(request, "File loading ...")
-                    for row in rows:
-                        print(row)
-                        data = {
-                            "device_type_file": row[settings.FIELDNAMES_FILE_TYPE[0]],
-                            "numbers_registry": row[settings.FIELDNAMES_FILE_TYPE[1]],
-                        }
-                        with transaction.atomic():
-                            instance, created = TypeToRegistry.objects.get_or_create(
-                                device_type_file=data["device_type_file"]
-                            )
-
-                            if not instance.numbers_registry:
-                                instance.numbers_registry = data["numbers_registry"]
-                            else:
-                                cur = set(
-                                    map(int, instance.numbers_registry.split(","))
-                                )
-
-                                new = list(
-                                    map(int, data["numbers_registry"].split(","))
-                                )
-
-                                cur = cur.union(new)
-
-                                instance.numbers_registry = ",".join(map(str, cur))
-                            if created:
-                                logger.info(f"{instance} create")
-                            else:
-                                logger.info(f"{instance} update")
-                            instance.save()
-                os.remove(form_object.csv_file.path)
+                download_type_from_file_into_db.delay(file_path, file_encoding)
             # возвращаем пользователя на главную с сообщением об успехе
             url = reverse("admin:index")
-            messages.success(request, "Файл успешно импортирован")
+            messages.success(request, "Файл будет импортирован")
 
             return HttpResponseRedirect(url)
 
@@ -204,5 +169,5 @@ admin.site.register(RegistryNumber)
 admin.site.register(TypeName)
 admin.site.register(Modification)
 admin.site.register(Device, DeviceAdmin)
-admin.site.register(Verification, DeviceVerificationAdmin)
+admin.site.register(Verification, VerificationAdmin)
 admin.site.register(TypeToRegistry, TypeToRegistryAdmin)
