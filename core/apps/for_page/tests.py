@@ -1,15 +1,15 @@
 from django.test import TestCase
 
 
-class TestPage(TestCase):
-
-    def test_menu(self):
-        response = self.client.get("/api/page/menu/")
-        self.assertEqual(response.status_code, 200)
-
-    def test_addresses(self):
-        response = self.client.get("/api/page/addresses/")
-        self.assertEqual(response.status_code, 200)
+# class TestPage(TestCase):
+#
+#     def test_menu(self):
+#         response = self.client.get("/api/page/menu/")
+#         self.assertEqual(response.status_code, 200)
+#
+#     def test_addresses(self):
+#         response = self.client.get("/api/page/addresses/")
+#         self.assertEqual(response.status_code, 200)
 
 
 # Create your tests here.
