@@ -144,7 +144,7 @@ class RegistryNumber(BaseTimeModel):
     registry_number = models.CharField(unique=True, max_length=10)
 
     class Meta:
-        verbose_name_plural = "device_registry_numbers"
+        verbose_name_plural = "registry_numbers"
 
     def __str__(self):
         return str(self.registry_number)
@@ -154,7 +154,7 @@ class TypeName(BaseTimeModel):
     type = models.CharField(max_length=100, unique=True)
 
     class Meta:
-        verbose_name_plural = "device_types"
+        verbose_name_plural = "types"
 
     def __str__(self):
         return self.type
@@ -164,7 +164,7 @@ class Modification(BaseTimeModel):
     mod = models.CharField(max_length=100, unique=True)
 
     class Meta:
-        verbose_name_plural = "device_mods"
+        verbose_name_plural = "mods"
 
     def __str__(self):
         return self.mod
@@ -175,7 +175,7 @@ class InstallationPoint(BaseTimeModel):
     order = models.PositiveSmallIntegerField(default=0)
 
     class Meta:
-        verbose_name_plural = "device_installation_points"
+        verbose_name_plural = "installation_points"
         ordering = ['order']
 
     def __str__(self):
@@ -298,7 +298,7 @@ class Verification(BaseTimeModel):
     is_delete = models.BooleanField(default=False)
 
     class Meta:
-        verbose_name_plural = "device_verifications"
+        verbose_name_plural = "verifications"
 
     def save(self, *args, **kwargs):
         """
