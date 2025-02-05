@@ -1,9 +1,6 @@
-import csv
 import logging
-import os
 
 from django.contrib import admin, messages
-from django.db import transaction
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import path, reverse
@@ -22,13 +19,15 @@ from .models import (
     Organization,
     # device
     InstallationPoint,
+    SIName,
     RegistryNumber,
     TypeName,
     Modification,
     Device,
     Verification,
 )
-from ..frontend.servises.file_services import check_csv_file
+from ..frontend.servises.file_services import check_csv_file, get_file_encoding
+from ..frontend.tasks import download_type_from_file_into_db
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +46,10 @@ class OrganizationAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
 
 
+class VerificationsInLineAdmin(admin.StackedInline):
+    model = Verification
+
+
 class DeviceAdmin(admin.ModelAdmin):
     list_display = (
         "id",
@@ -61,10 +64,10 @@ class DeviceAdmin(admin.ModelAdmin):
         "updated_at",
         "installation_point",
     )
-    # TODO добавить список поверок
+    inlines = [VerificationsInLineAdmin]
 
 
-class DeviceVerificationAdmin(admin.ModelAdmin):
+class VerificationAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "device",
@@ -174,6 +177,20 @@ class TypeToRegistryAdmin(admin.ModelAdmin):
         return render(request, "admin/csv_import_page.html", {"form": form})
 
 
+class SINameAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'order',
+    )
+
+
+class InstallationPointAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'order',
+    )
+
+
 admin.site.register(UserToOrganization)
 admin.site.register(Address)
 admin.site.register(MeteringUnit)
@@ -181,7 +198,8 @@ admin.site.register(Region)
 admin.site.register(TypeStreet)
 admin.site.register(Street)
 admin.site.register(Organization, OrganizationAdmin)
-admin.site.register(InstallationPoint)
+admin.site.register(InstallationPoint, InstallationPointAdmin)
+admin.site.register(SIName, SINameAdmin)
 admin.site.register(RegistryNumber)
 admin.site.register(TypeName)
 admin.site.register(Modification)
