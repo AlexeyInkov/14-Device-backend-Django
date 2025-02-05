@@ -172,9 +172,11 @@ class Modification(BaseTimeModel):
 
 class InstallationPoint(BaseTimeModel):
     name = models.CharField(max_length=100, unique=True)
+    order = models.PositiveSmallIntegerField(default=0)
 
     class Meta:
         verbose_name_plural = "device_installation_points"
+        ordering = ['order']
 
     def __str__(self):
         return self.name
@@ -196,6 +198,18 @@ class TypeToRegistryImport(models.Model):
     date_added = models.DateTimeField(auto_now_add=True)
 
 
+class SIName(BaseTimeModel):
+    name = models.CharField(max_length=100, unique=True)
+    order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        verbose_name_plural = "si_names"
+        ordering = ["order"]
+
+    def __str__(self):
+        return self.name
+
+
 class Device(BaseTimeModel):
     metering_unit = models.ForeignKey(
         MeteringUnit,
@@ -208,6 +222,13 @@ class Device(BaseTimeModel):
         on_delete=models.PROTECT,
         null=True,
         related_name="devices",
+    )
+    si_name = models.ForeignKey(
+        SIName,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="devices"
     )
     registry_number = models.ForeignKey(
         RegistryNumber,
