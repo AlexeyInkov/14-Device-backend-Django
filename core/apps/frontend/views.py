@@ -80,7 +80,7 @@ class DeviceDetailView(DataMixin, LoginRequiredMixin, DetailView):
 
         context["verifications"] = (
             Verification.objects.filter(device=self.object)
-            .filter(is_delete=False)
+            .filter(is_published=True)
             .order_by("-is_actual", "-verification_date")
         )
         return context
