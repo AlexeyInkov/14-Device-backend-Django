@@ -95,11 +95,11 @@ def device_verifications_update_view(request, pk):
         formset = DeviceVerificationFormset(request.POST, instance=device)
         if formset.is_valid():
             formset.save()
-            return redirect('parent_view', pk=device.id)
+            return redirect('frontend:detail_device', pk=device.id)
     else:
         formset =DeviceVerificationFormset(instance=device)
 
-    return render(request, 'modal_device_verifications_update.html', {
+    return render(request, 'frontend/includes/modal_device_verifications_update.html', {
         'device': device,
         'formset': formset})
 
