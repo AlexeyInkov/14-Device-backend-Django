@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404, render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, FormView, DetailView
 
@@ -11,10 +11,10 @@ from apps.frontend.servises.db_services import (
     get_devices,
     get_customers,
 )
-from .forms import UploadFileForm
+from .forms import UploadFileForm, DeviceVerificationFormset
 from .mixins import DataMixin
 from .servises.file_services import handle_uploaded_file
-from .tasks import download_file_to_db, refresh_valid_date
+from .tasks import download_device_from_file_into_db, refresh_valid_date
 
 
 class IndexView(DataMixin, LoginRequiredMixin, TemplateView, FormView):
@@ -29,7 +29,7 @@ class IndexView(DataMixin, LoginRequiredMixin, TemplateView, FormView):
         files = form.cleaned_data["file_field"]
         for f in files:
             handle_uploaded_file(f)
-            download_file_to_db.delay(f.name, self.request.user.id)
+            download_device_from_file_into_db.delay(f.name, self.request.user.id)
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
@@ -67,7 +67,6 @@ class IndexView(DataMixin, LoginRequiredMixin, TemplateView, FormView):
                 # "dev_selected": dev_selected,
             }
         )
-
         return context
 
 
@@ -84,8 +83,25 @@ class DeviceDetailView(DataMixin, LoginRequiredMixin, DetailView):
             .filter(is_delete=False)
             .order_by("-is_actual", "-verification_date")
         )
-
         return context
+
+
+def device_verifications_update_view(request, pk):
+    """Edit children and their addresses for a single parent."""
+
+    device = get_object_or_404(Device, id=pk)
+
+    if request.method == 'POST':
+        formset = DeviceVerificationFormset(request.POST, instance=device)
+        if formset.is_valid():
+            formset.save()
+            return redirect('parent_view', pk=device.id)
+    else:
+        formset =DeviceVerificationFormset(instance=device)
+
+    return render(request, 'modal_device_verifications_update.html', {
+        'device': device,
+        'formset': formset})
 
 
 def refresh_valid_date_view(request):
