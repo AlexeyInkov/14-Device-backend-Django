@@ -256,7 +256,7 @@ HEADERS_VERIFICATION = {
 HEADERS_VERIFICATION_UPDATE = HEADERS_VERIFICATION.copy()
 HEADERS_VERIFICATION_UPDATE.update({
     "is_published": "Показывать",
-    "id": "№ п/п",
+    "empty": "",
     "delete": "Удалить",
 }
 )
@@ -289,4 +289,4 @@ FIELDNAMES_FILE_MU = [
     "ТСО",
     "№ Тотэм",
 ]
-FIELDNAMES_FILE_TYPE = ["Тип", "Номер в госреестре"]
+FIELDNAMES_FILE_TYPE = ["Тип", "Номер в госреестре", "Наименование СИ"]
