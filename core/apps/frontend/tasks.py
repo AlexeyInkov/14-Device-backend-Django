@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.db.models import Max
 
-from apps.device.models import Device, Verification, TypeToRegistry
+from apps.device.models import Device, Verification, TypeToRegistry, SIName
 from apps.frontend.servises.arshin_servises import request_to_arshin
 from apps.frontend.servises.db_services import save_verification, write_row_to_db
 from apps.frontend.servises.file_services import check_csv_file, get_file_encoding
@@ -115,24 +115,30 @@ def download_type_from_file_into_db(file_path: str, file_encoding: str) -> None:
 
         for row in rows:
             logger.debug(row)
-            data = {
-                "device_type_file": row[settings.FIELDNAMES_FILE_TYPE[0]],
-                "numbers_registry": row[settings.FIELDNAMES_FILE_TYPE[1]],
-            }
+
+            device_type_file = row[settings.FIELDNAMES_FILE_TYPE[0]]
+            numbers_registry = row[settings.FIELDNAMES_FILE_TYPE[1]]
+            si_name = row[settings.FIELDNAMES_FILE_TYPE[2]]
+
             with transaction.atomic():
+                si_name, _ = SIName.objects.get_or_create(name=si_name)
+
                 instance, created = TypeToRegistry.objects.get_or_create(
-                    device_type_file=data["device_type_file"]
+                    device_type_file=device_type_file,
+                    defaults={'si_name': si_name}
                 )
+                if not created:
+                    instance.si_name = si_name
 
                 if not instance.numbers_registry:
-                    instance.numbers_registry = data["numbers_registry"]
+                    instance.numbers_registry = numbers_registry
                 else:
                     cur = set(
                         map(int, instance.numbers_registry.split(","))
                     )
 
                     new = list(
-                        map(int, data["numbers_registry"].split(","))
+                        map(int, numbers_registry.split(","))
                     )
 
                     cur = cur.union(new)
