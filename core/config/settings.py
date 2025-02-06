@@ -244,7 +244,6 @@ HEADERS_DEVICE = {
     "notes": "Примечание",
 }
 HEADERS_VERIFICATION = {
-    "id": "№ п/п",
     "org_title": "Поверитель",
     "mit_mitnumber": "№ в реестре",
     "mi_mitype": "Тип",
@@ -253,8 +252,14 @@ HEADERS_VERIFICATION = {
     "verification_date": "Дата поверки",
     "valid_date": "Поверка до",
     "is_actual": "Актуальна",
-    "is_delete": "Будет удалена",
 }
+HEADERS_VERIFICATION_UPDATE = HEADERS_VERIFICATION.copy()
+HEADERS_VERIFICATION_UPDATE.update({
+    "is_published": "Показывать",
+    "id": "№ п/п",
+    "delete": "Удалить",
+}
+)
 CONVERT_VERIF_FIELDS = {
     "mi_mititle": "mi.mititle",
     "mit_mitnumber": "mi.mitnumber",

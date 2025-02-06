@@ -18,47 +18,9 @@
   <title>{{ title }}</title>
 </head>
 <body>
-<div class="container" style="height: 100vh">
-  <!--- auth windows --->
-  {% block auth %}
-    <div class="row top_bar">
-      <div class="col-12">
-        {% include 'frontend/includes/header-nav-bar.html' %}
-      </div>
-    </div>
-    <div class="row content">
-      <div id="sidebar-content" class="col-3 menu-bar">
+<div class="container">
+  {% block content %}
 
-        <!--- sidebar menu --->
-        {% include "frontend/includes/sidebarMenu.html" %}
-
-      </div>
-      <div class="col-9">
-        <div class="row ">
-          <div id="addresses-content" class="col addresses">
-
-            <!--- Addresses --->
-            {% include "frontend/includes/list_metering_units.html" %}
-
-          </div>
-        </div>
-        <div class="row ">
-          <div id="devices-content" class="col devices">
-
-            <!--- Devices --->
-            {% include "frontend/includes/list_devices.html" %}
-
-          </div>
-        </div>
-      </div>
-    </div>
-    <footer class="row footer">
-      <div class="col-12">
-        {% block footer %}
-          <div class="bg-secondary text-center text-light">2024 © AlexeyInkov</div>
-        {% endblock %}
-      </div>
-    </footer>
   {% endblock %}
 </div>
 <!-- script bootstrap -->
