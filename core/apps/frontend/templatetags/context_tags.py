@@ -1,7 +1,7 @@
 from django import template
 from django.db.models import QuerySet
 
-from config.settings import HEADERS_ADDRESS, HEADERS_DEVICE, HEADERS_VERIFICATION
+from config.settings import HEADERS_ADDRESS, HEADERS_DEVICE, HEADERS_VERIFICATION, HEADERS_VERIFICATION_UPDATE
 
 register = template.Library()
 
@@ -19,6 +19,11 @@ def get_headers_device() -> dict:
 @register.simple_tag(name="get_headers_verification")
 def get_headers_verification() -> dict:
     return HEADERS_VERIFICATION
+
+
+@register.simple_tag(name="get_headers_verification_update")
+def get_headers_verification_update() -> dict:
+    return HEADERS_VERIFICATION_UPDATE
 
 
 @register.filter
