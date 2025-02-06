@@ -26,11 +26,68 @@ class UploadFileForm(forms.Form):
     file_field = MultipleFileField()
 
 
-class VerificationForm(forms.Form):
+class VerificationForm(forms.ModelForm):
     class Meta:
         model = Verification
-        fields = '__all__'
-        widgets = {}
+        fields = (
+            'org_title',
+            'mit_mitnumber',
+            'mi_mitype',
+            'mi_modification',
+            'mi_number',
+            'verification_date',
+            'valid_date',
+            'is_actual',
+            'is_published',
+        )
+        exclude = ('id', 'created_at', 'updated_at', 'device')
+        widgets = {
+            'org_title': forms.TextInput(attrs={
+                'readonly': True,
+                "class": 'form-control',
+                'style': {}
+            }),
+            'mit_mitnumber': forms.TextInput(attrs={
+                'readonly': True,
+                "class": 'form-control',
+                'style': {}
+            }),
+            'mi_mitype': forms.TextInput(attrs={
+                'readonly': True,
+                "class": 'form-control',
+                'style': {}
+            }),
+            'mi_modification': forms.TextInput(attrs={
+                'readonly': True,
+                "class": 'form-control',
+                'style': {}
+            }),
+            'mi_number': forms.TextInput(attrs={
+                'readonly': True,
+                "class": 'form-control',
+                'style': {}
+            }),
+            'verification_date': forms.DateInput(attrs={
+                'readonly': True,
+                "class": 'form-control',
+                'style': {}
+            }),
+            'valid_date': forms.DateInput(attrs={
+                'readonly': True,
+                "class": 'form-control',
+                'style': {}
+            }),
+            'is_actual': forms.CheckboxInput(attrs={
+                'readonly': False,
+                "class": '',
+                'style': {}
+            }),
+            'is_published': forms.CheckboxInput(attrs={
+                'readonly': False,
+                "class": '',
+                'style': {}
+            }),
+        }
 
 
 DeviceVerificationFormset = inlineformset_factory(
@@ -38,5 +95,5 @@ DeviceVerificationFormset = inlineformset_factory(
     Verification,
     form=VerificationForm,
     extra=0,
-    can_delete=False,
+    can_delete=True,
 )
