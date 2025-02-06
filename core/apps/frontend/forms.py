@@ -1,4 +1,7 @@
 from django import forms
+from django.forms import inlineformset_factory
+
+from apps.device.models import Verification, Device
 
 
 class MultipleFileInput(forms.ClearableFileInput):
@@ -21,3 +24,19 @@ class MultipleFileField(forms.FileField):
 
 class UploadFileForm(forms.Form):
     file_field = MultipleFileField()
+
+
+class VerificationForm(forms.Form):
+    class Meta:
+        model = Verification
+        fields = '__all__'
+        widgets = {}
+
+
+DeviceVerificationFormset = inlineformset_factory(
+    Device,
+    Verification,
+    form=VerificationForm,
+    extra=0,
+    can_delete=False,
+)
