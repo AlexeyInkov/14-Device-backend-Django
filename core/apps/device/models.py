@@ -182,9 +182,28 @@ class InstallationPoint(BaseTimeModel):
         return self.name
 
 
+class SIName(BaseTimeModel):
+    name = models.CharField(max_length=100, unique=True)
+    order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        verbose_name_plural = "si_names"
+        ordering = ["order"]
+
+    def __str__(self):
+        return self.name
+
+
 class TypeToRegistry(BaseTimeModel):
     device_type_file = models.CharField(max_length=100, unique=True)
     numbers_registry = models.CharField(max_length=100)
+    si_name = models.ForeignKey(
+        SIName,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="typetoreg",
+    )
 
     class Meta:
         verbose_name_plural = "types_to_registry"
@@ -196,18 +215,6 @@ class TypeToRegistry(BaseTimeModel):
 class TypeToRegistryImport(models.Model):
     csv_file = models.FileField(upload_to="uploads/")
     date_added = models.DateTimeField(auto_now_add=True)
-
-
-class SIName(BaseTimeModel):
-    name = models.CharField(max_length=100, unique=True)
-    order = models.PositiveSmallIntegerField(default=0)
-
-    class Meta:
-        verbose_name_plural = "si_names"
-        ordering = ["order"]
-
-    def __str__(self):
-        return self.name
 
 
 class Device(BaseTimeModel):
@@ -222,13 +229,6 @@ class Device(BaseTimeModel):
         on_delete=models.PROTECT,
         null=True,
         related_name="devices",
-    )
-    si_name = models.ForeignKey(
-        SIName,
-        on_delete=models.PROTECT,
-        null=True,
-        blank=True,
-        related_name="devices"
     )
     registry_number = models.ForeignKey(
         RegistryNumber,

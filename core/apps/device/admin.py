@@ -91,6 +91,7 @@ class TypeToRegistryAdmin(admin.ModelAdmin):
         "id",
         "device_type_file",
         "numbers_registry",
+        "si_name",
         "created_at",
         "updated_at",
     )
@@ -98,6 +99,7 @@ class TypeToRegistryAdmin(admin.ModelAdmin):
         "id",
         "device_type_file",
         "numbers_registry",
+        "si_name",
         "created_at",
         "updated_at",
     )
