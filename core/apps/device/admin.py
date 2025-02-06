@@ -80,7 +80,7 @@ class VerificationAdmin(admin.ModelAdmin):
         "verification_date",
         "valid_date",
         "is_actual",
-        "is_delete",
+        "is_published",
         "created_at",
         "updated_at",
     )
