@@ -237,10 +237,11 @@ HEADERS_DEVICE = {
     "id": "№ п/п",
     "installation_point": "Место установки",
     "registry_number": "№ в реестре",
-    "device_type": "Тип",
+    "type": "Тип",
+    "modifications": "Модификация",
     "factory_number": "Зав. №",
-    "verification_date": "Дата поверки",
-    "verifications.valid_date": "Поверка до",
+    # "verification_date": "Дата поверки",
+    "valid_date": "Поверка до",
     "notes": "Примечание",
 }
 HEADERS_VERIFICATION = {
