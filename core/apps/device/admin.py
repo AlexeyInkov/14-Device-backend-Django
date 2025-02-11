@@ -9,7 +9,6 @@ from config import settings
 from .forms import TypeToRegistryImportForm
 from .models import (
     # metering_unit
-    TypeToRegistry,
     UserToOrganization,
     Address,
     MeteringUnit,
@@ -22,9 +21,10 @@ from .models import (
     SIName,
     RegistryNumber,
     TypeName,
-    Modification,
+    TypeRegistry,
     Device,
     Verification,
+    TypeToRegistryImport
 )
 from ..frontend.servises.file_services import check_csv_file, get_file_encoding
 from ..frontend.tasks import download_type_from_file_into_db
@@ -54,15 +54,18 @@ class DeviceAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "metering_unit",
-        "type_of_file",
+        "installation_point",
+        "name",
+        # "type_of_file",
         "registry_number",
         "type",
-        "mod",
+        "modification",
         "factory_number",
+        "valid_date",
         "notes",
         "created_at",
         "updated_at",
-        "installation_point",
+
     )
     inlines = [VerificationsInLineAdmin]
 
@@ -86,20 +89,20 @@ class VerificationAdmin(admin.ModelAdmin):
     )
 
 
-class TypeToRegistryAdmin(admin.ModelAdmin):
+class TypeRegistryAdmin(admin.ModelAdmin):
     list_display = (
         "id",
-        "device_type_file",
-        "numbers_registry",
-        "si_name",
+        "type",
+        "number_registry",
+
         "created_at",
         "updated_at",
     )
     ordering = (
         "id",
-        "device_type_file",
-        "numbers_registry",
-        "si_name",
+        "type",
+        "number_registry",
+
         "created_at",
         "updated_at",
     )
@@ -149,6 +152,7 @@ class SINameAdmin(admin.ModelAdmin):
         'name',
         'order',
     )
+    ordering = ('order',)
 
 
 class InstallationPointAdmin(admin.ModelAdmin):
@@ -156,6 +160,14 @@ class InstallationPointAdmin(admin.ModelAdmin):
         'name',
         'order',
     )
+    ordering = ('order',)
+
+
+class TypeNameAdmin(admin.ModelAdmin):
+    list_display = (
+        'type', 'name',
+    )
+    ordering = ('name__order', "type")
 
 
 admin.site.register(UserToOrganization)
@@ -168,8 +180,8 @@ admin.site.register(Organization, OrganizationAdmin)
 admin.site.register(InstallationPoint, InstallationPointAdmin)
 admin.site.register(SIName, SINameAdmin)
 admin.site.register(RegistryNumber)
-admin.site.register(TypeName)
-admin.site.register(Modification)
+admin.site.register(TypeName, TypeNameAdmin)
+admin.site.register(TypeToRegistryImport)
 admin.site.register(Device, DeviceAdmin)
 admin.site.register(Verification, VerificationAdmin)
-admin.site.register(TypeToRegistry, TypeToRegistryAdmin)
+admin.site.register(TypeRegistry, TypeRegistryAdmin)

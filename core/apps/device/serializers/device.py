@@ -5,10 +5,9 @@ from apps.device.models import (
     InstallationPoint,
     RegistryNumber,
     TypeName,
-    Modification,
     Device,
     Verification,
-    TypeToRegistry,
+    TypeRegistry,
 )
 
 
@@ -30,25 +29,25 @@ class DeviceTypeSerializer(MySerializer):
         fields = "id", "type"
 
 
-class DeviceModSerializer(MySerializer):
-    class Meta:
-        model = Modification
-        fields = "id", "mod"
+# class DeviceModSerializer(MySerializer):
+#     class Meta:
+#         model = Modification
+#         fields = "id", "mod"
 
 
 class TypeToRegistrySerializer(MySerializer):
     numbers_registry = serializers.CharField(required=False)
 
     class Meta:
-        model = TypeToRegistry
-        fields = "id", "device_type_file", "numbers_registry"
+        model = TypeRegistry
+        fields = "id", "type", "numbers_registry"
 
 
 class DeviceSerializer(MySerializer):
 
     registry_number = DeviceRegistryNumberSerializer(required=False)
     type = DeviceTypeSerializer(required=False)
-    mod = DeviceModSerializer(required=False)
+    # mod = DeviceModSerializer(required=False)
     nodes = serializers.CharField(required=False)
 
     class Meta:
@@ -59,7 +58,7 @@ class DeviceSerializer(MySerializer):
             "installation_point",
             "registry_number",
             "type",
-            "mod",
+            # "mod",
             "type_of_file",
             "factory_number",
             "nodes",

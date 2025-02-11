@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from django.db import models
+from django.db import models, transaction
 from slugify import slugify
 
 
@@ -150,8 +150,26 @@ class RegistryNumber(BaseTimeModel):
         return str(self.registry_number)
 
 
+class SIName(BaseTimeModel):
+    name = models.CharField(max_length=100, unique=True)
+    order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        verbose_name_plural = "si_names"
+        ordering = ["order"]
+
+    def __str__(self):
+        return self.name
+
+
 class TypeName(BaseTimeModel):
     type = models.CharField(max_length=100, unique=True)
+    name = models.ForeignKey(
+        SIName,
+        null=True,
+        on_delete=models.PROTECT,
+        related_name="types",
+    )
 
     class Meta:
         verbose_name_plural = "types"
@@ -161,13 +179,19 @@ class TypeName(BaseTimeModel):
 
 
 class Modification(BaseTimeModel):
-    mod = models.CharField(max_length=100, unique=True)
+    modification = models.CharField(max_length=100, unique=True)
+    type = models.ForeignKey(
+        TypeName,
+        null=True,
+        on_delete=models.PROTECT,
+        related_name="modifications",
+    )
 
     class Meta:
         verbose_name_plural = "mods"
 
     def __str__(self):
-        return self.mod
+        return self.modification
 
 
 class InstallationPoint(BaseTimeModel):
@@ -182,34 +206,25 @@ class InstallationPoint(BaseTimeModel):
         return self.name
 
 
-class SIName(BaseTimeModel):
-    name = models.CharField(max_length=100, unique=True)
-    order = models.PositiveSmallIntegerField(default=0)
-
-    class Meta:
-        verbose_name_plural = "si_names"
-        ordering = ["order"]
-
-    def __str__(self):
-        return self.name
-
-
-class TypeToRegistry(BaseTimeModel):
-    device_type_file = models.CharField(max_length=100, unique=True)
-    numbers_registry = models.CharField(max_length=100)
-    si_name = models.ForeignKey(
-        SIName,
-        on_delete=models.PROTECT,
+class TypeRegistry(BaseTimeModel):
+    type = models.ForeignKey(
+        TypeName,
         null=True,
-        blank=True,
-        related_name="typetoreg",
+        on_delete=models.PROTECT,
+        related_name="numbers_registry",
+    )
+    number_registry = models.ForeignKey(
+        RegistryNumber,
+        null=True,
+        on_delete=models.PROTECT,
+        related_name="types",
     )
 
     class Meta:
-        verbose_name_plural = "types_to_registry"
+        verbose_name_plural = "types_registry"
 
     def __str__(self):
-        return f"{self.device_type_file} - ({self.numbers_registry})"
+        return f"{self.type.type} ({self.number_registry.registry_number})"
 
 
 class TypeToRegistryImport(models.Model):
@@ -230,6 +245,12 @@ class Device(BaseTimeModel):
         null=True,
         related_name="devices",
     )
+    name = models.ForeignKey(
+        SIName,
+        on_delete=models.PROTECT,
+        null=True,
+        related_name="devices",
+    )
     registry_number = models.ForeignKey(
         RegistryNumber,
         on_delete=models.PROTECT,
@@ -244,20 +265,17 @@ class Device(BaseTimeModel):
         blank=True,
         related_name="devices",
     )
-    mod = models.ForeignKey(
+    modification = models.ForeignKey(
         Modification,
         on_delete=models.PROTECT,
         null=True,
         blank=True,
         related_name="devices",
     )
-    type_of_file = models.ForeignKey(
-        TypeToRegistry,
-        on_delete=models.PROTECT,
-        null=True,
-        related_name="devices",
-    )
+
     factory_number = models.CharField(max_length=100, unique=True)
+
+    valid_date = models.DateField(default="1900-01-01")
 
     notes = models.CharField(
         max_length=100,
@@ -268,15 +286,8 @@ class Device(BaseTimeModel):
     class Meta:
         verbose_name_plural = "devices"
 
-    @property
-    def device_type(self):
-        if self.registry_number:
-            return f"{self.type.type}({str(self.mod.mod)})"
-        else:
-            return f"{self.type_of_file.device_type_file}"
-
     def __str__(self):
-        return f"{str(self.type_of_file)} №{self.factory_number}"
+        return f"{str(self.type)} №{self.factory_number}"
 
 
 class Verification(BaseTimeModel):
@@ -295,7 +306,7 @@ class Verification(BaseTimeModel):
     verification_date = models.DateField(default="1900-01-01")
     valid_date = models.DateField(default="1900-01-01")
     is_actual = models.BooleanField(default=False)
-    is_published = models.BooleanField(default=False)
+    is_published = models.BooleanField(default=True)
 
     class Meta:
         verbose_name_plural = "verifications"
@@ -306,20 +317,24 @@ class Verification(BaseTimeModel):
         """
         # TODO перенести в celery tasks и atomic transactions
         if self.is_actual:
-            for verification in Verification.objects.filter(device=self.device):
-                verification.is_actual = False
-                verification.save()
-            self.is_actual = True
-            # device_type, _ = DeviceType.objects.get_or_create(type=self.mi_mitype)
-            if self.mi_modification:
-                self.device.mod = Modification.objects.get_or_create(
-                    mod=self.mi_modification
-                )[0]
-            if self.mi_mitype:
-                self.device.type = TypeName.objects.get_or_create(type=self.mi_mitype)[
-                    0
-                ]
-            self.device.save()
+            with transaction.atomic():
+                for verification in Verification.objects.filter(device=self.device):
+                    verification.is_actual = False
+                    verification.save()
+                self.is_actual = True
+                device = Device.objects.get(pk=self.device)
+                if self.mit_mitnumber:
+                    device_registry_number = RegistryNumber.objects.get_or_create(registry_number=self.mit_mitnumber)[0]
+                    device.registry_number = device_registry_number
+                if self.mi_mitype:
+                    device_type = TypeName.objects.get_or_create(type=self.mi_mitype)[0]
+                    device.type = device_type
+                if self.mi_modification:
+                    device_modification = Modification.objects.get_or_create(modification=self.mi_modification, type=device.type)[0]
+                    device.modification = device_modification
+                if self.mit_mitnumber and self.mi_mitype:
+                    TypeRegistry.objects.get_or_create(type=self.mi_mitype, registry_number=self.mit_mitnumber)
+                self.device.save()
 
         super().save(*args, **kwargs)
 

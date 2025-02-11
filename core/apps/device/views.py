@@ -16,8 +16,8 @@ from apps.device.models import (
     InstallationPoint,
     RegistryNumber,
     TypeName,
-    Modification,
-    TypeToRegistry,
+    # Modification,
+    TypeRegistry,
     Verification,
 )
 from .serializers import (
@@ -25,7 +25,7 @@ from .serializers import (
     DeviceInstallationPointSerializer,
     DeviceRegistryNumberSerializer,
     DeviceTypeSerializer,
-    DeviceModSerializer,
+    # DeviceModSerializer,
     TypeToRegistrySerializer,
     DeviceVerificationSerializer,
 )
@@ -106,14 +106,14 @@ class DeviceTypeViewSet(CreateModelViewSetMixin, ModelViewSet):
     permission_classes = [IsAuthenticated, IsAdminUser]
 
 
-class DeviceModViewSet(CreateModelViewSetMixin, ModelViewSet):
-    queryset = Modification.objects.all()
-    serializer_class = DeviceModSerializer
-    permission_classes = [IsAuthenticated, IsAdminUser]
+# class DeviceModViewSet(CreateModelViewSetMixin, ModelViewSet):
+#     queryset = Modification.objects.all()
+#     serializer_class = DeviceModSerializer
+#     permission_classes = [IsAuthenticated, IsAdminUser]
 
 
 class TypeToRegistryViewSet(CreateModelViewSetMixin, ModelViewSet):
-    queryset = TypeToRegistry.objects.all()
+    queryset = TypeRegistry.objects.all()
     serializer_class = TypeToRegistrySerializer
     permission_classes = [IsAuthenticated, IsAdminUser]
 

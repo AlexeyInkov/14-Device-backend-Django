@@ -15,7 +15,7 @@ from apps.device.models import (
     Address,
     MeteringUnit,
     InstallationPoint,
-    TypeToRegistry,
+    TypeRegistry, TypeName,
 )
 from config.settings import CONVERT_VERIF_FIELDS
 
@@ -27,20 +27,22 @@ def get_devices(mu_selected: str, metering_units: QuerySet) -> QuerySet:
         Device.objects.only(
             "installation_point__name",
             "installation_point__order",
-            "si_name__order",
+            "name__order",
             "registry_number__registry_number",
             "type__type",
-            "mod__mod",
-            "type_of_file__device_type_file",
-            "type_of_file__numbers_registry",
+            "modification__modification",
             "factory_number",
             "notes",
-            "metering_unit_id"
+            "metering_unit_id",
+            "valid_date"
         )
-        .select_related("type_of_file")
+        .select_related("registry_number")
+        .select_related("type")
+        .select_related("modification")
         .select_related("installation_point")
-        .select_related("si_name")
-        .order_by("metering_unit_id", "installation_point__order", "si_name__order")
+        .select_related("name")
+        .select_related("metering_unit")
+        .order_by("metering_unit_id", "installation_point__order", "name__order")
     )
     # Device filter
     if mu_selected and mu_selected != "all":
@@ -202,39 +204,33 @@ def write_row_to_db(row, user):
             **installation_point
         )
 
-        type_of_file = {"device_type_file": row["Тип"].strip()}
-        logger.debug(type_of_file)
-        type_of_file_id, _ = TypeToRegistry.objects.get_or_create(**type_of_file)
+        device_type = row["Тип"].strip()
+        logger.debug(device_type)
+        type_id, _ = TypeName.objects.get_or_create(type=device_type)
 
-        # mod = row["Ду"]
+        # mod = row["Ду"].strip()
         # mod_id = req_api('device/mod/', body=mod, headers=headers)['id']
 
+        data = row["Дата"].strip()
+        if data:
+            data = data.split(".")
+            valid_date = "-".join((data[2], data[1], data[0]))
         device = {
             "metering_unit": metering_unit_id,
             "installation_point": installation_point_id,
-            "type_of_file": type_of_file_id,
+            "type": type_id,
+            "valid_date": valid_date,
         }
         factory_number = row["Номер"].strip()
         # TODO обработать номер для СПТ, КТПТР, СДВ-И
 
         logger.debug(device)
         device_id, create = Device.objects.get_or_create(factory_number=factory_number, defaults=device)
+
         if not create:
             device_id.metering_unit = metering_unit_id
             device_id.installation_point = installation_point_id
-            device_id.type_of_file = type_of_file_id
+            device_id.type_of_file = type_id
+            if valid_date>device_id.valid_date:
+                device_id.valid_date = valid_date
             device_id.save()
-
-        data = row["Дата"].strip()
-        if data:
-            data = data.split(".")
-
-            device_verification = {
-                "device": device_id,
-                "valid_date": "-".join((data[2], data[1], data[0])),
-            }
-            logger.debug(device_verification)
-            try:
-                Verification.objects.get_or_create(**device_verification)
-            except Exception as e:
-                logger.error(e)

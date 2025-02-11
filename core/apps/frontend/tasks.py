@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.db.models import Max
 
-from apps.device.models import Device, Verification, TypeToRegistry, SIName
+from apps.device.models import Device, Verification, TypeRegistry, SIName, TypeName, RegistryNumber
 from apps.frontend.servises.arshin_servises import request_to_arshin
 from apps.frontend.servises.db_services import save_verification, write_row_to_db
 from apps.frontend.servises.file_services import check_csv_file, get_file_encoding
@@ -25,18 +25,26 @@ def refresh_valid_date() -> str:
         .annotate(updated=Max("updated_at"))
         .order_by("updated")[:50]
     )
+    if not devices:
+        devices = Device.objects.all().order_by("updated_at").prefetch_related("type__numbers_registry__number_registry")[:100]
     logger.debug(f"{devices=}")
-    # devices = Device.objects.all().order_by("updated_at").only("id")[:10]
 
-    for index, item in enumerate(devices):
-        logger.info(f"index={index}, device_id={item['device']}")
-        device = Device.objects.get(pk=item["device"])
-        logger.info(f"device={device}")
+    for device in devices:
+        logger.info(f"{device=}")
+        # device = Device.objects.get(pk=device.id)
+        # logger.info(f"device={device}")
         # get_device_verifications.delay(device.pk)
         # logger.info("run get_device_verifications")
-        for reg_number in device.type_of_file.numbers_registry.split(","):
+        logger.info("get device numbers_registry")
+        numbers_registry = device.type.numbers_registry.all()
+        logger.debug(f"{numbers_registry=}")
+        for reg_number in numbers_registry:
+            logger.info(reg_number.number_registry.registry_number)
             logger.info("request_to_arshin")
-            response = request_to_arshin(reg_number, device.factory_number)
+
+            # TODO добавить начало поиска в arshin
+
+            response = request_to_arshin(reg_number.number_registry.registry_number, device.factory_number)
             if response.status_code == 200:
                 logger.info(f"response={response.status_code}")
                 response = response.json()["response"]
@@ -100,7 +108,7 @@ def download_device_from_file_into_db(filename: str, user_id: str):
 
 
 # TODO новые tasks
-def user_to_org_create(id):
+def user_to_org_create():
     pass
 
 
@@ -116,37 +124,17 @@ def download_type_from_file_into_db(file_path: str, file_encoding: str) -> None:
         for row in rows:
             logger.debug(row)
 
-            device_type_file = row[settings.FIELDNAMES_FILE_TYPE[0]]
-            numbers_registry = row[settings.FIELDNAMES_FILE_TYPE[1]]
-            si_name = row[settings.FIELDNAMES_FILE_TYPE[2]]
+            device_type = row[settings.FIELDNAMES_FILE_TYPE[0]].strip()
+            numbers_registry = row[settings.FIELDNAMES_FILE_TYPE[1]].strip()
+            name = row[settings.FIELDNAMES_FILE_TYPE[2]].strip()
 
             with transaction.atomic():
-                si_name, _ = SIName.objects.get_or_create(name=si_name)
-
-                instance, created = TypeToRegistry.objects.get_or_create(
-                    device_type_file=device_type_file,
-                    defaults={'si_name': si_name}
-                )
-                if not created:
-                    instance.si_name = si_name
-
-                if not instance.numbers_registry:
-                    instance.numbers_registry = numbers_registry
-                else:
-                    cur = set(
-                        map(int, instance.numbers_registry.split(","))
+                device_name, _ = SIName.objects.get_or_create(name=name)
+                device_type, _ = TypeName.objects.get_or_create(type=device_type, name=device_name)
+                numbers_registry = (RegistryNumber.objects.get_or_create(registry_number=number_registry)[0] for number_registry in numbers_registry.split(","))
+                for number_registry in numbers_registry:
+                    type_registry, _ = TypeRegistry.objects.get_or_create(
+                        type=device_type,
+                        number_registry=number_registry,
                     )
-
-                    new = list(
-                        map(int, numbers_registry.split(","))
-                    )
-
-                    cur = cur.union(new)
-
-                    instance.numbers_registry = ",".join(map(str, cur))
-                if created:
-                    logger.info(f"{instance} create")
-                else:
-                    logger.info(f"{instance} update")
-                instance.save()
     os.remove(file_path)
