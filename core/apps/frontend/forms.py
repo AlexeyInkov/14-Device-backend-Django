@@ -90,6 +90,8 @@ class VerificationForm(forms.ModelForm):
         }
 
 
+# https://evileg.com/ru/post/455/
+# https://www.squash.io/advanced-django-forms-dynamic-generation-formsets-and-custom-widgets/
 DeviceVerificationFormset = inlineformset_factory(
     Device,
     Verification,

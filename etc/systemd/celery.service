@@ -1,0 +1,22 @@
+[Unit]
+Description=celery dbms_template_domain service
+After=network.target
+
+[Service]
+Type=forking
+User=www
+Group=www-data
+WorkingDirectory=dbms_template_path/core
+ExecStart=/bin/sh -c 'dbms_template_path/env/bin/celery -A config multi start w1 \
+    --pidfile=/var/run/celery/%n.pid --logfile=dbms_template_path/log/celery/%n%I.log \
+    --loglevel="INFO" --time-limit=300 --concurrency=8'
+ExecStop=/bin/sh -c 'dbms_template_path/env/bin/celery multi stopwait w1 \
+    --pidfile=/var/run/celery/%n.pid --logfile=dbms_template_path/log/celery/%n%I.log \
+    --loglevel="INFO"'
+ExecReload=/bin/sh -c 'dbms_template_path/env/bin/celery -A config multi restart w1 \
+    --pidfile=/var/run/celery/%n.pid --logfile=dbms_template_path/log/celery/%n%I.log \
+    --loglevel="INFO" --time-limit=300 --concurrency=8'
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

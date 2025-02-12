@@ -1,6 +1,6 @@
 [Unit]
-Description=dbms_template_domain socket
+Description=gunicorn dbms_template_domain socket
 [Socket]
-ListenStream=/run/dbms_template_domain.sock
+ListenStream=/run/gunicorn_dbms_template_domain.sock
 [Install]
 WantedBy=sockets.target

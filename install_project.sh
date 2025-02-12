@@ -39,28 +39,40 @@ python core/manage.py migrate
 python core/manage.py collectstatic
 
 echo "Остановка Gunicorn"
-systemctl stop $project_domain
-systemctl stop $project_domain.socket
+systemctl stop gunicorn_$project_domain
+systemctl stop gunicorn_$project_domain.socket
+
+echo "Остановка Celery"
+systemctl stop celery_$project_domain
+systemctl stop celery_beat_$project_domain
 
 echo "Удаление Gunicorn"
-sudo rm -r /etc/systemd/system/$project_domain.service
-sudo rm -r /etc/systemd/system/$project_domain.socket
+sudo rm -r /etc/systemd/system/gunicorn_$project_domain.service
+sudo rm -r /etc/systemd/system/gunicorn_$project_domain.socket
 
-echo "Копирование настроек Nginx и Gunicorn"
+echo "Удаление Celery"
+sudo rm -r /etc/systemd/system/celery_$project_domain.service
+sudo rm -r /etc/systemd/system/celery_beat_$project_domain.service
+
+echo "Копирование настроек Nginx, Gunicorn и Celery"
 sudo cp -f etc/nginx/my_site.conf /etc/nginx/sites-available/$project_domain.conf
-sudo cp -f etc/systemd/gunicorn.service /etc/systemd/system/$project_domain.service
-sudo cp -f etc/systemd/gunicorn.socket /etc/systemd/system/$project_domain.socket
+sudo cp -f etc/systemd/gunicorn.service /etc/systemd/system/gunicorn_$project_domain.service
+sudo cp -f etc/systemd/gunicorn.socket /etc/systemd/system/gunicorn_$project_domain.socket
+sudo cp -f etc/systemd/celery.service /etc/systemd/system/celery_$project_domain.service
+sudo cp -f etc/systemd/celery_beat.service /etc/systemd/system/celery_beat_$project_domain.service
 
 echo "Подготовка настроек Nginx и Gunicorn"
-sudo sed -i "s~dbms_template_path~$project_path~g" /etc/nginx/sites-available/$project_domain.conf /etc/systemd/system/$project_domain.service
-sudo sed -i "s~dbms_template_domain~$project_domain~g" /etc/nginx/sites-available/$project_domain.conf /etc/systemd/system/$project_domain.service /etc/systemd/system/$project_domain.socket
+sudo sed -i "s~dbms_template_path~$project_path~g" /etc/nginx/sites-available/$project_domain.conf /etc/systemd/system/gunicorn_$project_domain.service /etc/systemd/system/celery_$project_domain.service /etc/systemd/system/celery_beat_$project_domain.service
+sudo sed -i "s~dbms_template_domain~$project_domain~g" /etc/nginx/sites-available/$project_domain.conf /etc/systemd/system/gunicorn_$project_domain.service /etc/systemd/system/gunicorn_$project_domain.socket /etc/systemd/system/celery_$project_domain.service /etc/systemd/system/celery_beat_$project_domain.service
 
 echo "Подключение настроек Nginx"
 sudo ln -s /etc/nginx/sites-available/$project_domain.conf /etc/nginx/sites-enabled/
 
 echo "Перезагрузка Nginx и Gunicorn"
 sudo systemctl daemon-reload
-sudo systemctl enable $project_domain.socket
-sudo systemctl start $project_domain.socket
-sudo systemctl restart $project_domain
+sudo systemctl enable gunicorn_$project_domain.socket
+sudo systemctl start gunicorn_$project_domain.socket
+sudo systemctl restart gunicorn_$project_domain
+sudo systemctl restart celery_$project_domain
+sudo systemctl restart celery_beat_$project_domain
 sudo service nginx reload

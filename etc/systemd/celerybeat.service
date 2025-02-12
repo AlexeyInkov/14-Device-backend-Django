@@ -1,0 +1,16 @@
+[Unit]
+Description=celery_beat dbms_template_domain Service
+After=network.target
+
+[Service]
+Type=simple
+User=www
+Group=www-data
+WorkingDirectory=dbms_template_path/core
+ExecStart=/bin/sh -c 'dbms_template_path/env/bin/celery -A config beat  \
+    --pidfile=/var/run/celery/beat.pid \
+    --logfile=dbms_template_path/log/celery/beat.log --loglevel=INFO'
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
