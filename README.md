@@ -2,7 +2,7 @@
 ### Клонируем репозиторий
 ```
 git clone https://gitlab.com/device_control/backend-django.git
-cd backend-django
+cd core
 chmod +x install_project.sh
 mv .env_template .env
 ```
