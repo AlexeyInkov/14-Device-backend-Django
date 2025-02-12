@@ -74,5 +74,5 @@ sudo systemctl enable gunicorn_$project_domain.socket
 sudo systemctl start gunicorn_$project_domain.socket
 sudo systemctl restart gunicorn_$project_domain
 sudo systemctl restart celery_$project_domain
-sudo systemctl restart celery_beat_$project_domain
+#sudo systemctl restart celery_beat_$project_domain
 sudo service nginx reload
