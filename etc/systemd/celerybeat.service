@@ -1,15 +1,16 @@
 [Unit]
-Description=celery_beat dbms_template_domain Service
+Description=celery_beat service
 After=network.target
 
 [Service]
 Type=simple
 User=www
 Group=www-data
+EnvironmentFile=/etc/conf.d/celery
 WorkingDirectory=dbms_template_path/core
-ExecStart=/bin/sh -c 'dbms_template_path/env/bin/celery -A config beat  \
-    --pidfile=/var/run/celery/beat.pid \
-    --logfile=dbms_template_path/log/celery/beat.log --loglevel=INFO'
+ExecStart=/bin/sh -c '${CELERY_BIN} -A ${CELERY_APP} beat  \
+    --pidfile=${CELERYBEAT_PID_FILE} \
+    --logfile=${CELERYBEAT_LOG_FILE} --loglevel=${CELERYD_LOG_LEVEL}'
 Restart=always
 
 [Install]

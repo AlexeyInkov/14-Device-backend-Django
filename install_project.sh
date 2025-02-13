@@ -58,12 +58,13 @@ echo "Копирование настроек Nginx, Gunicorn и Celery"
 sudo cp -f etc/nginx/my_site.conf /etc/nginx/sites-available/$project_domain.conf
 sudo cp -f etc/systemd/gunicorn.service /etc/systemd/system/gunicorn_$project_domain.service
 sudo cp -f etc/systemd/gunicorn.socket /etc/systemd/system/gunicorn_$project_domain.socket
+sudo cp -f etc/celery/celery /etc/conf.d/celery
 sudo cp -f etc/systemd/celery.service /etc/systemd/system/celery_$project_domain.service
 sudo cp -f etc/systemd/celerybeat.service /etc/systemd/system/celery_beat_$project_domain.service
 
 echo "Подготовка настроек Nginx и Gunicorn"
-sudo sed -i "s~dbms_template_path~$project_path~g" /etc/nginx/sites-available/$project_domain.conf /etc/systemd/system/gunicorn_$project_domain.service /etc/systemd/system/celery_$project_domain.service /etc/systemd/system/celery_beat_$project_domain.service
-sudo sed -i "s~dbms_template_domain~$project_domain~g" /etc/nginx/sites-available/$project_domain.conf /etc/systemd/system/gunicorn_$project_domain.service /etc/systemd/system/gunicorn_$project_domain.socket /etc/systemd/system/celery_$project_domain.service /etc/systemd/system/celery_beat_$project_domain.service
+sudo sed -i "s~dbms_template_path~$project_path~g" /etc/nginx/sites-available/$project_domain.conf /etc/systemd/system/gunicorn_$project_domain.service /etc/systemd/system/celery_$project_domain.service /etc/systemd/system/celery_beat_$project_domain.service /etc/conf.d/celery
+sudo sed -i "s~dbms_template_domain~$project_domain~g" /etc/nginx/sites-available/$project_domain.conf /etc/systemd/system/gunicorn_$project_domain.service /etc/systemd/system/gunicorn_$project_domain.socket
 
 echo "Подключение настроек Nginx"
 sudo ln -s /etc/nginx/sites-available/$project_domain.conf /etc/nginx/sites-enabled/
