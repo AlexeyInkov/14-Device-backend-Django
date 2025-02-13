@@ -47,7 +47,8 @@
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownUserMenu">
               <li><a class="dropdown-item btn btn-secondary" href="#"> Профиль </a></li>
               <li><a class="dropdown-item btn btn-secondary" href="#" type="button" data-bs-toggle="modal" data-bs-target="#loadFile"> Загрузить данные из файла </a></li>
-              <li><a class="dropdown-item btn btn-secondary" href="{% url 'frontend:refresh_valid_date' %}">refresh_valid_date</a></li>
+              <li><a class="dropdown-item btn btn-secondary" href="{% url 'frontend:refresh_valid_date' %}">Обновить данные о поверке</a></li>
+              <li><a class="dropdown-item btn btn-secondary" href="#">Выгрузить данные в файл</a></li>
               <li><a class="dropdown-item btn btn-secondary" href="{% url "my_auth:logout" %}">Выход</a></li>
             </ul>
           </div>

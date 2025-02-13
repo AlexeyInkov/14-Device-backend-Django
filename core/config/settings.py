@@ -31,6 +31,8 @@ INSTALLED_APPS = [
     # Celery
     "django_celery_beat",
     "django_celery_results",
+
+    "cachalot",
     "corsheaders",
     # htmx
     "django_htmx",
@@ -153,12 +155,20 @@ CORS_ORIGIN_WHITELIST = [
     "https://dev-test.inkov.online",
 ]
 
+INTERNAL_IPS = [
+    "localhost",
+    "127.0.0.1",
+]
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": os.environ.get("REDIS_URL"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
     }
 }
 
@@ -181,12 +191,14 @@ LOGGING = {
     "handlers": {
         "file": {
             "class": "logging.FileHandler",
-            "level": "INFO",
+            "level": "WARNING",
             "filename": BASE_DIR.parent / "log/django_info.log",
+            "formatter": "django.server",
         },
         "console": {
             "level": "DEBUG",
             "class": "logging.StreamHandler",
+            "formatter": "django.server",
         },
     },
     "root": {
@@ -196,9 +208,14 @@ LOGGING = {
     "loggers": {
         "django": {
             "handlers": ["file", "console"],
-            # "level": "DEBUG",
-            "propagate": False,
+            "level": "INFO",
+            "propagate": True,
         },
+        # "django.db": {
+        #     "handlers": ["console"],
+        #     "level": "DEBUG",
+        #     "propagate": False,
+        # }
     },
 }
 
@@ -216,13 +233,15 @@ CELERY_TIMEZONE = "UTC"
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
-TIME_DDOS_FOR_REQUEST = 1
-# KAFKA_URL = os.environ.get("KAFKA_URL")
+# Cachelot
+if DEBUG:
+    CACHALOT_ENABLED = False
+    from debug_toolbar.settings import PANELS_DEFAULTS
 
-INTERNAL_IPS = [
-    "localhost",
-    "127.0.0.1",
-]
+    PANELS_DEFAULTS = PANELS_DEFAULTS.append("cachalot.panels.CachalotPanel")
+
+# Пауза между запросами для fgis.arshin
+TIME_DDOS_FOR_REQUEST = 1
 
 # Heades table for frontend
 HEADERS_ADDRESS = {
