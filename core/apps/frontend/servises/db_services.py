@@ -1,3 +1,4 @@
+import datetime
 import logging
 from typing import Tuple, Dict
 
@@ -220,6 +221,7 @@ def write_row_to_db(row, user):
             "installation_point": installation_point_id,
             "type": type_id,
             "valid_date": valid_date,
+            "name": type_id.name
         }
         factory_number = row["Номер"].strip()
         # TODO обработать номер для СПТ, КТПТР, СДВ-И
@@ -231,6 +233,7 @@ def write_row_to_db(row, user):
             device_id.metering_unit = metering_unit_id
             device_id.installation_point = installation_point_id
             device_id.type_of_file = type_id
-            if valid_date>device_id.valid_date:
+            device_id.name = type_id.name
+            if datetime.datetime.strptime(valid_date, "%Y-%m-%d").date() > device_id.valid_date:
                 device_id.valid_date = valid_date
             device_id.save()
