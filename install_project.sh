@@ -71,9 +71,20 @@ sudo ln -s /etc/nginx/sites-available/$project_domain.conf /etc/nginx/sites-enab
 
 echo "Перезагрузка Nginx и Gunicorn"
 sudo systemctl daemon-reload
+
+echo "Запуск Gunicorn"
 sudo systemctl enable gunicorn_$project_domain.socket
 sudo systemctl start gunicorn_$project_domain.socket
 sudo systemctl restart gunicorn_$project_domain
+
+echo "Запуск Celery"
+sudo systemctl enable celery_$project_domain
+sudo systemctl start celery_$project_domain
 sudo systemctl restart celery_$project_domain
-#sudo systemctl restart celery_beat_$project_domain
+
+echo "Запуск Celery Beat"
+sudo systemctl enable celery_beat_$project_domain
+sudo systemctl start celery_beat_$project_domain
+sudo systemctl restart celery_beat_$project_domain
+
 sudo service nginx reload
