@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 def refresh_valid_date() -> str:
     logger.info("run refresh_valid_date")
 # TODO получение и сортировка device
-    devices = Device.objects.alias(updated=Max("verifications__updated_at")).order_by("-updated")
+    devices = Device.objects.alias(updated=Max("verifications__updated_at")).order_by("-updated")[200]
     logger.debug(f"{devices=}")
 
     for device in devices:
