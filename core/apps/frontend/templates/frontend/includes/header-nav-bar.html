@@ -22,18 +22,18 @@
           <div class="dropdown">
             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuOrganizations" data-bs-toggle="dropdown" aria-expanded="false">
               {% if org_selected == 'all' %}
-                all_organizations
+                Все организации
               {% else %}
                 {{ select_org }}
               {% endif %}
             </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuOrganizations">
-              <li><a href="{% url 'frontend:home' %}?organization=all&tso={{ tso_selected }}&customer={{ cust_selected }}">all_organizations</a></li>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuOrganizations">
+              <li><a class="dropdown-item btn btn-secondary" href="{% url 'frontend:home' %}?organization=all&tso={{ tso_selected }}&customer={{ cust_selected }}">Все организации</a></li>
               {% for org in all_user_orgs %}
                 {% if org.id == org_selected|add:"0" %}
                   <li>{{ org.name }}</li>
                 {% else %}
-                  <li><a href="{% url 'frontend:home' %}?organization={{ org.slug }}&tso={{ tso_selected }}&customer={{ cust_selected }}">{{ org.name }}</a></li>
+                  <li><a class="dropdown-item btn btn-secondary" href="{% url 'frontend:home' %}?organization={{ org.slug }}">{{ org.name }}</a></li>
                 {% endif %}
               {% endfor %}
             </ul>
@@ -45,10 +45,10 @@
               {{ user.username }}
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownUserMenu">
-              <li><a class="dropdown-item btn btn-secondary" href="#"> Профиль </a></li>
+              <li><a class="dropdown-item btn btn-secondary disabled" href="#"> Профиль </a></li>
               <li><a class="dropdown-item btn btn-secondary" href="#" type="button" data-bs-toggle="modal" data-bs-target="#loadFile"> Загрузить данные из файла </a></li>
               <li><a class="dropdown-item btn btn-secondary" href="{% url 'frontend:refresh_valid_date' %}">Обновить данные о поверке</a></li>
-              <li><a class="dropdown-item btn btn-secondary" href="#">Выгрузить данные в файл</a></li>
+              <li><a class="dropdown-item btn btn-secondary disabled" href="#">Выгрузить данные в файл</a></li>
               <li><a class="dropdown-item btn btn-secondary" href="{% url "my_auth:logout" %}">Выход</a></li>
             </ul>
           </div>
