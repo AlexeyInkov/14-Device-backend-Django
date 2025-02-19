@@ -34,18 +34,20 @@ INSTALLED_APPS = [
 
     "cachalot",
     "corsheaders",
-    # htmx
     "django_htmx",
-    # App
+
+    # Apps
     "apps.my_auth",
     "apps.for_page",
     "apps.device",
     "apps.frontend",  # django template
-    # dev
-    "rest_framework_swagger",
-    "debug_toolbar",
-    "drf_yasg",
 ]
+if DEBUG:
+    INSTALLED_APPS += [
+        "rest_framework_swagger",
+        "debug_toolbar",
+        "drf_yasg",
+    ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -56,8 +58,9 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
+if DEBUG:
+    MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware",]
 
 ROOT_URLCONF = "config.urls"
 
@@ -82,12 +85,12 @@ WSGI_APPLICATION = "config.wsgi.application"
 # Database
 if DEBUG:
     print("sqlite")
-    if not os.path.exists(BASE_DIR.parent / "db"):
-        os.makedirs(BASE_DIR.parent / "db")
+    if not os.path.exists(BASE_DIR.parent.parent / "dc_db"):
+        os.makedirs(BASE_DIR.parent.parent / "dc_db")
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR.parent / "db/db.sqlite3",
+            "NAME": BASE_DIR.parent.parent / "dc_db/db.sqlite3",
         }
     }
 else:
@@ -149,8 +152,6 @@ if not os.path.exists(BASE_DIR.parent / "files"):
 FILE_UPLOAD_DIR = os.path.join(BASE_DIR.parent, "files/")
 
 CORS_ORIGIN_WHITELIST = [
-    "http://127.0.0.1:3000",
-    "http://localhost:3000",
     "https://inkov.online",
     "https://dev-test.inkov.online",
 ]
@@ -257,9 +258,8 @@ HEADERS_DEVICE = {
     "installation_point": "Место установки",
     "registry_number": "№ в реестре",
     "type": "Тип",
-    "modifications": "Модификация",
+    "modification": "Модификация",
     "factory_number": "Зав. №",
-    # "verification_date": "Дата поверки",
     "valid_date": "Поверка до",
     "notes": "Примечание",
 }

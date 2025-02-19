@@ -19,14 +19,8 @@ logger = logging.getLogger(__name__)
 @shared_task(name="tasks.refresh_all_valid_date")
 def refresh_valid_date() -> str:
     logger.info("run refresh_valid_date")
-
-    devices = (
-        Verification.objects.values("device")
-        .annotate(updated=Max("updated_at"))
-        .order_by("updated")[:50]
-    )
-    if not devices:
-        devices = Device.objects.all().order_by("updated_at").prefetch_related("type__numbers_registry__number_registry")[:100]
+# TODO получение и сортировка device
+    devices = Device.objects.alias(updated=Max("verifications__updated_at")).order_by("-updated")[200]
     logger.debug(f"{devices=}")
 
     for device in devices:

@@ -1,8 +1,6 @@
 import csv
 import os
 
-import chardet
-from chardet.enums import LanguageFilter
 from chardet.universaldetector import UniversalDetector
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
@@ -35,6 +33,7 @@ def check_csv_file(file_path: str, fieldnames: list, encoding: str) -> bool:
     """Проверка заголовков таблицы csv файла"""
     with open(file_path, "r", encoding=encoding) as file:
         reader = csv.DictReader(file, delimiter=";")
-        if reader.fieldnames != fieldnames:
-            return False
+        for field in fieldnames:
+            if field not in reader.fieldnames:
+                return False
         return True

@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 from django.shortcuts import redirect, get_object_or_404, render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, FormView, DetailView
@@ -6,8 +7,9 @@ from django.views.generic import TemplateView, FormView, DetailView
 
 from apps.device.models import Organization, Device, Verification
 from apps.frontend.servises.db_services import (
-    get_filter_organization,
+    get_select_organization,
     get_metering_units,
+    get_filter_metering_units,
     get_devices,
     get_customers,
 )
@@ -39,32 +41,32 @@ class IndexView(DataMixin, LoginRequiredMixin, TemplateView, FormView):
         tso_selected = self.request.GET.get("tso", "all")
         cust_selected = self.request.GET.get("customer", "all")
         mu_selected = self.request.GET.get("metering_unit", "all")
-        # dev_selected = self.request.GET.get("device", "all")
 
-        all_user_orgs = Organization.objects.only("name", "slug").filter(
-            user_to_org__user=self.request.user
+        user_orgs = Organization.objects.filter(
+            user_to_org__user=self.request.user, user_to_org__actual=True
         )
-        filter_org, select_org = get_filter_organization(org_selected, all_user_orgs)
+        metering_units = get_metering_units(user_orgs)
 
-        filter_metering_units, metering_units = get_metering_units(
-            tso_selected, cust_selected, filter_org
-        )
+        all_user_orgs = Organization.objects.filter(Q(mu_c__in=metering_units) | Q(mu_so__in=metering_units) | Q(mu_tso__in=metering_units)).distinct()
+
+        filter_metering_units = get_filter_metering_units(tso_selected, cust_selected, org_selected, metering_units)
+
+        select_org = get_select_organization(org_selected, all_user_orgs)
 
         context.update(
             {
                 "all_user_orgs": all_user_orgs,
                 "select_org": select_org,
                 "tso_s": all_user_orgs.filter(
-                    pk__in=(metering_units.values("tso").distinct())
+                    pk__in=(filter_metering_units.values("tso").distinct())
                 ),
-                "customers": get_customers(tso_selected, metering_units, all_user_orgs),
+                "customers": get_customers(tso_selected, filter_metering_units, all_user_orgs),
                 "metering_units": filter_metering_units,
                 "devices": get_devices(mu_selected, filter_metering_units),
                 "org_selected": org_selected,
                 "tso_selected": tso_selected,
                 "cust_selected": cust_selected,
                 "mu_selected": mu_selected,
-                # "dev_selected": dev_selected,
             }
         )
         return context

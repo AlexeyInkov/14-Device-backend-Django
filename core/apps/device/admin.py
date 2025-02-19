@@ -48,6 +48,7 @@ class OrganizationAdmin(admin.ModelAdmin):
 
 class VerificationsInLineAdmin(admin.StackedInline):
     model = Verification
+    extra = 0
 
 
 class DeviceAdmin(admin.ModelAdmin):
