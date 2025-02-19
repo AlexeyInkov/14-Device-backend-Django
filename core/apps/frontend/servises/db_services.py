@@ -16,7 +16,7 @@ from apps.device.models import (
     Address,
     MeteringUnit,
     InstallationPoint,
-    TypeRegistry, TypeName,
+    TypeName,
 )
 from config.settings import CONVERT_VERIF_FIELDS
 
@@ -51,9 +51,9 @@ def get_devices(mu_selected: str, metering_units: QuerySet) -> QuerySet:
     return devices.filter(metering_unit__in=metering_units.values_list("pk", flat=True))
 
 
-def get_metering_units(
-        tso_selected: str, cust_selected: str, orgs: QuerySet
-) -> Tuple[QuerySet, QuerySet]:
+def get_metering_units(user_orgs: QuerySet, org_selected: str) -> QuerySet:
+    if org_selected != "all":
+        user_orgs = user_orgs.filter(slug=org_selected)
     metering_units = (
         MeteringUnit.objects.only(
             "customer__name",
@@ -74,7 +74,11 @@ def get_metering_units(
         .select_related("address__street__type_street")
         .select_related("customer")
         .select_related("tso")
-    ).filter(Q(tso__in=orgs) | Q(customer__in=orgs) | Q(service_organization__in=orgs))
+    ).filter(Q(tso__in=user_orgs) | Q(customer__in=user_orgs) | Q(service_organization__in=user_orgs))
+    return metering_units
+
+
+def get_filter_metering_units(tso_selected: str, cust_selected: str, metering_units: QuerySet) -> QuerySet:
     # MeteringUnit filter
     filters = {}
     if tso_selected != "all":
@@ -82,8 +86,8 @@ def get_metering_units(
     if cust_selected != "all":
         filters["customer__slug"] = cust_selected
     if filters:
-        return metering_units.filter(**filters), metering_units
-    return metering_units, metering_units
+        return metering_units.filter(**filters)
+    return metering_units
 
 
 def get_filter_organization(
