@@ -1,6 +1,6 @@
 import datetime
 import logging
-from typing import Tuple, Dict
+from typing import Dict
 
 from django.db import transaction
 from django.db.models import Q, QuerySet
@@ -51,9 +51,7 @@ def get_devices(mu_selected: str, metering_units: QuerySet) -> QuerySet:
     return devices.filter(metering_unit__in=metering_units.values_list("pk", flat=True))
 
 
-def get_metering_units(user_orgs: QuerySet, org_selected: str) -> QuerySet:
-    if org_selected != "all":
-        user_orgs = user_orgs.filter(slug=org_selected)
+def get_metering_units(user_orgs: QuerySet) -> QuerySet:
     metering_units = (
         MeteringUnit.objects.only(
             "customer__name",
@@ -78,7 +76,7 @@ def get_metering_units(user_orgs: QuerySet, org_selected: str) -> QuerySet:
     return metering_units
 
 
-def get_filter_metering_units(tso_selected: str, cust_selected: str, metering_units: QuerySet) -> QuerySet:
+def get_filter_metering_units(tso_selected: str, cust_selected: str, org_selected: str, metering_units: QuerySet) -> QuerySet:
     # MeteringUnit filter
     filters = {}
     if tso_selected != "all":
@@ -87,16 +85,15 @@ def get_filter_metering_units(tso_selected: str, cust_selected: str, metering_un
         filters["customer__slug"] = cust_selected
     if filters:
         return metering_units.filter(**filters)
+    if org_selected != "all":
+        org = Organization.objects.filter(slug=org_selected)
+        metering_units = metering_units.filter(Q(tso__in=org) | Q(customer__in=org) | Q(service_organization__in=org))
     return metering_units
 
 
-def get_filter_organization(
-        org_selected: str, orgs: QuerySet
-) -> Tuple[QuerySet, Organization | None]:
+def get_select_organization(org_selected: str, orgs: QuerySet) -> Organization | None:
     if org_selected != "all":
-        result = orgs.filter(slug=org_selected)
-        return result, result.first()
-    return orgs, None
+        return orgs.get(slug=org_selected)
 
 
 def get_customers(

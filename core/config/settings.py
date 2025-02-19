@@ -258,9 +258,8 @@ HEADERS_DEVICE = {
     "installation_point": "Место установки",
     "registry_number": "№ в реестре",
     "type": "Тип",
-    "modifications": "Модификация",
+    "modification": "Модификация",
     "factory_number": "Зав. №",
-    # "verification_date": "Дата поверки",
     "valid_date": "Поверка до",
     "notes": "Примечание",
 }
