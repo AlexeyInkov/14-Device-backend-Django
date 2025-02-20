@@ -116,17 +116,15 @@ def save_verification(device_id: int, verification_fields: dict) -> None:
         logger.debug(f"{verification=}")
 
 
-def convert_verification_field(
-        device_id: int, verification_fields: Dict[str, str]
-) -> Dict[str, str]:
+def convert_verification_field(device_id: int, verification_fields: Dict[str, str]) -> Dict[str, str]:
     logger.debug(f"{verification_fields=}")
     model_fields = {}
     for field_name in CONVERT_VERIF_FIELDS.keys():
         if verification_fields.get(CONVERT_VERIF_FIELDS[field_name], None) is not None:
             if field_name[-4:] == "date":
-                model_fields[field_name] = verification_fields[
+                model_fields[field_name] = "-".join(verification_fields[
                                                CONVERT_VERIF_FIELDS[field_name]
-                                           ][:10]
+                                           ][:10].split(".")[-1::-1])
             else:
                 model_fields[field_name] = verification_fields[
                     CONVERT_VERIF_FIELDS[field_name]

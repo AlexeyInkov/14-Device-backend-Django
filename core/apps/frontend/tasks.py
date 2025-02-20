@@ -1,6 +1,7 @@
 import csv
 import logging
 import os
+from typing import List
 
 from celery import shared_task
 from django.contrib.auth import get_user_model
@@ -17,18 +18,14 @@ logger = logging.getLogger(__name__)
 
 
 @shared_task(name="tasks.refresh_all_valid_date")
-def refresh_valid_date() -> str:
+def refresh_valid_date(count_devices_in_task: int = -1) -> str:
     logger.info("run refresh_valid_date")
 # TODO получение и сортировка device
-    devices = Device.objects.alias(updated=Max("verifications__updated_at")).order_by("-updated")[200]
+    devices = Device.objects.alias(updated=Max("verifications__updated_at")).order_by("updated")[:count_devices_in_task]
     logger.debug(f"{devices=}")
 
     for device in devices:
         logger.info(f"{device=}")
-        # device = Device.objects.get(pk=device.id)
-        # logger.info(f"device={device}")
-        # get_device_verifications.delay(device.pk)
-        # logger.info("run get_device_verifications")
         logger.info("get device numbers_registry")
         numbers_registry = device.type.numbers_registry.all()
         logger.debug(f"{numbers_registry=}")
@@ -41,12 +38,15 @@ def refresh_valid_date() -> str:
             response = request_to_arshin(reg_number.number_registry.registry_number, device.factory_number)
             if response.status_code == 200:
                 logger.info(f"response={response.status_code}")
-                response = response.json()["response"]
-                logger.info(f"Found verifications in response: {response['numFound']}")
-                if response["numFound"] > 0:
-                    verifications = response["docs"]
+                logger.debug(f"response={response}")
+                response = response.json()["result"]
+                logger.debug(f"response['result']={response}")
+                logger.info(f"Found verifications in response: {response['count']}")
+                if response["count"] > 0:
+                    verifications = response["items"]
                     if verifications:
                         for verification in verifications:
+                            logger.debug(verification)
                             save_verification(device.id, verification)
                             logger.info("verification saved")
     return "Done"

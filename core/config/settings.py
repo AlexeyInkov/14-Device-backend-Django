@@ -281,11 +281,11 @@ HEADERS_VERIFICATION_UPDATE.update({
 }
 )
 CONVERT_VERIF_FIELDS = {
-    "mi_mititle": "mi.mititle",
-    "mit_mitnumber": "mi.mitnumber",
-    "mi_mitype": "mi.mitype",
-    "mi_modification": "mi.modification",
-    "mi_number": "mi.number",
+    "mi_mititle": "mit_title",
+    "mit_mitnumber": "mit_number",
+    "mi_mitype": "mit_notation",
+    "mi_modification": "mi_modification",
+    "mi_number": "mi_number",
     "org_title": "org_title",
     "verification_date": "verification_date",
     "valid_date": "valid_date",
