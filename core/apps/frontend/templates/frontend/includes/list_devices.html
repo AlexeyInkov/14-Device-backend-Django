@@ -3,10 +3,9 @@
 
 {% if devices %}
   <table class="table table-bordered table-hover" id="devices">
+    {% get_headers_device as HEADERS_DEVICE %}
     <thead>
     <tr>
-      {% get_headers_device as HEADERS_DEVICE %}
-
       {% for header in HEADERS_DEVICE.values %}
         <th>{{ header }}</th>
       {% endfor %}
@@ -14,51 +13,32 @@
     </thead>
     <tbody>
     {% for device in devices %}
-
-      <!-- Модальное окно -->
-
-{#      {% show_modal_verifications device %}#}
-
-
       {% if device.id == dev_selected|add:"0" %}
         <tr class="table-active">
           {% for key in HEADERS_DEVICE.keys %}
-
             <td>{{ device|attr:key }}</td>
           {% endfor %}
         </tr>
       {% else %}
         <tr>
           {% for key in HEADERS_DEVICE.keys %}
-
             <td><a class="link-dark show-modal"
-                   
                    href=""
                    hx-get="{% url 'frontend:detail_device' device.pk %}"
-                   hx-target="#dialog">  {# data-bs-toggle="modal" data-bs-target="#verificationsModal">#}
-
+                   hx-target="#dialog">
               {{ device|attr:key }}
             </a></td>
           {% endfor %}
         </tr>
       {% endif %}
-
-      <!-- Модальное окно -->
-{#      {% include "frontend/index/includes/modal_list_verifications.html" %}#}
-
-     
-    
     {% endfor %}
     </tbody>
-  </table> 
-  
+  </table>
+
   <!-- Модальное окно -->
-  <div class="modal fade" id="verificationsModal" >
+  <div class="modal fade" id="verificationsModal">
     <div id="dialog" class="modal-dialog modal-xl" hx-target="this"></div>
   </div>
-  
-  
-
 
 {% endif %}
 

@@ -1,4 +1,3 @@
-{% extends "frontend/base/base_bs5_htmx.html" %}
 {% load context_tags %}
 
 <div class="modal-content">
@@ -6,39 +5,39 @@
     <h5 class="modal-title" id="verificationsModalLabel">{{ device.device_type }} #{{ device.factory_number }}</h5>
     <button type="button" class="close-dialog btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
   </div>
-  <div class="modal-body">
-{% block content %}
-    <form method="post" action="">
+  <form hx-post="{{ request.path }}" action="{% url 'frontend:detail_device' device.pk %}">
     {% csrf_token %}
-    {% get_headers_verification_update as HEADERS_VERIFICATION %}
-    <table class="table table-bordered">
-      <thead>
-      <tr>
-        {% for header in HEADERS_VERIFICATION.values %}
-          <th>{{ header }}</th>
-        {% endfor %}
-      </tr>
-      </thead>
-      <tbody>
-      {{ formset.management_form }}
-      {% for form in formset.forms %}
-        <tr>
-          {% for field in form %}
-            <td>
-              {{ field }}
-            </td>
+    <div class="modal-body">
+      {% block content %}
+        {% get_headers_verification_update as HEADERS_VERIFICATION %}
+        <table class="table table-bordered">
+          <thead>
+          <tr>
+            {% for header in HEADERS_VERIFICATION.values %}
+              <th>{{ header }}</th>
+            {% endfor %}
+          </tr>
+          </thead>
+          <tbody>
+          {{ formset.management_form }}
+          {% for form in formset.forms %}
+            <tr>
+              {% for field in form %}
+                <td>
+                  {{ field }}
+                </td>
+              {% endfor %}
+            </tr>
           {% endfor %}
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
-    <input type="submit" value="Сохранить">
-    </form>
-  {% endblock %}
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="close-dialog btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-  </div>
+          </tbody>
+        </table>
+        </div>
+        <div class="modal-footer">
+        <button type="submit" class="close-dialog btn btn-secondary">Сохранить</button>
+        <button type="button" class="close-dialog btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+      {% endblock %}
+      </div>
+  </form>
 </div>
 
 

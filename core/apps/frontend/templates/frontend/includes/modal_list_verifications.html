@@ -30,6 +30,12 @@
     </table>
   </div>
   <div class="modal-footer">
+    <a class="btn btn-secondary"
+       href=""
+       hx-get="{% url 'frontend:update_device_verification' device.pk %}"
+       hx-target="#dialog">
+      Изменить
+    </a>
     <button type="button" class="close-dialog btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
   </div>
 </div>
