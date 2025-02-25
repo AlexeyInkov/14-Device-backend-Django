@@ -1,14 +1,13 @@
 import csv
 import logging
 import os
-from typing import List
 
 from celery import shared_task
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.db.models import Max
 
-from apps.device.models import Device, Verification, TypeRegistry, SIName, TypeName, RegistryNumber
+from apps.device.models import Device, TypeRegistry, SIName, TypeName, RegistryNumber
 from apps.frontend.servises.arshin_servises import request_to_arshin
 from apps.frontend.servises.db_services import save_verification, write_row_to_db
 from apps.frontend.servises.file_services import check_csv_file, get_file_encoding
@@ -18,10 +17,10 @@ logger = logging.getLogger(__name__)
 
 
 @shared_task(name="tasks.refresh_all_valid_date")
-def refresh_valid_date(count_devices_in_task: int = -1) -> str:
+def refresh_valid_date() -> str:
     logger.info("run refresh_valid_date")
-# TODO получение и сортировка device
-    devices = Device.objects.alias(updated=Max("verifications__updated_at")).order_by("updated")[:count_devices_in_task]
+    # TODO получение и сортировка device
+    devices = Device.objects.alias(updated=Max("verifications__updated_at")).order_by("updated")  # [:count_devices_in_task]
     logger.debug(f"{devices=}")
 
     for device in devices:
