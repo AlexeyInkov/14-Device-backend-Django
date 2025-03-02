@@ -10,7 +10,7 @@ body {
     --bs-body-font-size: 0.75rem;
 }
 
-.container {
+.main-container {
     height: 100vh;
     overflow: hidden;
 }
