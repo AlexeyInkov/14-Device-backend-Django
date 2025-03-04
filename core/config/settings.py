@@ -14,7 +14,7 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 DEBUG = "True" == os.environ.get("DJANGO_DEBUG", True)
 
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(",")
-CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS").split(",")
+
 
 # Application definition
 
@@ -33,7 +33,6 @@ INSTALLED_APPS = [
     "django_celery_results",
 
     "cachalot",
-    "corsheaders",
     "django_htmx",
 
     # Apps
@@ -52,7 +51,6 @@ if DEBUG:
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -150,11 +148,6 @@ MEDIA_URL = "media/"
 if not os.path.exists(BASE_DIR.parent / "files"):
     os.makedirs(BASE_DIR.parent / "files")
 FILE_UPLOAD_DIR = os.path.join(BASE_DIR.parent, "files/")
-
-CORS_ORIGIN_WHITELIST = [
-    "https://inkov.online",
-    "https://dev-test.inkov.online",
-]
 
 INTERNAL_IPS = [
     "localhost",
@@ -265,8 +258,8 @@ HEADERS_DEVICE = {
 }
 HEADERS_VERIFICATION = {
     "org_title": "Поверитель",
-    "mit_mitnumber": "№ в реестре",
-    "mi_mitype": "Тип",
+    "mit_number": "№ в реестре",
+    "mit_notation": "Тип",
     "mi_modification": "Модификация",
     "mi_number": "Зав. №",
     "verification_date": "Дата поверки",
@@ -280,17 +273,7 @@ HEADERS_VERIFICATION_UPDATE.update({
     "delete": "Удалить",
 }
 )
-CONVERT_VERIF_FIELDS = {
-    "mi_mititle": "mit_title",
-    "mit_mitnumber": "mit_number",
-    "mi_mitype": "mit_notation",
-    "mi_modification": "mi_modification",
-    "mi_number": "mi_number",
-    "org_title": "org_title",
-    "verification_date": "verification_date",
-    "valid_date": "valid_date",
-}
-
+# File field names for csv
 FIELDNAMES_FILE_MU = [
     "Наименование абонента",
     "Город",

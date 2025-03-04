@@ -297,9 +297,9 @@ class Verification(BaseTimeModel):
         null=True,
         related_name="verifications",
     )
-    mi_mititle = models.CharField(max_length=200, blank=True, null=True)
-    mit_mitnumber = models.CharField(max_length=10, blank=True, null=True)
-    mi_mitype = models.CharField(max_length=100, blank=True, null=True)
+    mit_title = models.CharField(max_length=200, blank=True, null=True)
+    mit_number = models.CharField(max_length=10, blank=True, null=True)
+    mit_notation = models.CharField(max_length=100, blank=True, null=True)
     mi_modification = models.CharField(max_length=100, blank=True, null=True)
     mi_number = models.CharField(max_length=20, blank=True, null=True)
     org_title = models.CharField(max_length=100, blank=True, null=True)
