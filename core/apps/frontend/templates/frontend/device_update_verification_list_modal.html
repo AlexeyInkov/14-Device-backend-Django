@@ -5,7 +5,7 @@
     <h5 class="modal-title" id="verificationsModalLabel">{{ device.device_type }} #{{ device.factory_number }}</h5>
     <button type="button" class="close-dialog btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
   </div>
-  <form hx-post="{{ request.path }}" action="{% url 'frontend:detail_device' device.pk %}">
+  <form hx-post="{{ request.path }}" action="{% url 'frontend:device_detail' device.pk %}">
     {% csrf_token %}
     <div class="modal-body">
       {% block content %}

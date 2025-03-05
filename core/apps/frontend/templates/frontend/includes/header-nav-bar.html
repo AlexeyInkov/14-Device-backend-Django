@@ -5,14 +5,12 @@
   <div class="container-fluid justify-content-between">
     <div>
       <a class="navbar-brand" role="checkbox" data-bs-toggle="collapse"
-         data-bs-target="#menu-bar" aria-expanded="false"
-         aria-controls="menu-bar" href="#menu-bar">
+         data-bs-target="#sidebar-content" aria-expanded="false"
+         aria-controls="sidebar-content" href="#sidebar-content">
         <img src="{% static "frontend/images/align-justify.svg" %}" alt="" width="20" height="20"
              class="d-inline-block align-text-top">
       </a>
       <a class="navbar-brand text-light" href="{% url "frontend:home" %}">
-        {#        <img src="{% static "frontend/images/logo.png" %}" alt="" width="20" height="20"#}
-        {#             class="d-inline-block align-text-top">#}
         Device Control
       </a>
     </div>
@@ -20,24 +18,27 @@
       <ul class="navbar-nav me-auto ">
         <li class="nav-item">
           <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuOrganizations" data-bs-toggle="dropdown" aria-expanded="false">
-              {% if org_selected == 'all' %}
-                Все организации
-              {% else %}
+            <button class="btn btn-secondary dropdown-toggle"
+                    type="button" id="dropdownMenuOrganizations"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    hx-get="{% url 'frontend:user_organization_list' %}"
+                    hx-target="#orgs_list"
+                    hx-swap="innerHTML"
+            >
+              {% if select_org %}
                 {{ select_org }}
+              {% else %}
+                Все организации
               {% endif %}
             </button>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuOrganizations">
-              <li><a class="dropdown-item btn btn-secondary" href="{% url 'frontend:home' %}?organization=all&tso={{ tso_selected }}&customer={{ cust_selected }}">Все организации</a></li>
-              {% for org in all_user_orgs %}
-                {% if org.id == org_selected|add:"0" %}
-                  <li>{{ org.name }}</li>
-                {% else %}
-                  <li><a class="dropdown-item btn btn-secondary" href="{% url 'frontend:home' %}?organization={{ org.slug }}">{{ org.name }}</a></li>
-                {% endif %}
-              {% endfor %}
+            <ul id="orgs_list" class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuOrganizations">
+
+              <!-- Список организаций подгружается с помощью HTMX -->
+
             </ul>
           </div>
+
         </li>
         <li class="nav-item">
           <div class="dropdown">
@@ -45,11 +46,39 @@
               {{ user.username }}
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownUserMenu">
-              <li><a class="dropdown-item btn btn-secondary disabled" href="#"> Профиль </a></li>
-              <li><a class="dropdown-item btn btn-secondary" href="#" type="button" data-bs-toggle="modal" data-bs-target="#loadFile"> Загрузить данные из файла </a></li>
-              <li><a class="dropdown-item btn btn-secondary" href="{% url 'frontend:refresh_valid_date' %}">Обновить данные о поверке</a></li>
-              <li><a class="dropdown-item btn btn-secondary disabled" href="#">Выгрузить данные в файл</a></li>
-              <li><a class="dropdown-item btn btn-secondary" href="{% url "my_auth:logout" %}">Выход</a></li>
+              <li><a class="dropdown-item btn btn-secondary disabled"
+                     href="#"
+              > Профиль </a></li>
+
+
+              <li><a
+                  class="dropdown-item btn btn-secondary"
+                  href="#"
+                  type="button"
+                  hx-get="{% url 'frontend:load_data_from_file' %}"
+                  hx-target="#dialogLoadFile"
+                  hx-trigger="click"
+                   data-bs-toggle="modal"
+                   data-bs-target="#loadFileModal"
+              >Загрузить данные из файла 
+              </a></li>
+
+              <li><a 
+                  class="dropdown-item btn btn-secondary"
+                     hx-get="{% url 'frontend:refresh_valid_date' %}"
+                     href=""
+              >Обновить данные о поверке
+              </a></li>
+              
+              <li><a class="dropdown-item btn btn-secondary disabled"
+                     href="#">
+                Выгрузить данные в файл
+              </a></li>
+             
+              <li><a class="dropdown-item btn btn-secondary"
+                     href="{% url "my_auth:logout" %}">
+                Выход
+              </a></li>
             </ul>
           </div>
         </li>
@@ -59,6 +88,8 @@
 </nav>
 
 <!-- Модальное окно -->
-{% include "frontend/includes/modal-load-file.html" %}
+<div class="modal fade" id="loadFileModal">
+  <div id="dialogLoadFile" class="modal-dialog modal-lg" ></div>
+</div>
 
 
