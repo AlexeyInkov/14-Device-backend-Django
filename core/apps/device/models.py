@@ -103,7 +103,7 @@ class Address(BaseTimeModel):
             address.append(f"корп. {str(self.corp)}")
         if self.liter:
             address.append(f"лит {str(self.liter)}")
-        address.append(f"({self.latitude}, {self.longitude})"),
+        # address.append(f"({self.latitude}, {self.longitude})"),
         return ", ".join(address)
 
 
@@ -132,6 +132,8 @@ class MeteringUnit(BaseTimeModel):
     )
     itp = models.CharField(max_length=10, blank=True)
     totem_number = models.CharField(max_length=100, blank=True)
+
+    attention = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "metering_units"
@@ -282,6 +284,8 @@ class Device(BaseTimeModel):
         null=True,
         blank=True,
     )
+
+    attention = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "devices"
