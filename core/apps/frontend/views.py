@@ -6,14 +6,14 @@ from django.views.generic import TemplateView, ListView, DetailView
 
 from apps.device.models import Device, Verification, Organization
 from .forms import UploadFileForm, DeviceVerificationFormset
-from .mixins import DataMixin
+from .mixins import ContextDataMixin, TemplateMixin
 from .servises.db_services import GetIndexViewDataFromDB
 from .servises.file_services import handle_uploaded_file
 from .servises.request_services import get_org_selected, get_tso_selected, get_cust_selected, get_mu_selected
 from .tasks import download_device_from_file_into_db, refresh_valid_date
 
 
-class IndexView(DataMixin, LoginRequiredMixin, TemplateView):
+class IndexView(ContextDataMixin, LoginRequiredMixin, TemplateView):
     template_name = "frontend/index.html"
     title_page = "Главная страница"
 
@@ -28,7 +28,7 @@ class IndexView(DataMixin, LoginRequiredMixin, TemplateView):
         return context
 
 
-class UserOrganizationsListView(DataMixin, LoginRequiredMixin, ListView):
+class UserOrganizationsListView(TemplateMixin, LoginRequiredMixin, ListView):
     template_name = "frontend/user_organizations_list.html"
     title_page = "Организации пользователя"
     context_object_name = "user_orgs_for_select"
@@ -57,7 +57,7 @@ def refresh_valid_date_view(request):
     return redirect("frontend:home")
 
 
-class MeteringUnitListView(DataMixin, LoginRequiredMixin, ListView):
+class MeteringUnitListView(TemplateMixin, ContextDataMixin, LoginRequiredMixin, ListView):
     template_name = "frontend/metering_unit_list.html"
     title_page = "Узлы учета"
     context_object_name = "metering_units"
@@ -71,7 +71,7 @@ class MeteringUnitListView(DataMixin, LoginRequiredMixin, ListView):
         ).metering_units
 
 
-class MenuItemListView(DataMixin,LoginRequiredMixin, ListView):
+class MenuItemListView(TemplateMixin, ContextDataMixin,LoginRequiredMixin, ListView):
     template_name = "frontend/menu_item_list.html"
     title_page = "Пункты меню"
     context_object_name = "menu_items"
@@ -84,7 +84,7 @@ class MenuItemListView(DataMixin,LoginRequiredMixin, ListView):
         ).metering_units.values("tso__name", 'tso__slug').distinct()
 
 
-class MenuItemDetailView(DataMixin, LoginRequiredMixin, ListView):
+class MenuItemDetailView(TemplateMixin, ContextDataMixin, LoginRequiredMixin, ListView):
     template_name = "frontend/menu_item_detail.html"
     title_page = "Пункт меню"
     context_object_name = "menu_item"
@@ -97,7 +97,7 @@ class MenuItemDetailView(DataMixin, LoginRequiredMixin, ListView):
         ).metering_units.values("customer__name", 'customer__slug').distinct()
 
 
-class DeviceListView(DataMixin, LoginRequiredMixin, ListView):
+class DeviceListView(TemplateMixin, ContextDataMixin, LoginRequiredMixin, ListView):
     template_name = "frontend/device_list.html"
     title_page = "Приборы"
     context_object_name = "devices"
@@ -112,7 +112,7 @@ class DeviceListView(DataMixin, LoginRequiredMixin, ListView):
         ).devices
 
 
-class DeviceDetailView(DataMixin, LoginRequiredMixin, DetailView):
+class DeviceDetailView(ContextDataMixin, LoginRequiredMixin, DetailView):
     model = Device
     template_name = "frontend/device_detail_verification_list_modal.html"
     title_page = "Поверки"
