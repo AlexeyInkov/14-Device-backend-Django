@@ -75,9 +75,9 @@ class VerificationAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "device",
-        "mi_mititle",
-        "mit_mitnumber",
-        "mi_mitype",
+        "mit_title",
+        "mit_number",
+        "mit_notation",
         "mi_modification",
         "mi_number",
         "org_title",

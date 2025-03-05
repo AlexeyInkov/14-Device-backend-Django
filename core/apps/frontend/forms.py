@@ -31,8 +31,8 @@ class VerificationForm(forms.ModelForm):
         model = Verification
         fields = (
             'org_title',
-            'mit_mitnumber',
-            'mi_mitype',
+            'mit_number',
+            'mit_notation',
             'mi_modification',
             'mi_number',
             'verification_date',
@@ -47,12 +47,12 @@ class VerificationForm(forms.ModelForm):
                 "class": 'form-control',
                 'style': {}
             }),
-            'mit_mitnumber': forms.TextInput(attrs={
+            'mit_number': forms.TextInput(attrs={
                 'readonly': True,
                 "class": 'form-control',
                 'style': {}
             }),
-            'mi_mitype': forms.TextInput(attrs={
+            'mit_notation': forms.TextInput(attrs={
                 'readonly': True,
                 "class": 'form-control',
                 'style': {}

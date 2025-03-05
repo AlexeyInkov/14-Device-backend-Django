@@ -20,11 +20,17 @@ logger = logging.getLogger(__name__)
 def refresh_valid_date() -> str:
     logger.info("run refresh_valid_date")
     # TODO получение и сортировка device
-    devices = Device.objects.alias(updated=Max("verifications__updated_at")).order_by("updated")  # [:count_devices_in_task]
+    devices = Device.objects.annotate(updated=Max("verifications__updated_at")).values('id').order_by("updated")  # [:count_devices_in_task]
     logger.debug(f"{devices=}")
 
-    for device in devices:
-        logger.info(f"{device=}")
+    for device_id in devices:
+        logger.info(f"{device_id=}")
+        try:
+            device = Device.objects.get(id=device_id)
+            logger.info(f"{device=}")
+        except Device.DoesNotExist:
+            logger.error(f"Device with id={device_id} not found")
+            continue
         logger.info("get device numbers_registry")
         numbers_registry = device.type.numbers_registry.all()
         logger.debug(f"{numbers_registry=}")

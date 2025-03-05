@@ -103,7 +103,7 @@ class Address(BaseTimeModel):
             address.append(f"корп. {str(self.corp)}")
         if self.liter:
             address.append(f"лит {str(self.liter)}")
-        address.append(f"({self.latitude}, {self.longitude})"),
+        # address.append(f"({self.latitude}, {self.longitude})"),
         return ", ".join(address)
 
 
@@ -132,6 +132,8 @@ class MeteringUnit(BaseTimeModel):
     )
     itp = models.CharField(max_length=10, blank=True)
     totem_number = models.CharField(max_length=100, blank=True)
+
+    attention = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "metering_units"
@@ -283,6 +285,8 @@ class Device(BaseTimeModel):
         blank=True,
     )
 
+    attention = models.BooleanField(default=False)
+
     class Meta:
         verbose_name_plural = "devices"
 
@@ -297,9 +301,9 @@ class Verification(BaseTimeModel):
         null=True,
         related_name="verifications",
     )
-    mi_mititle = models.CharField(max_length=200, blank=True, null=True)
-    mit_mitnumber = models.CharField(max_length=10, blank=True, null=True)
-    mi_mitype = models.CharField(max_length=100, blank=True, null=True)
+    mit_title = models.CharField(max_length=200, blank=True, null=True)
+    mit_number = models.CharField(max_length=10, blank=True, null=True)
+    mit_notation = models.CharField(max_length=100, blank=True, null=True)
     mi_modification = models.CharField(max_length=100, blank=True, null=True)
     mi_number = models.CharField(max_length=20, blank=True, null=True)
     org_title = models.CharField(max_length=100, blank=True, null=True)

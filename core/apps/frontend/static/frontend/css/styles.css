@@ -6,11 +6,16 @@ root {
 .navbar-brand {
     font-size: 1rem;
 }
-body {
-    --bs-body-font-size: 0.75rem;
+#orgs_list {
+  max-height: 50vh;
+  overflow-y: scroll;
 }
 
-.container {
+body {
+    --bs-body-font-size: 0.8rem;
+}
+
+.main-container {
     height: 100vh;
     overflow: hidden;
 }
@@ -19,6 +24,10 @@ body {
 .menu-bar {
     height: calc(100vh - 54px - 24px);
     overflow-y: scroll;
+}
+
+#menu-accordion-button {
+    font-size: 0.8rem;
 }
 
 .addresses {
@@ -40,4 +49,14 @@ body {
 
 .login {
     height: 100%;
+}
+
+.htmx-indicator{
+    display:none;
+}
+.htmx-request .htmx-indicator{
+    display:inline;
+}
+.htmx-request.htmx-indicator{
+    display:inline;
 }
