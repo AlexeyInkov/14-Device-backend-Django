@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.db.models import Max
 
-from apps.device.models import Device, Verification, TypeRegistry, SIName, TypeName, RegistryNumber
+from apps.device.models import Device, TypeRegistry, SIName, TypeName, RegistryNumber
 from apps.frontend.servises.arshin_servises import request_to_arshin
 from apps.frontend.servises.db_services import save_verification, write_row_to_db
 from apps.frontend.servises.file_services import check_csv_file, get_file_encoding
@@ -19,16 +19,18 @@ logger = logging.getLogger(__name__)
 @shared_task(name="tasks.refresh_all_valid_date")
 def refresh_valid_date() -> str:
     logger.info("run refresh_valid_date")
-# TODO получение и сортировка device
-    devices = Device.objects.alias(updated=Max("verifications__updated_at")).order_by("-updated")[200]
+    # TODO получение и сортировка device
+    devices = Device.objects.annotate(updated=Max("verifications__updated_at")).values('id').order_by("updated")  # [:count_devices_in_task]
     logger.debug(f"{devices=}")
 
-    for device in devices:
-        logger.info(f"{device=}")
-        # device = Device.objects.get(pk=device.id)
-        # logger.info(f"device={device}")
-        # get_device_verifications.delay(device.pk)
-        # logger.info("run get_device_verifications")
+    for device_id in devices:
+        logger.info(f"{device_id=}")
+        try:
+            device = Device.objects.get(id=device_id)
+            logger.info(f"{device=}")
+        except Device.DoesNotExist:
+            logger.error(f"Device with id={device_id} not found")
+            continue
         logger.info("get device numbers_registry")
         numbers_registry = device.type.numbers_registry.all()
         logger.debug(f"{numbers_registry=}")
@@ -41,12 +43,15 @@ def refresh_valid_date() -> str:
             response = request_to_arshin(reg_number.number_registry.registry_number, device.factory_number)
             if response.status_code == 200:
                 logger.info(f"response={response.status_code}")
-                response = response.json()["response"]
-                logger.info(f"Found verifications in response: {response['numFound']}")
-                if response["numFound"] > 0:
-                    verifications = response["docs"]
+                logger.debug(f"response={response}")
+                response = response.json()["result"]
+                logger.debug(f"response['result']={response}")
+                logger.info(f"Found verifications in response: {response['count']}")
+                if response["count"] > 0:
+                    verifications = response["items"]
                     if verifications:
                         for verification in verifications:
+                            logger.debug(verification)
                             save_verification(device.id, verification)
                             logger.info("verification saved")
     return "Done"

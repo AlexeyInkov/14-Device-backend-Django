@@ -103,7 +103,7 @@ class Address(BaseTimeModel):
             address.append(f"корп. {str(self.corp)}")
         if self.liter:
             address.append(f"лит {str(self.liter)}")
-        address.append(f"({self.latitude}, {self.longitude})"),
+        # address.append(f"({self.latitude}, {self.longitude})"),
         return ", ".join(address)
 
 
@@ -132,6 +132,8 @@ class MeteringUnit(BaseTimeModel):
     )
     itp = models.CharField(max_length=10, blank=True)
     totem_number = models.CharField(max_length=100, blank=True)
+
+    attention = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "metering_units"
@@ -283,6 +285,8 @@ class Device(BaseTimeModel):
         blank=True,
     )
 
+    attention = models.BooleanField(default=False)
+
     class Meta:
         verbose_name_plural = "devices"
 
@@ -297,9 +301,9 @@ class Verification(BaseTimeModel):
         null=True,
         related_name="verifications",
     )
-    mi_mititle = models.CharField(max_length=200, blank=True, null=True)
-    mit_mitnumber = models.CharField(max_length=10, blank=True, null=True)
-    mi_mitype = models.CharField(max_length=100, blank=True, null=True)
+    mit_title = models.CharField(max_length=200, blank=True, null=True)
+    mit_number = models.CharField(max_length=10, blank=True, null=True)
+    mit_notation = models.CharField(max_length=100, blank=True, null=True)
     mi_modification = models.CharField(max_length=100, blank=True, null=True)
     mi_number = models.CharField(max_length=20, blank=True, null=True)
     org_title = models.CharField(max_length=100, blank=True, null=True)
@@ -323,16 +327,16 @@ class Verification(BaseTimeModel):
                     verification.save()
                 self.is_actual = True
                 # device = Device.objects.get(pk=self.device.pk)
-                if self.mit_mitnumber:
-                    device_registry_number = RegistryNumber.objects.get_or_create(registry_number=self.mit_mitnumber)[0]
+                if self.mit_number:
+                    device_registry_number = RegistryNumber.objects.get_or_create(registry_number=self.mit_number)[0]
                     self.device.registry_number = device_registry_number
-                if self.mi_mitype:
-                    device_type = TypeName.objects.get_or_create(type=self.mi_mitype)[0]
+                if self.mit_notation:
+                    device_type = TypeName.objects.get_or_create(type=self.mit_notation)[0]
                     self.device.type = device_type
                 if self.mi_modification:
                     device_modification = Modification.objects.get_or_create(modification=self.mi_modification, type=self.device.type)[0]
                     self.device.modification = device_modification
-                if self.mit_mitnumber and self.mi_mitype:
+                if self.mit_number and self.mit_notation:
                     TypeRegistry.objects.get_or_create(type=device_type, number_registry=device_registry_number)
                 self.device.save()
 

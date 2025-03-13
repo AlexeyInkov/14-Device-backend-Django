@@ -1,26 +1,20 @@
-class DataMixin:
-    title_page = None
-    extra_context = {}
-
-    def __init__(self):
-        if self.title_page:
-            self.extra_context["title"] = self.title_page
-
-    #
-    # def get_mixin_context(self, context, **kwargs):
-    #     context.update(kwargs)
-    #     return context
+from .servises.request_services import get_tso_selected, get_org_selected, get_cust_selected, get_mu_selected
 
 
-# class CustomHtmxMixin:
-#     def dispatch(self, request, *args, **kwargs):
-#         # import pdb; pdb.set_trace()
-#         self.template_htmx = self.template_name
-#         if not self.request.META.get('HTTP_HX_REQUEST'):
-#             self.template_name = 'components/include_block.html'
-#         else:
-#             time.sleep(1)
-#         return super().dispatch(request, *args, **kwargs)
-#     def get_context_data(self, **kwargs):
-#         kwargs['template_htmx'] = self.template_htmx
-#         return super().get_context_data(**kwargs)
+class TemplateMixin:
+    def get_template_names(self):
+        if self.request.headers.get("Hx-Request"):
+            template_name = self.template_name
+        else:
+            template_name = "frontend/index.html"
+        return template_name
+
+
+class ContextDataMixin:
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["org_selected"] = get_org_selected(self.request)
+        context["tso_selected"] = get_tso_selected(self.request)
+        context["cust_selected"] = get_cust_selected(self.request)
+        context["mu_selected"] = get_mu_selected(self.request)
+        return context

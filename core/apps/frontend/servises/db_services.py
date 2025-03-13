@@ -2,6 +2,7 @@ import datetime
 import logging
 from typing import Dict
 
+from django.contrib.auth.models import User
 from django.db import transaction
 from django.db.models import Q, QuerySet
 
@@ -18,93 +19,111 @@ from apps.device.models import (
     InstallationPoint,
     TypeName,
 )
-from config.settings import CONVERT_VERIF_FIELDS
 
 logger = logging.getLogger(__name__)
 
 
-def get_devices(mu_selected: str, metering_units: QuerySet) -> QuerySet:
-    devices = (
-        Device.objects.only(
-            "installation_point__name",
-            "installation_point__order",
-            "name__order",
-            "registry_number__registry_number",
-            "type__type",
-            "modification__modification",
-            "factory_number",
-            "notes",
-            "metering_unit_id",
-            "valid_date"
-        )
-        .select_related("registry_number")
-        .select_related("type")
-        .select_related("modification")
-        .select_related("installation_point")
-        .select_related("name")
-        .select_related("metering_unit")
-        .order_by("metering_unit_id", "installation_point__order", "name__order")
+def get_user_orgs(user: User) -> QuerySet:
+    return Organization.objects.filter(
+        user_to_org__user=user,
+        user_to_org__actual=True
     )
-    # Device filter
-    if mu_selected and mu_selected != "all":
-        return devices.filter(metering_unit=mu_selected)
-    return devices.filter(metering_unit__in=metering_units.values_list("pk", flat=True))
 
 
-def get_metering_units(user_orgs: QuerySet) -> QuerySet:
-    metering_units = (
-        MeteringUnit.objects.only(
-            "customer__name",
-            "address__region__name",
-            "address__region__parent_region__name",
-            "address__street__type_street__name",
-            "address__street__name",
-            "address__house_number",
-            "address__corp",
-            "address__liter",
-            "address__latitude",
-            "address__longitude",
-            "itp",
-            "tso__name",
-            "service_organization__name",
-        )
-        .select_related("address__region__parent_region")
-        .select_related("address__street__type_street")
-        .select_related("customer")
-        .select_related("tso")
-    ).filter(Q(tso__in=user_orgs) | Q(customer__in=user_orgs) | Q(service_organization__in=user_orgs))
-    return metering_units
+def get_user_metering_units(user: User) -> QuerySet:
+    user_orgs = get_user_orgs(user)
+    return (MeteringUnit.objects
+            .select_related("address__region__parent_region")
+            .select_related("address__street__type_street")
+            .select_related("customer")
+            .select_related("tso")
+            .filter(Q(tso__in=user_orgs) | Q(customer__in=user_orgs) | Q(service_organization__in=user_orgs))
+            )
 
 
-def get_filter_metering_units(tso_selected: str, cust_selected: str, org_selected: str, metering_units: QuerySet) -> QuerySet:
-    # MeteringUnit filter
+# only(
+#     "customer__name",
+#     "address__region__name",
+#     "address__region__parent_region__name",
+#     "address__street__type_street__name",
+#     "address__street__name",
+#     "address__house_number",
+#     "address__corp",
+#     "address__liter",
+#     "address__latitude",
+#     "address__longitude",
+#     "itp",
+#     "tso__name",
+#     "service_organization__name"
+# )
+
+
+def get_orgs_for_select(user: User) -> QuerySet:
+    user_metering_units = get_user_metering_units(user)
+    return Organization.objects.filter(Q(mu_c__in=user_metering_units) | Q(mu_so__in=user_metering_units) | Q(mu_tso__in=user_metering_units)).distinct()
+
+
+def get_user_devices(user: User) -> QuerySet:
+    user_metering_units = get_user_metering_units(user)
+    return (Device.objects
+            .select_related("registry_number")
+            .select_related("type")
+            .select_related("modification")
+            .select_related("installation_point")
+            .select_related("name")
+            .select_related("metering_unit")
+            .order_by("metering_unit_id", "installation_point__order", "name__order")
+            .filter(metering_unit__in=user_metering_units))
+
+
+# .only(
+#     "installation_point__name",
+#     "installation_point__order",
+#     "name__order",
+#     "registry_number__registry_number",
+#     "type__type",
+#     "modification__modification",
+#     "factory_number",
+#     "notes",
+#     "metering_unit_id",
+#     "valid_date"
+# )
+
+
+def get_select_org(org_selected: str | None) -> Organization | None:
+    if org_selected is not None and org_selected != "all":
+        return Organization.objects.get(slug=org_selected)
+
+
+def get_metering_units(user: User, org_selected: str | None, tso_selected: str | None, cust_selected: str | None) -> QuerySet:
     filters = {}
-    if tso_selected != "all":
+    metering_units = get_user_metering_units(user)
+    select_org = get_select_org(org_selected)
+    if org_selected is not None and org_selected != "all":
+        metering_units = metering_units.filter(Q(tso=select_org) | Q(customer=select_org) | Q(service_organization=select_org))
+    if tso_selected is not None and tso_selected != "all":
         filters["tso__slug"] = tso_selected
-    if cust_selected != "all":
+    if cust_selected is not None and cust_selected != "all":
         filters["customer__slug"] = cust_selected
     if filters:
-        return metering_units.filter(**filters)
-    if org_selected != "all":
-        org = Organization.objects.filter(slug=org_selected)
-        metering_units = metering_units.filter(Q(tso__in=org) | Q(customer__in=org) | Q(service_organization__in=org))
+        metering_units = metering_units.filter(**filters)
     return metering_units
 
 
-def get_select_organization(org_selected: str, orgs: QuerySet) -> Organization | None:
-    if org_selected != "all":
-        return orgs.get(slug=org_selected)
+def get_devices(user: User, org_selected: str | None, tso_selected: str | None, cust_selected: str | None, mu_selected: int | None) -> QuerySet:  #
+    devices = get_user_devices(user)
+    if mu_selected is not None:
+        return devices.filter(metering_unit=mu_selected)
+    elif org_selected is not None:
+        return devices.filter(metering_unit__in=get_metering_units(user, org_selected, tso_selected, cust_selected))
+    return devices
 
 
-def get_customers(
-        tso_selected: str, metering_units: QuerySet, orgs: QuerySet
-) -> QuerySet:
-    filters = {}
-    if tso_selected != "all":
-        filters["tso__slug"] = tso_selected
-    return orgs.filter(
-        id__in=(metering_units.filter(**filters).values("customer").distinct())
-    )
+def get_verifications(device: Device) -> QuerySet:
+    return (Verification.objects
+            .filter(device=device)
+            .filter(is_published=True)
+            .order_by("-is_actual", "-verification_date"))
 
 
 def save_verification(device_id: int, verification_fields: dict) -> None:
@@ -116,21 +135,12 @@ def save_verification(device_id: int, verification_fields: dict) -> None:
         logger.debug(f"{verification=}")
 
 
-def convert_verification_field(
-        device_id: int, verification_fields: Dict[str, str]
-) -> Dict[str, str]:
+def convert_verification_field(device_id: int, verification_fields: Dict[str, str]) -> Dict[str, str]:
     logger.debug(f"{verification_fields=}")
     model_fields = {}
-    for field_name in CONVERT_VERIF_FIELDS.keys():
-        if verification_fields.get(CONVERT_VERIF_FIELDS[field_name], None) is not None:
-            if field_name[-4:] == "date":
-                model_fields[field_name] = verification_fields[
-                                               CONVERT_VERIF_FIELDS[field_name]
-                                           ][:10]
-            else:
-                model_fields[field_name] = verification_fields[
-                    CONVERT_VERIF_FIELDS[field_name]
-                ]
+    for field_name in verification_fields:
+        if field_name[-4:] == "date":
+            model_fields[field_name] = "-".join(verification_fields[field_name][:10].split(".")[-1::-1])
     model_fields["device"] = Device.objects.get(pk=device_id)
     logger.debug(f"{model_fields=}")
     return model_fields

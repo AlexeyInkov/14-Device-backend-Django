@@ -1,0 +1,9 @@
+<script>
+    {% if debug %}
+        document.addEventListener("htmx:afterSettle", (event) => {
+            if ('djdt' in window) {
+                window.djdt.init();
+            }
+        }
+    {% endif %}
+</script>

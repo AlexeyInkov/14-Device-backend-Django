@@ -1,42 +1,21 @@
-{% extends "frontend/base/base_bs5_htmx.html" %}
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html"
+      xmlns="http://www.w3.org/1999/html">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% include "frontend/base/head.html" %}
+  <title>{{ title }}</title>
+</head>
+<body>
+{% include "frontend/base/debug_tool_bar_script_before.html" %}
+<div class="container main-container">
 
-    {% block content %}
-    <div class="row top_bar">
-      <div class="col-12">
-        {% include 'frontend/includes/header-nav-bar.html' %}
-      </div>
-    </div>
-    <div class="row content">
-      <div id="sidebar-content" class="col-3 menu-bar">
+  {% block content %}{% endblock %}
 
-        <!--- sidebar menu --->
-        {% include "frontend/includes/sidebarMenu.html" %}
-
-      </div>
-      <div class="col-9">
-        <div class="row ">
-          <div id="addresses-content" class="col addresses">
-
-            <!--- Addresses --->
-            {% include "frontend/includes/list_metering_units.html" %}
-
-          </div>
-        </div>
-        <div class="row ">
-          <div id="devices-content" class="col devices">
-
-            <!--- Devices --->
-            {% include "frontend/includes/list_devices.html" %}
-
-          </div>
-        </div>
-      </div>
-    </div>
-    <footer class="row footer">
-      <div class="col-12">
-        {% block footer %}
-          <div class="bg-secondary text-center text-light">2024 © AlexeyInkov</div>
-        {% endblock %}
-      </div>
-    </footer>
-  {% endblock %}
+  {% include "frontend/base/footer.html" %}
+</div>
+{% include "frontend/base/scripts.html" %}
+{% include "frontend/base/debug_tool_bar_script_end.html" %}
+</body>
+</html>

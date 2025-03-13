@@ -1,0 +1,58 @@
+{% load context_tags %}
+
+
+{% if devices %}
+  <table class="table table-bordered table-hover" id="devices">
+    {% get_headers_device as HEADERS_DEVICE %}
+    <thead>
+    <tr>
+      {% for header in HEADERS_DEVICE.values %}
+        <th>{{ header }}</th>
+      {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+    {% for device in devices %} 
+        <tr>
+          {% for key in HEADERS_DEVICE.keys %}
+            {% if key == 'id' and device|attr:'attention' %}
+            <td style="background: red;"><a class="link-dark show-modal"
+                   href=""
+                   hx-get="{% url 'frontend:device_detail' device.pk %}"
+                   hx-target="#dialogVerifications"
+                   hx-trigger="click"
+                   data-bs-toggle="modal"
+                   data-bs-target="#verificationsModal"
+            >
+              {{ device|attr:key }}
+            </a></td>
+            {% else %}
+              <td><a class="link-dark show-modal"
+                   href=""
+                   hx-get="{% url 'frontend:device_detail' device.pk %}"
+                   hx-target="#dialogVerifications"
+                   hx-trigger="click"
+                   data-bs-toggle="modal"
+                   data-bs-target="#verificationsModal"
+            >
+              {{ device|attr:key }}
+            </a></td>
+            {% endif %}
+          {% endfor %}
+        </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Модальное окно -->
+
+  <div id="verificationsModal"
+       class="modal fade"
+       style="display: none"
+       aria-hidden="false"
+       tabindex="-1">>
+    <div id="dialogVerifications" class="modal-dialog modal-xl" ></div>
+  </div>
+
+{% endif %}
+
