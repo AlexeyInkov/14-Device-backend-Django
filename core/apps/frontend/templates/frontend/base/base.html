@@ -8,6 +8,7 @@
   <title>{{ title }}</title>
 </head>
 <body>
+{% include "frontend/base/debug_tool_bar_script_before.html" %}
 <div class="container main-container">
 
   {% block content %}{% endblock %}
@@ -15,5 +16,6 @@
   {% include "frontend/base/footer.html" %}
 </div>
 {% include "frontend/base/scripts.html" %}
+{% include "frontend/base/debug_tool_bar_script_end.html" %}
 </body>
 </html>
