@@ -1,5 +1,5 @@
 {% load context_tags %}
-
+{% load static %}
 
 {% for tso in menu_items %}
   <div class="accordion-item">
@@ -20,10 +20,12 @@
     </div>
     <div id="flush-collapse{{ tso|dictitem:'tso__slug' }}" class="accordion-collapse collapse" data-bs-parent="#accordionFlushMenu">
       <div class="accordion-body">
+        <img id="spinner" class="htmx-indicator" src="{% static 'frontend/images/3-dots-scale.svg' %}"/>
         <div class="list-group"
              hx-get="{% url 'frontend:menu_item' %}?tso={{ tso|dictitem:'tso__slug' }}{% if org_selected %}&organization={{ org_selected }}{% endif %}"
              hx-target="this"
-             hx-trigger="load, changed"
+            {#             <!--при раскрытии тела аккордеона, получать список организаций, связанных с ТСО-->#}
+             hx-trigger="intersect div:#flush-collapse{{ tso|dictitem:'tso__slug' }}"
         ></div>
       </div>
     </div>
