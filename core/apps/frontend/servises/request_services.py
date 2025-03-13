@@ -57,6 +57,6 @@ def get_mu_selected(request: HttpRequest) -> int:
 
 
 def reset_selected_param(request: HttpRequest, param_name: str) -> None:
-    param = request.session.pop("param_name", None)
+    param = request.session.pop(param_name, None)
     logger.debug(f"reset {param_name} = {param}")
     logger.debug(f"org_selected_session: {request.session.get('org_selected')}")
