@@ -1,6 +1,5 @@
 import datetime
 import logging
-from dataclasses import dataclass
 from typing import Dict
 
 from django.contrib.auth.models import User
@@ -24,111 +23,107 @@ from apps.device.models import (
 logger = logging.getLogger(__name__)
 
 
-@dataclass
-class GetIndexViewDataFromDB:
-    user: User = None
-    org_selected = None
-    tso_selected = None
-    cust_selected = None
-    mu_selected = None
+def get_user_orgs(user: User) -> QuerySet:
+    return Organization.objects.filter(
+        user_to_org__user=user,
+        user_to_org__actual=True
+    )
 
-    metering_units = None
-    orgs_for_select = None
-    devices = None
 
-    def __init__(self, user, org_selected=None, tso_selected=None, cust_selected=None, mu_selected=None):
-        self.user = user
-        self.org_selected = org_selected
-        self.tso_selected = tso_selected
-        self.cust_selected = cust_selected
-        self.mu_selected = mu_selected
+def get_user_metering_units(user: User) -> QuerySet:
+    user_orgs = get_user_orgs(user)
+    return (MeteringUnit.objects
+            .select_related("address__region__parent_region")
+            .select_related("address__street__type_street")
+            .select_related("customer")
+            .select_related("tso")
+            .filter(Q(tso__in=user_orgs) | Q(customer__in=user_orgs) | Q(service_organization__in=user_orgs))
+            )
 
-        self.metering_units = self.get_metering_units()
-        self.orgs_for_select = self.get_all_orgs()
-        self.devices = self.get_devices()
 
-    def get_user_orgs(self) -> QuerySet:
-        return Organization.objects.filter(
-            user_to_org__user=self.user,
-            user_to_org__actual=True
-        )
+# only(
+#     "customer__name",
+#     "address__region__name",
+#     "address__region__parent_region__name",
+#     "address__street__type_street__name",
+#     "address__street__name",
+#     "address__house_number",
+#     "address__corp",
+#     "address__liter",
+#     "address__latitude",
+#     "address__longitude",
+#     "itp",
+#     "tso__name",
+#     "service_organization__name"
+# )
 
-    def get_user_metering_units(self) -> QuerySet:
-        return (MeteringUnit.objects
-                .select_related("address__region__parent_region")
-                .select_related("address__street__type_street")
-                .select_related("customer")
-                .select_related("tso")
-                .filter(Q(tso__in=self.get_user_orgs()) | Q(customer__in=self.get_user_orgs()) | Q(service_organization__in=self.get_user_orgs()))
-                )
 
-    # only(
-    #     "customer__name",
-    #     "address__region__name",
-    #     "address__region__parent_region__name",
-    #     "address__street__type_street__name",
-    #     "address__street__name",
-    #     "address__house_number",
-    #     "address__corp",
-    #     "address__liter",
-    #     "address__latitude",
-    #     "address__longitude",
-    #     "itp",
-    #     "tso__name",
-    #     "service_organization__name"
-    # )
+def get_orgs_for_select(user: User) -> QuerySet:
+    user_metering_units = get_user_metering_units(user)
+    return Organization.objects.filter(Q(mu_c__in=user_metering_units) | Q(mu_so__in=user_metering_units) | Q(mu_tso__in=user_metering_units)).distinct()
 
-    def get_all_orgs(self) -> QuerySet:
-        return Organization.objects.filter(Q(mu_c__in=self.get_user_metering_units()) | Q(mu_so__in=self.get_user_metering_units()) | Q(mu_tso__in=self.get_user_metering_units())).distinct()
 
-    def get_user_devices(self) -> QuerySet:
-        return (Device.objects
-                .select_related("registry_number")
-                .select_related("type")
-                .select_related("modification")
-                .select_related("installation_point")
-                .select_related("name")
-                .select_related("metering_unit")
-                .order_by("metering_unit_id", "installation_point__order", "name__order")
-                .filter(metering_unit__in=self.get_user_metering_units()))
+def get_user_devices(user: User) -> QuerySet:
+    user_metering_units = get_user_metering_units(user)
+    return (Device.objects
+            .select_related("registry_number")
+            .select_related("type")
+            .select_related("modification")
+            .select_related("installation_point")
+            .select_related("name")
+            .select_related("metering_unit")
+            .order_by("metering_unit_id", "installation_point__order", "name__order")
+            .filter(metering_unit__in=user_metering_units))
 
-    # .only(
-    #     "installation_point__name",
-    #     "installation_point__order",
-    #     "name__order",
-    #     "registry_number__registry_number",
-    #     "type__type",
-    #     "modification__modification",
-    #     "factory_number",
-    #     "notes",
-    #     "metering_unit_id",
-    #     "valid_date"
-    # )
 
-    def get_select_org(self) -> Organization | None:
-        if self.org_selected is not None:
-            return Organization.objects.get(slug=self.org_selected)
+# .only(
+#     "installation_point__name",
+#     "installation_point__order",
+#     "name__order",
+#     "registry_number__registry_number",
+#     "type__type",
+#     "modification__modification",
+#     "factory_number",
+#     "notes",
+#     "metering_unit_id",
+#     "valid_date"
+# )
 
-    def get_metering_units(self) -> QuerySet:
-        filters = {}
-        metering_units = self.get_user_metering_units()
-        if self.org_selected is not None:
-            metering_units = metering_units.filter(Q(tso=self.get_select_org()) | Q(customer=self.get_select_org()) | Q(service_organization=self.get_select_org()))
-        if self.tso_selected is not None:
-            filters["tso__slug"] = self.tso_selected
-        if self.cust_selected is not None:
-            filters["customer__slug"] = self.cust_selected
-        if filters:
-            metering_units = metering_units.filter(**filters)
-        return metering_units
 
-    def get_devices(self):  #
-        devices = self.get_user_devices()
-        if self.mu_selected is not None:
-            return devices.filter(metering_unit=self.mu_selected)
-        elif self.org_selected is not None:
-            return devices.filter(metering_unit__in=self.metering_units)
-        return devices
+def get_select_org(org_selected: str | None) -> Organization | None:
+    if org_selected is not None and org_selected != "all":
+        return Organization.objects.get(slug=org_selected)
+
+
+def get_metering_units(user: User, org_selected: str | None, tso_selected: str | None, cust_selected: str | None) -> QuerySet:
+    filters = {}
+    metering_units = get_user_metering_units(user)
+    select_org = get_select_org(org_selected)
+    if org_selected is not None and org_selected != "all":
+        metering_units = metering_units.filter(Q(tso=select_org) | Q(customer=select_org) | Q(service_organization=select_org))
+    if tso_selected is not None and tso_selected != "all":
+        filters["tso__slug"] = tso_selected
+    if cust_selected is not None and cust_selected != "all":
+        filters["customer__slug"] = cust_selected
+    if filters:
+        metering_units = metering_units.filter(**filters)
+    return metering_units
+
+
+def get_devices(user: User, org_selected: str | None, tso_selected: str | None, cust_selected: str | None, mu_selected: int | None) -> QuerySet:  #
+    devices = get_user_devices(user)
+    if mu_selected is not None:
+        return devices.filter(metering_unit=mu_selected)
+    elif org_selected is not None:
+        return devices.filter(metering_unit__in=get_metering_units(user, org_selected, tso_selected, cust_selected))
+    return devices
+
+
+def get_verifications(device: Device) -> QuerySet:
+    return (Verification.objects
+            .filter(device=device)
+            .filter(is_published=True)
+            .order_by("-is_actual", "-verification_date"))
 
 
 def save_verification(device_id: int, verification_fields: dict) -> None:

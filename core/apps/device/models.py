@@ -327,16 +327,16 @@ class Verification(BaseTimeModel):
                     verification.save()
                 self.is_actual = True
                 # device = Device.objects.get(pk=self.device.pk)
-                if self.mit_mitnumber:
-                    device_registry_number = RegistryNumber.objects.get_or_create(registry_number=self.mit_mitnumber)[0]
+                if self.mit_number:
+                    device_registry_number = RegistryNumber.objects.get_or_create(registry_number=self.mit_number)[0]
                     self.device.registry_number = device_registry_number
-                if self.mi_mitype:
-                    device_type = TypeName.objects.get_or_create(type=self.mi_mitype)[0]
+                if self.mit_notation:
+                    device_type = TypeName.objects.get_or_create(type=self.mit_notation)[0]
                     self.device.type = device_type
                 if self.mi_modification:
                     device_modification = Modification.objects.get_or_create(modification=self.mi_modification, type=self.device.type)[0]
                     self.device.modification = device_modification
-                if self.mit_mitnumber and self.mi_mitype:
+                if self.mit_number and self.mit_notation:
                     TypeRegistry.objects.get_or_create(type=device_type, number_registry=device_registry_number)
                 self.device.save()
 

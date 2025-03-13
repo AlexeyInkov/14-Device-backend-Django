@@ -4,13 +4,14 @@ from django.http import HttpResponse
 from django.shortcuts import redirect, get_object_or_404, render
 from django.views.generic import TemplateView, ListView, DetailView
 
-from apps.device.models import Device, Verification, Organization
-from .forms import UploadFileForm, DeviceVerificationFormset
-from .mixins import ContextDataMixin, TemplateMixin
-from .servises.db_services import GetIndexViewDataFromDB
-from .servises.file_services import handle_uploaded_file
-from .servises.request_services import get_org_selected, get_tso_selected, get_cust_selected, get_mu_selected
-from .tasks import download_device_from_file_into_db, refresh_valid_date
+import apps.frontend.servises.db_services as db_services
+import apps.frontend.servises.request_services as request_services
+from apps.device.models import Device
+
+from apps.frontend.forms import UploadFileForm, DeviceVerificationFormset
+from apps.frontend.mixins import ContextDataMixin, TemplateMixin
+from apps.frontend.servises.file_services import handle_uploaded_file
+from apps.frontend.tasks import download_device_from_file_into_db, refresh_valid_date
 
 
 class IndexView(ContextDataMixin, LoginRequiredMixin, TemplateView):
@@ -19,12 +20,9 @@ class IndexView(ContextDataMixin, LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        org_selected = get_org_selected(self.request)
+        org_selected = request_services.get_org_selected(self.request)
         if org_selected:
-            context["org_selected"] = org_selected
-            select_org = Organization.objects.get(slug=org_selected),
-            print(select_org[0])
-            context["select_org"] = select_org[0]
+            context["select_org"] = db_services.get_select_org(org_selected)
         return context
 
 
@@ -34,7 +32,7 @@ class UserOrganizationsListView(TemplateMixin, LoginRequiredMixin, ListView):
     context_object_name = "user_orgs_for_select"
 
     def get_queryset(self):
-        return GetIndexViewDataFromDB(user=self.request.user).orgs_for_select
+        return db_services.get_orgs_for_select(user=self.request.user)
 
 
 @login_required
@@ -54,6 +52,7 @@ def load_file_view(request):
 
 def refresh_valid_date_view(request):
     refresh_valid_date.delay()
+    # TODO: сделать попап сообщение об успехе
     return redirect("frontend:home")
 
 
@@ -63,25 +62,26 @@ class MeteringUnitListView(TemplateMixin, ContextDataMixin, LoginRequiredMixin, 
     context_object_name = "metering_units"
 
     def get_queryset(self):
-        return GetIndexViewDataFromDB(
+        return db_services.get_metering_units(
             user=self.request.user,
-            org_selected=get_org_selected(self.request),
-            tso_selected=get_tso_selected(self.request),
-            cust_selected=get_cust_selected(self.request),
-        ).metering_units
+            org_selected=request_services.get_org_selected(self.request),
+            tso_selected=request_services.get_tso_selected(self.request),
+            cust_selected=request_services.get_cust_selected(self.request)
+        )
 
 
-class MenuItemListView(TemplateMixin, ContextDataMixin,LoginRequiredMixin, ListView):
+class MenuItemListView(TemplateMixin, ContextDataMixin, LoginRequiredMixin, ListView):
     template_name = "frontend/menu_item_list.html"
     title_page = "Пункты меню"
     context_object_name = "menu_items"
 
     def get_queryset(self):
-        return GetIndexViewDataFromDB(
+        return db_services.get_metering_units(
             user=self.request.user,
-            org_selected=get_org_selected(self.request),
-
-        ).metering_units.values("tso__name", 'tso__slug').distinct()
+            org_selected=request_services.get_org_selected(self.request),
+            tso_selected=request_services.get_tso_selected(self.request),
+            cust_selected=request_services.get_cust_selected(self.request)
+        ).values("tso__name", 'tso__slug').distinct()
 
 
 class MenuItemDetailView(TemplateMixin, ContextDataMixin, LoginRequiredMixin, ListView):
@@ -90,11 +90,12 @@ class MenuItemDetailView(TemplateMixin, ContextDataMixin, LoginRequiredMixin, Li
     context_object_name = "menu_item"
 
     def get_queryset(self):
-        return GetIndexViewDataFromDB(
+        return db_services.get_metering_units(
             user=self.request.user,
-            org_selected=get_org_selected(self.request),
-            tso_selected=get_tso_selected(self.request),
-        ).metering_units.values("customer__name", 'customer__slug').distinct()
+            org_selected=request_services.get_org_selected(self.request),
+            tso_selected=request_services.get_tso_selected(self.request),
+            cust_selected=request_services.get_cust_selected(self.request)
+        ).values("customer__name", 'customer__slug').distinct()
 
 
 class DeviceListView(TemplateMixin, ContextDataMixin, LoginRequiredMixin, ListView):
@@ -103,13 +104,13 @@ class DeviceListView(TemplateMixin, ContextDataMixin, LoginRequiredMixin, ListVi
     context_object_name = "devices"
 
     def get_queryset(self):
-        return GetIndexViewDataFromDB(
+        return db_services.get_devices(
             user=self.request.user,
-            org_selected=get_org_selected(self.request),
-            tso_selected=get_tso_selected(self.request),
-            cust_selected=get_cust_selected(self.request),
-            mu_selected=get_mu_selected(self.request),
-        ).devices
+            org_selected=request_services.get_org_selected(self.request),
+            tso_selected=request_services.get_tso_selected(self.request),
+            cust_selected=request_services.get_cust_selected(self.request),
+            mu_selected=request_services.get_mu_selected(self.request)
+        )
 
 
 class DeviceDetailView(ContextDataMixin, LoginRequiredMixin, DetailView):
@@ -119,12 +120,8 @@ class DeviceDetailView(ContextDataMixin, LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        context["verifications"] = (
-            Verification.objects.filter(device=self.object)
-            .filter(is_published=True)
-            .order_by("-is_actual", "-verification_date")
-        )
+        device = self.get_object()
+        context["verifications"] = db_services.get_verifications(device)
         return context
 
 
