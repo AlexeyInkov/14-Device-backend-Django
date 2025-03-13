@@ -45,5 +45,5 @@ dist-ssr
 /db
 /files/
 /core/media/
-/core/static/
+/core/static/*
 /core/staticfiles/
