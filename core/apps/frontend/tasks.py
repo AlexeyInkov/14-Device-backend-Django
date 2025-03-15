@@ -1,12 +1,16 @@
 import csv
 import logging
 import os
+import shutil
+import uuid
 
 from celery import shared_task
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.db.models import Max
 
+import apps.frontend.servises.db_services as db_services
+import apps.frontend.servises.file_services as file_services
 from apps.device.models import Device, TypeRegistry, SIName, TypeName, RegistryNumber
 from apps.frontend.servises.arshin_servises import request_to_arshin
 from apps.frontend.servises.db_services import save_verification, write_row_to_db
@@ -137,3 +141,13 @@ def download_type_from_file_into_db(file_path: str, file_encoding: str) -> None:
                         number_registry=number_registry,
                     )
     os.remove(file_path)
+
+
+def create_excel_file(metering_units):
+    # template = os.path.sep.join((settings.FILE_TEMPLATES_DIR, "template.xlsx"))
+    file_name = os.path.sep.join((settings.FILE_TEMPLATES_DIR, f'{str(uuid.uuid4()).split("-")[-1]}.xlsx'))
+    # # копируем шаблон
+    # shutil.copyfile(template, file_name)
+    dict_list = db_services.create_dict_from_db(metering_units)
+    file_services.create_excel_from_dict_list(dict_list, file_name, sheet_name='Sheet1')
+    return file_name
