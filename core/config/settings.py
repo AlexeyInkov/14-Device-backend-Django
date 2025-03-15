@@ -277,7 +277,6 @@ if DEBUG and not IS_RUNNING_TESTS:
     CACHALOT_ENABLED = False
 
 
-
 # Пауза между запросами для fgis.arshin
 TIME_DDOS_FOR_REQUEST = 1
 
