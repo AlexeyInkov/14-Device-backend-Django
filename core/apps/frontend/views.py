@@ -1,3 +1,5 @@
+import os
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
@@ -7,11 +9,10 @@ from django.views.generic import TemplateView, ListView, DetailView
 import apps.frontend.servises.db_services as db_services
 import apps.frontend.servises.request_services as request_services
 from apps.device.models import Device
-
 from apps.frontend.forms import UploadFileForm, DeviceVerificationFormset
 from apps.frontend.mixins import ContextDataMixin, TemplateMixin
 from apps.frontend.servises.file_services import handle_uploaded_file
-from apps.frontend.tasks import download_device_from_file_into_db, refresh_valid_date
+from apps.frontend.tasks import download_device_from_file_into_db, refresh_valid_date, create_excel_file
 
 
 class IndexView(ContextDataMixin, LoginRequiredMixin, TemplateView):
@@ -36,7 +37,7 @@ class UserOrganizationsListView(TemplateMixin, LoginRequiredMixin, ListView):
 
 
 @login_required
-def load_file_view(request):
+def upload_file_view(request):
     if request.method == "POST":
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
@@ -48,6 +49,23 @@ def load_file_view(request):
     else:
         form = UploadFileForm()
     return render(request, 'frontend/modal-load-file.html', {'form': form})
+
+
+@login_required
+def download_file_view(request):
+    metering_units = db_services.get_metering_units(
+        user=request.user,
+        org_selected=request_services.get_org_selected(request),
+        tso_selected=request_services.get_tso_selected(request),
+        cust_selected=request_services.get_cust_selected(request)
+    )
+    file_path = create_excel_file(metering_units)
+    if file_path is not None and os.path.exists(file_path):
+        with open(file_path, 'rb') as fh:
+            response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
+            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+            return response
+    return render(request, 'frontend/message.html', context={'message': 'File not found', 'mu': metering_units})
 
 
 def refresh_valid_date_view(request):
