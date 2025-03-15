@@ -65,18 +65,23 @@
 
               <li><a 
                   class="dropdown-item btn btn-secondary"
-                     hx-get="{% url 'frontend:refresh_valid_date' %}"
-                     href=""
+                     href="{% url 'frontend:refresh_valid_date' %}"
               >Обновить данные о поверке
               </a></li>
               
-              <li><a class="dropdown-item btn btn-secondary disabled"
-                     href="#">
+              <li><a class="dropdown-item btn btn-secondary"
+                     href="{% url 'frontend:load_data_to_file' %}">
                 Выгрузить данные в файл
               </a></li>
              
               <li><a class="dropdown-item btn btn-secondary"
-                     href="{% url "my_auth:logout" %}">
+                     href="
+{% url "my_auth:logout" %}?
+{% if tso_selected %}tso={{ tso_selected }}&{% endif %}
+{% if cust_selected %}customer={{ cust_selected }}&{% endif %}
+{% if org_selected %}organization={{ org_selected }}&{% endif %}
+{% if mu_selected %}metering_unit={{ mu_selected }}{% endif %}
+">
                 Выход
               </a></li>
             </ul>
