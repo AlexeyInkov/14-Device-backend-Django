@@ -145,7 +145,7 @@ def download_type_from_file_into_db(file_path: str, file_encoding: str) -> None:
 
 def create_excel_file(metering_units):
     # template = os.path.sep.join((settings.FILE_TEMPLATES_DIR, "template.xlsx"))
-    file_name = os.path.sep.join((settings.FILE_TEMPLATES_DIR, f'{str(uuid.uuid4()).split("-")[-1]}.xlsx'))
+    file_name = os.path.sep.join((settings.FILE_UPLOAD_DIR, f'{str(uuid.uuid4()).split("-")[-1]}.xlsx'))
     # # копируем шаблон
     # shutil.copyfile(template, file_name)
     dict_list = db_services.create_dict_from_db(metering_units)

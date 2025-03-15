@@ -75,12 +75,20 @@ def create_excel_from_dict_list(dict_list: list, output_filename: str, sheet_nam
     cell_style.alignment = Alignment(horizontal='left', vertical='center')
     cell_style.border = border_style
 
+    date_style = NamedStyle(name='data')
+    date_style.number_format = 'DD.MM.YYYY'
+    date_style.alignment = Alignment(horizontal='left', vertical='center')
+    date_style.border = border_style
+
     for cell in ws[1]:  # Применяем стиль к заголовкам
         cell.style = header_style
 
     for row in ws.iter_rows(min_row=2, max_row=ws.max_row, min_col=1, max_col=ws.max_column):
         for cell in row:
-            cell.style = cell_style
+            if cell.is_date:
+                cell.style = date_style
+            else:
+                cell.style = cell_style
 
     # Автоматическое изменение ширины столбцов
     for col in ws.columns:
