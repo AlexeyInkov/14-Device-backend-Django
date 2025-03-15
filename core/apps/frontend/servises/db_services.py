@@ -248,3 +248,32 @@ def write_row_to_db(row, user):
             if datetime.datetime.strptime(valid_date, "%Y-%m-%d").date() > device_id.valid_date:
                 device_id.valid_date = valid_date
             device_id.save()
+
+
+def create_dict_from_db(metering_units: QuerySet) -> list:
+    lst = []
+    for metering_unit in metering_units:
+        for device in Device.objects.filter(metering_unit=metering_unit):
+            lst.append(
+                {
+                    "№ п/п":metering_unit.id,
+                    "Наименование абонента": metering_unit.customer.name,
+                    "Город": metering_unit.address.region.name,
+                    "Наименование улицы": metering_unit.address.street.name,
+                    "Тип улицы": metering_unit.address.street.type_street.name,
+                    "№ дома": metering_unit.address.house_number,
+                    "Корп": metering_unit.address.corp,
+                    "Лит": metering_unit.address.liter,
+                    "ТЦ": metering_unit.itp,
+                    "Труба": device.installation_point.name,
+                    "Тип": device.type.type,
+                    "Ду": "",
+                    "Номер": device.factory_number,
+                    "Дата": device.valid_date,
+                    "МПИ": "",
+                    "ТСО": metering_unit.tso.name,
+                    "№ Тотэм": "",
+                }
+            )
+    return lst
+
