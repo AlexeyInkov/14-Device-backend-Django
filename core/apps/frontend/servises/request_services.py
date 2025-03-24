@@ -24,9 +24,9 @@ def get_tso_selected(request: HttpRequest) -> str:
     tso_selected = request.session.get("tso_selected")
     logger.debug(f"tso_selected_request: {tso_selected_request}")
     logger.debug(f"tso_selected_session: {tso_selected}")
-    if tso_selected_request != tso_selected:
-        reset_selected_param(request, 'cust_selected')
-        reset_selected_param(request, 'mu_selected')
+    if tso_selected_request != tso_selected and tso_selected_request is not None:
+        reset_selected_param(request, "cust_selected")
+        reset_selected_param(request, "mu_selected")
         request.session["tso_selected"] = tso_selected_request
         return tso_selected_request
     return tso_selected
