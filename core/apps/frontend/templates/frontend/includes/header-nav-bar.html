@@ -58,30 +58,28 @@
                   hx-get="{% url 'frontend:load_data_from_file' %}"
                   hx-target="#dialogLoadFile"
                   hx-trigger="click"
-                   data-bs-toggle="modal"
-                   data-bs-target="#loadFileModal"
-              >Загрузить данные из файла 
+                  data-bs-toggle="modal"
+                  data-bs-target="#loadFileModal"
+              >Загрузить данные из файла
               </a></li>
 
-              <li><a 
+              <li><a
                   class="dropdown-item btn btn-secondary"
-                     href="{% url 'frontend:refresh_valid_date' %}"
+                  href="{% url 'frontend:refresh_valid_date' %}"
               >Обновить данные о поверке
               </a></li>
-              
+
               <li><a class="dropdown-item btn btn-secondary"
-                     href="{% url 'frontend:load_data_to_file' %}">
-                Выгрузить данные в файл
-              </a></li>
-             
-              <li><a class="dropdown-item btn btn-secondary"
-                     href="
-{% url "my_auth:logout" %}?
+                     href="{% url 'frontend:load_data_to_file' %}?
 {% if tso_selected %}tso={{ tso_selected }}&{% endif %}
 {% if cust_selected %}customer={{ cust_selected }}&{% endif %}
 {% if org_selected %}organization={{ org_selected }}&{% endif %}
-{% if mu_selected %}metering_unit={{ mu_selected }}{% endif %}
-">
+{% if mu_selected %}metering_unit={{ mu_selected }}{% endif %}">
+                Выгрузить данные в файл
+              </a></li>
+
+              <li><a class="dropdown-item btn btn-secondary"
+                     href="{% url "my_auth:logout" %}">
                 Выход
               </a></li>
             </ul>
@@ -94,7 +92,7 @@
 
 <!-- Модальное окно -->
 <div class="modal fade" id="loadFileModal">
-  <div id="dialogLoadFile" class="modal-dialog modal-lg" ></div>
+  <div id="dialogLoadFile" class="modal-dialog modal-lg"></div>
 </div>
 
 
