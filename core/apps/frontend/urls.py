@@ -35,7 +35,11 @@ urlpatterns = [
     ),
     path("refresh-valid-date/", refresh_valid_date_view, name="refresh_valid_date"),
     path(
-        "upload-data-from-file/", upload_device_from_file_view, name="load_data_from_file"
+        "upload-data-from-file/",
+        upload_device_from_file_view,
+        name="load_data_from_file",
     ),
-    path("download-data-to-file/", download_device_to_file_view, name="load_data_to_file"),
+    path(
+        "download-data-to-file/", download_device_to_file_view, name="load_data_to_file"
+    ),
 ]
