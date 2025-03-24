@@ -1,7 +1,12 @@
 from django import template
 from django.db.models import QuerySet
 
-from config.settings import HEADERS_ADDRESS, HEADERS_DEVICE, HEADERS_VERIFICATION, HEADERS_VERIFICATION_UPDATE
+from config.settings import (
+    HEADERS_ADDRESS,
+    HEADERS_DEVICE,
+    HEADERS_VERIFICATION,
+    HEADERS_VERIFICATION_UPDATE,
+)
 
 register = template.Library()
 

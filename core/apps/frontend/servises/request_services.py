@@ -11,9 +11,9 @@ def get_org_selected(request: HttpRequest) -> str:
     logger.debug(f"org_selected_request: {org_selected_request}")
     logger.debug(f"org_selected_session: {org_selected}")
     if org_selected_request != org_selected:
-        reset_selected_param(request, 'tso_selected')
-        reset_selected_param(request, 'cust_selected')
-        reset_selected_param(request, 'mu_selected')
+        reset_selected_param(request, "tso_selected")
+        reset_selected_param(request, "cust_selected")
+        reset_selected_param(request, "mu_selected")
         request.session["org_selected"] = org_selected_request
         return org_selected_request
     return org_selected
@@ -24,9 +24,9 @@ def get_tso_selected(request: HttpRequest) -> str:
     tso_selected = request.session.get("tso_selected")
     logger.debug(f"tso_selected_request: {tso_selected_request}")
     logger.debug(f"tso_selected_session: {tso_selected}")
-    if tso_selected_request != tso_selected:
-        reset_selected_param(request, 'cust_selected')
-        reset_selected_param(request, 'mu_selected')
+    if tso_selected_request != tso_selected and tso_selected_request is not None:
+        reset_selected_param(request, "cust_selected")
+        reset_selected_param(request, "mu_selected")
         request.session["tso_selected"] = tso_selected_request
         return tso_selected_request
     return tso_selected
@@ -38,7 +38,7 @@ def get_cust_selected(request: HttpRequest) -> str:
     logger.debug(f"cust_selected_request: {cust_selected_request}")
     logger.debug(f"cust_selected_session: {cust_selected}")
     if cust_selected_request != cust_selected and cust_selected_request is not None:
-        reset_selected_param(request, 'mu_selected')
+        reset_selected_param(request, "mu_selected")
 
         request.session["cust_selected"] = cust_selected_request
         return cust_selected_request

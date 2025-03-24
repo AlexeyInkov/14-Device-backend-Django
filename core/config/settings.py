@@ -35,10 +35,8 @@ INSTALLED_APPS = [
     # Celery
     "django_celery_beat",
     "django_celery_results",
-
     "cachalot",
     "django_htmx",
-
     # Apps
     "apps.my_auth.apps.MyAuthConfig",
     "apps.for_page.apps.ForPageConfig",
@@ -154,7 +152,7 @@ if not DEBUG:
             "LOCATION": os.environ.get("REDIS_URL"),
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            }
+            },
         }
     }
 
@@ -201,7 +199,7 @@ LOGGING = {
             "handlers": ["console"],
             "level": "DEBUG",
             "propagate": False,
-        }
+        },
     },
 }
 
@@ -220,7 +218,7 @@ CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
 # Development options
-IS_RUNNING_TESTS = 'test' in sys.argv
+IS_RUNNING_TESTS = "test" in sys.argv
 
 INTERNAL_IPS = ("127.0.0.1", "localhost")
 
@@ -229,8 +227,11 @@ def show_toolbar(request: HttpRequest) -> bool:
     if DEBUG and not IS_RUNNING_TESTS:
         if request.META.get("REMOTE_ADDR") not in INTERNAL_IPS:
             logger.error(
-                'Local address is not in INTERNAL_IPs',
-                error={'remote_addr': request.META.get('REMOTE_ADDR'), 'INTERNAL_IPs': INTERNAL_IPS},
+                "Local address is not in INTERNAL_IPs",
+                error={
+                    "remote_addr": request.META.get("REMOTE_ADDR"),
+                    "INTERNAL_IPs": INTERNAL_IPS,
+                },
             )
         return True
 
@@ -242,8 +243,12 @@ if DEBUG and not IS_RUNNING_TESTS:
         "drf_yasg",
     ]
     # Debug toolbar
-    INSTALLED_APPS += ["debug_toolbar",]
-    MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware",]
+    INSTALLED_APPS += [
+        "debug_toolbar",
+    ]
+    MIDDLEWARE += [
+        "debug_toolbar.middleware.DebugToolbarMiddleware",
+    ]
 
     DEBUG_TOOLBAR_PANELS = (
         # "debug_toolbar.panels.versions.VersionsPanel",
@@ -264,18 +269,17 @@ if DEBUG and not IS_RUNNING_TESTS:
     )
 
     DEBUG_TOOLBAR_CONFIG = {
-        'SHOW_TOOLBAR_CALLBACK': show_toolbar,
+        "SHOW_TOOLBAR_CALLBACK": show_toolbar,
         # 'INSERT_BEFORE': '<head>',
-        'UPDATE_ON_FETCH': True,
-        'SQL_WARNING_THRESHOLD': 20,
-        'ROOT_TAG_EXTRA_ATTRS': 'hx-preserve',
+        "UPDATE_ON_FETCH": True,
+        "SQL_WARNING_THRESHOLD": 20,
+        "ROOT_TAG_EXTRA_ATTRS": "hx-preserve",
         # 'EXCLUDE_URLS': ('/admin',),  # не работает, но в разработке есть...
-        'INTERCEPT_REDIRECTS': False,
+        "INTERCEPT_REDIRECTS": False,
     }
 
     # Cachalot
     CACHALOT_ENABLED = False
-
 
 
 # Пауза между запросами для fgis.arshin
@@ -311,11 +315,12 @@ HEADERS_VERIFICATION = {
     "is_actual": "Актуальна",
 }
 HEADERS_VERIFICATION_UPDATE = HEADERS_VERIFICATION.copy()
-HEADERS_VERIFICATION_UPDATE.update({
-    "is_published": "Показывать",
-    "empty": "",
-    "delete": "Удалить",
-}
+HEADERS_VERIFICATION_UPDATE.update(
+    {
+        "is_published": "Показывать",
+        "empty": "",
+        "delete": "Удалить",
+    }
 )
 # File field names for csv
 FIELDNAMES_FILE_MU = [
