@@ -12,7 +12,11 @@ from apps.device.models import Device
 from apps.frontend.forms import UploadFileForm, DeviceVerificationFormset
 from apps.frontend.mixins import ContextDataMixin, TemplateMixin
 from apps.frontend.servises.file_services import handle_uploaded_file
-from apps.frontend.tasks import download_device_from_file_into_db, refresh_valid_date, create_excel_file
+from apps.frontend.tasks import (
+    download_device_from_file_into_db,
+    refresh_valid_date,
+    create_excel_file,
+)
 
 
 class IndexView(ContextDataMixin, LoginRequiredMixin, TemplateView):
@@ -37,7 +41,7 @@ class UserOrganizationsListView(TemplateMixin, LoginRequiredMixin, ListView):
 
 
 @login_required
-def upload_file_view(request):
+def upload_device_from_file_view(request):
     if request.method == "POST":
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
@@ -48,24 +52,30 @@ def upload_file_view(request):
         return HttpResponse(status=204)
     else:
         form = UploadFileForm()
-    return render(request, 'frontend/modal-load-file.html', {'form': form})
+    return render(request, "frontend/modal-load-file.html", {"form": form})
 
 
 @login_required
-def download_file_view(request):
+def download_device_to_file_view(request):
     metering_units = db_services.get_metering_units(
         user=request.user,
         org_selected=request_services.get_org_selected(request),
         tso_selected=request_services.get_tso_selected(request),
-        cust_selected=request_services.get_cust_selected(request)
+        cust_selected=request_services.get_cust_selected(request),
     )
     file_path = create_excel_file(metering_units)
     if file_path is not None and os.path.exists(file_path):
-        with open(file_path, 'rb') as fh:
+        with open(file_path, "rb") as fh:
             response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
-            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+            response["Content-Disposition"] = "inline; filename=" + os.path.basename(
+                file_path
+            )
             return response
-    return render(request, 'frontend/message.html', context={'message': 'File not found', 'mu': metering_units})
+    return render(
+        request,
+        "frontend/message.html",
+        context={"message": "File not found", "mu": metering_units},
+    )
 
 
 def refresh_valid_date_view(request):
@@ -74,7 +84,9 @@ def refresh_valid_date_view(request):
     return redirect("frontend:home")
 
 
-class MeteringUnitListView(TemplateMixin, ContextDataMixin, LoginRequiredMixin, ListView):
+class MeteringUnitListView(
+    TemplateMixin, ContextDataMixin, LoginRequiredMixin, ListView
+):
     template_name = "frontend/metering_unit_list.html"
     title_page = "Узлы учета"
     context_object_name = "metering_units"
@@ -84,7 +96,7 @@ class MeteringUnitListView(TemplateMixin, ContextDataMixin, LoginRequiredMixin, 
             user=self.request.user,
             org_selected=request_services.get_org_selected(self.request),
             tso_selected=request_services.get_tso_selected(self.request),
-            cust_selected=request_services.get_cust_selected(self.request)
+            cust_selected=request_services.get_cust_selected(self.request),
         )
 
 
@@ -94,12 +106,16 @@ class MenuItemListView(TemplateMixin, ContextDataMixin, LoginRequiredMixin, List
     context_object_name = "menu_items"
 
     def get_queryset(self):
-        return db_services.get_metering_units(
-            user=self.request.user,
-            org_selected=request_services.get_org_selected(self.request),
-            tso_selected=request_services.get_tso_selected(self.request),
-            cust_selected=request_services.get_cust_selected(self.request)
-        ).values("tso__name", 'tso__slug').distinct()
+        return (
+            db_services.get_metering_units(
+                user=self.request.user,
+                org_selected=request_services.get_org_selected(self.request),
+                tso_selected=request_services.get_tso_selected(self.request),
+                cust_selected=request_services.get_cust_selected(self.request),
+            )
+            .values("tso__name", "tso__slug")
+            .distinct()
+        )
 
 
 class MenuItemDetailView(TemplateMixin, ContextDataMixin, LoginRequiredMixin, ListView):
@@ -108,12 +124,16 @@ class MenuItemDetailView(TemplateMixin, ContextDataMixin, LoginRequiredMixin, Li
     context_object_name = "menu_item"
 
     def get_queryset(self):
-        return db_services.get_metering_units(
-            user=self.request.user,
-            org_selected=request_services.get_org_selected(self.request),
-            tso_selected=request_services.get_tso_selected(self.request),
-            cust_selected=request_services.get_cust_selected(self.request)
-        ).values("customer__name", 'customer__slug').distinct()
+        return (
+            db_services.get_metering_units(
+                user=self.request.user,
+                org_selected=request_services.get_org_selected(self.request),
+                tso_selected=request_services.get_tso_selected(self.request),
+                cust_selected=request_services.get_cust_selected(self.request),
+            )
+            .values("customer__name", "customer__slug")
+            .distinct()
+        )
 
 
 class DeviceListView(TemplateMixin, ContextDataMixin, LoginRequiredMixin, ListView):
@@ -127,7 +147,7 @@ class DeviceListView(TemplateMixin, ContextDataMixin, LoginRequiredMixin, ListVi
             org_selected=request_services.get_org_selected(self.request),
             tso_selected=request_services.get_tso_selected(self.request),
             cust_selected=request_services.get_cust_selected(self.request),
-            mu_selected=request_services.get_mu_selected(self.request)
+            mu_selected=request_services.get_mu_selected(self.request),
         )
 
 
@@ -148,14 +168,16 @@ def device_verifications_update_view(request, pk):
 
     device = get_object_or_404(Device, id=pk)
 
-    if request.method == 'POST':
+    if request.method == "POST":
         formset = DeviceVerificationFormset(request.POST, instance=device)
         if formset.is_valid():
             formset.save()
-            return redirect('frontend:device_detail', pk=device.id)
+            return redirect("frontend:device_detail", pk=device.id)
     else:
         formset = DeviceVerificationFormset(instance=device)
 
-    return render(request, 'frontend/device_update_verification_list_modal.html', {
-        'device': device,
-        'formset': formset})
+    return render(
+        request,
+        "frontend/device_update_verification_list_modal.html",
+        {"device": device, "formset": formset},
+    )

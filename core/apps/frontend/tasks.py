@@ -24,7 +24,11 @@ logger = logging.getLogger(__name__)
 def refresh_valid_date() -> str:
     logger.info("run refresh_valid_date")
     # TODO получение и сортировка device
-    devices = Device.objects.annotate(updated=Max("verifications__updated_at")).values('id').order_by("updated")  # [:count_devices_in_task]
+    devices = (
+        Device.objects.annotate(updated=Max("verifications__updated_at"))
+        .values("id")
+        .order_by("updated")
+    )  # [:count_devices_in_task]
     logger.debug(f"{devices=}")
 
     for device_id in devices:
@@ -44,7 +48,9 @@ def refresh_valid_date() -> str:
 
             # TODO добавить начало поиска в arshin
 
-            response = request_to_arshin(reg_number.number_registry.registry_number, device.factory_number)
+            response = request_to_arshin(
+                reg_number.number_registry.registry_number, device.factory_number
+            )
             if response.status_code == 200:
                 logger.info(f"response={response.status_code}")
                 logger.debug(f"response={response}")
@@ -73,7 +79,9 @@ def download_device_from_file_into_db(filename: str, user_id: str):
 
     logger.info(error_filename)
 
-    if not check_csv_file(filename, settings.FIELDNAMES_FILE_MU, encoding=file_encoding):
+    if not check_csv_file(
+        filename, settings.FIELDNAMES_FILE_MU, encoding=file_encoding
+    ):
         logger.info("bad format file")
         raise ValueError
 
@@ -133,8 +141,15 @@ def download_type_from_file_into_db(file_path: str, file_encoding: str) -> None:
 
             with transaction.atomic():
                 device_name, _ = SIName.objects.get_or_create(name=name)
-                device_type, _ = TypeName.objects.get_or_create(type=device_type, name=device_name)
-                numbers_registry = (RegistryNumber.objects.get_or_create(registry_number=number_registry)[0] for number_registry in numbers_registry.split(","))
+                device_type, _ = TypeName.objects.get_or_create(
+                    type=device_type, name=device_name
+                )
+                numbers_registry = (
+                    RegistryNumber.objects.get_or_create(
+                        registry_number=number_registry
+                    )[0]
+                    for number_registry in numbers_registry.split(",")
+                )
                 for number_registry in numbers_registry:
                     type_registry, _ = TypeRegistry.objects.get_or_create(
                         type=device_type,
@@ -145,9 +160,11 @@ def download_type_from_file_into_db(file_path: str, file_encoding: str) -> None:
 
 def create_excel_file(metering_units):
     # template = os.path.sep.join((settings.FILE_TEMPLATES_DIR, "template.xlsx"))
-    file_name = os.path.sep.join((settings.FILE_UPLOAD_DIR, f'{str(uuid.uuid4()).split("-")[-1]}.xlsx'))
+    file_name = os.path.sep.join(
+        (settings.FILE_UPLOAD_DIR, f'{str(uuid.uuid4()).split("-")[-1]}.xlsx')
+    )
     # # копируем шаблон
     # shutil.copyfile(template, file_name)
     dict_list = db_services.create_dict_from_db(metering_units)
-    file_services.create_excel_from_dict_list(dict_list, file_name, sheet_name='Sheet1')
+    file_services.create_excel_from_dict_list(dict_list, file_name, sheet_name="Sheet1")
     return file_name
