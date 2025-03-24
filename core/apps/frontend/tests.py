@@ -9,16 +9,20 @@ from apps.frontend.servises.file_services import get_file_encoding, check_csv_fi
 
 
 class FileServicesTestCase(TestCase):
-    encoding = ['utf-8', 'UTF-16', 'cp1251']
-    ext = ['csv', 'txt']
+    encoding = ["utf-8", "UTF-16", "cp1251"]
+    ext = ["csv", "txt"]
 
     @classmethod
     def setUpClass(cls):
         for ext in cls.ext:
             for encoding in cls.encoding:
-                with open(f"media/test/{encoding}.{ext}", "w", encoding=encoding, newline="") as csv_file:
+                with open(
+                    f"media/test/{encoding}.{ext}", "w", encoding=encoding, newline=""
+                ) as csv_file:
                     fieldnames = settings.FIELDNAMES_FILE_MU
-                    writer = csv.DictWriter(csv_file, fieldnames=fieldnames, delimiter=";")
+                    writer = csv.DictWriter(
+                        csv_file, fieldnames=fieldnames, delimiter=";"
+                    )
                     writer.writeheader()
                     row = {}
                     for key in settings.FIELDNAMES_FILE_MU:
@@ -34,8 +38,22 @@ class FileServicesTestCase(TestCase):
     def test_check_csv_file(self):
         for ext in self.ext:
             for encoding in self.encoding:
-                self.assertEqual(check_csv_file(f"media/test/{encoding}.{ext}", settings.FIELDNAMES_FILE_MU, encoding=encoding), True)
-                self.assertEqual(check_csv_file(f"media/test/{encoding}.{ext}", settings.FIELDNAMES_FILE_TYPE, encoding=encoding), False)
+                self.assertEqual(
+                    check_csv_file(
+                        f"media/test/{encoding}.{ext}",
+                        settings.FIELDNAMES_FILE_MU,
+                        encoding=encoding,
+                    ),
+                    True,
+                )
+                self.assertEqual(
+                    check_csv_file(
+                        f"media/test/{encoding}.{ext}",
+                        settings.FIELDNAMES_FILE_TYPE,
+                        encoding=encoding,
+                    ),
+                    False,
+                )
 
         # self.assertEqual(check_csv_file("media/test/TypeToRegistry.csv", settings.FIELDNAMES_FILE_TYPE, 'utf-8'), True)
         # self.assertEqual(check_csv_file("media/test/база поверок_new_.csv", settings.FIELDNAMES_FILE_TYPE, 'cp1251'), False)
@@ -43,12 +61,12 @@ class FileServicesTestCase(TestCase):
     def test_get_file_encoding(self):
         for ext in self.ext:
             for encoding in self.encoding:
-                self.assertEqual(get_file_encoding(f"media/test/{encoding}.{ext}"), encoding)
+                self.assertEqual(
+                    get_file_encoding(f"media/test/{encoding}.{ext}"), encoding
+                )
 
         # self.assertEqual(get_file_encoding("media/test/TypeToRegistry.csv"), 'utf-8')
         # self.assertEqual(get_file_encoding("media/test/база поверок_new_.csv"), 'cp1251')
-
-
 
 
 # Create your tests here.

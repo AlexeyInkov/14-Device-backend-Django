@@ -24,7 +24,7 @@ from .models import (
     TypeRegistry,
     Device,
     Verification,
-    TypeToRegistryImport
+    TypeToRegistryImport,
 )
 from ..frontend.servises.file_services import check_csv_file, get_file_encoding
 from ..frontend.tasks import download_type_from_file_into_db
@@ -66,7 +66,6 @@ class DeviceAdmin(admin.ModelAdmin):
         "notes",
         "created_at",
         "updated_at",
-
     )
     inlines = [VerificationsInLineAdmin]
 
@@ -95,7 +94,6 @@ class TypeRegistryAdmin(admin.ModelAdmin):
         "id",
         "type",
         "number_registry",
-
         "created_at",
         "updated_at",
     )
@@ -103,7 +101,6 @@ class TypeRegistryAdmin(admin.ModelAdmin):
         "id",
         "type",
         "number_registry",
-
         "created_at",
         "updated_at",
     )
@@ -126,9 +123,9 @@ class TypeRegistryAdmin(admin.ModelAdmin):
                 file_path = form_object.csv_file.path
                 file_encoding = get_file_encoding(form_object.csv_file.path)
                 if not check_csv_file(
-                        file_path,
-                        settings.FIELDNAMES_FILE_TYPE,
-                        encoding=file_encoding,
+                    file_path,
+                    settings.FIELDNAMES_FILE_TYPE,
+                    encoding=file_encoding,
                 ):
                     # обновляем страницу пользователя
                     # с информацией о какой-то ошибке
@@ -150,25 +147,26 @@ class TypeRegistryAdmin(admin.ModelAdmin):
 
 class SINameAdmin(admin.ModelAdmin):
     list_display = (
-        'name',
-        'order',
+        "name",
+        "order",
     )
-    ordering = ('order',)
+    ordering = ("order",)
 
 
 class InstallationPointAdmin(admin.ModelAdmin):
     list_display = (
-        'name',
-        'order',
+        "name",
+        "order",
     )
-    ordering = ('order',)
+    ordering = ("order",)
 
 
 class TypeNameAdmin(admin.ModelAdmin):
     list_display = (
-        'type', 'name',
+        "type",
+        "name",
     )
-    ordering = ('name__order', "type")
+    ordering = ("name__order", "type")
 
 
 admin.site.register(UserToOrganization)

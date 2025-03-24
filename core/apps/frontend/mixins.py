@@ -1,4 +1,9 @@
-from .servises.request_services import get_tso_selected, get_org_selected, get_cust_selected, get_mu_selected
+from .servises.request_services import (
+    get_tso_selected,
+    get_org_selected,
+    get_cust_selected,
+    get_mu_selected,
+)
 
 
 class TemplateMixin:
