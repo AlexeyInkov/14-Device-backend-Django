@@ -78,6 +78,7 @@ def download_device_to_file_view(request):
     )
 
 
+@login_required
 def refresh_valid_date_view(request):
     refresh_valid_date.delay()
     # TODO: сделать попап сообщение об успехе
@@ -163,6 +164,7 @@ class DeviceDetailView(ContextDataMixin, LoginRequiredMixin, DetailView):
         return context
 
 
+@login_required
 def device_verifications_update_view(request, pk):
     """Edit children and their addresses for a single parent."""
 
