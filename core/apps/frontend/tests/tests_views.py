@@ -79,30 +79,38 @@ class DeviceListViewTestCase(BaseViewsTestCase):
     url_name = "frontend:device_list"
     template_name = "frontend/device_list.html"
 
+
+# class MenuItemDetailView(ViewsTestCase):
+#     """"""
+#     url_name =
+#     template_name =
 #
 #
-# class ProductsExportViewTestCase(TestCase):
-#     fixtures = [
-#         'products-fixture.json',
-#     ]
+# class DeviceDetailView(ViewsTestCase):
+#     """"""
+#     url_name =
+#     template_name =
 #
-#     def test_get_products_view(self):
-#         response = self.client.get(
-#             reverse("shopapp:products-export"),
-#         )
-#         self.assertEqual(response.status_code, 200)
-#         products = Product.objects.order_by("pk").all()
-#         expected_data = [
-#             {
-#                 "pk": product.pk,
-#                 "name": product.name,
-#                 "price": str(product.price),
-#                 "archived": product.archived,
-#             }
-#             for product in products
-#         ]
-#         products_data = response.json()
-#         self.assertEqual(
-#             products_data["products"],
-#             expected_data,
-#         )
+#
+# class upload_device_from_file_view(ViewsTestCase):
+#     """"""
+#     url_name =
+#     template_name =
+#
+#
+# class download_device_to_file_view(ViewsTestCase):
+#     """"""
+#     url_name =
+#     template_name =
+#
+#
+# class refresh_valid_date_view(ViewsTestCase):
+#     """"""
+#     url_name =
+#     template_name =
+#
+#
+# class device_verifications_update_view(ViewsTestCase):
+#     """"""
+#     url_name =
+#     template_name =
