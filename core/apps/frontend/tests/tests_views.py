@@ -1,11 +1,6 @@
-import csv
-import os
-import random
-
-from django.conf import settings
 from django.test import TestCase
+from django.urls import reverse
 
-from apps.frontend.servises.file_services import get_file_encoding, check_csv_file
 
 class BaseViewsTestCase(TestCase):
     index_template_name = "frontend/index.html"
@@ -49,132 +44,40 @@ class BaseViewsTestCase(TestCase):
             response = self.client.get(reverse(self.url_name))
             self.assertTemplateUsed(response, self.index_template_name)
 
-    def test_get_file_encoding(self):
-        for ext in self.ext:
-            for encoding in self.encoding:
-                self.assertEqual(
-                    get_file_encoding(f"media/test/{encoding}.{ext}"), encoding
-                )
 
-        # self.assertEqual(get_file_encoding("media/test/TypeToRegistry.csv"), 'utf-8')
-        # self.assertEqual(get_file_encoding("media/test/база поверок_new_.csv"), 'cp1251')
+class IndexViewsTestCase(BaseViewsTestCase):
+    """Test index view"""
+
+    url_name = "frontend:home"
+    template_name = "frontend/index.html"
 
 
-# Create your tests here.
+class UserOrganizationsListViewTestCase(BaseViewsTestCase):
+    """Test user organization list view"""
+
+    url_name = "frontend:user_organization_list"
+    template_name = "frontend/user_organizations_list.html"
 
 
-# class TestPage(TestCase):
-#
-#     def test_menu(self):
-#         response = self.client.get("/api/page/menu/")
-#         self.assertEqual(response.status_code, 200)
-#
-#     def test_addresses(self):
-#         response = self.client.get("/api/page/addresses/")
-#         self.assertEqual(response.status_code, 200)
+class MeteringUnitListViewTestCase(BaseViewsTestCase):
+    """Test metering unit list view"""
+
+    url_name = "frontend:metering_unit_list"
+    template_name = "frontend/metering_unit_list.html"
 
 
-# Create your tests here.
-# from string import ascii_letters
-# from random import choices
-#
-# from django.conf import settings
-# from django.contrib.auth.models import User
-# from django.test import TestCase
-# from django.urls import reverse
-#
-# from shopapp.models import Product
-# from shopapp.utils import add_two_numbers
-#
-#
-# class AddTwoNumbersTestCase(TestCase):
-#     def test_add_two_numbers(self):
-#         result = add_two_numbers(2, 3)
-#         self.assertEqual(result, 5)
-#
-#
-# class ProductCreateViewTestCase(TestCase):
-#     def setUp(self) -> None:
-#         self.product_name = "".join(choices(ascii_letters, k=10))
-#         Product.objects.filter(name=self.product_name).delete()
-#
-#     def test_create_product(self):
-#         response = self.client.post(
-#             reverse("shopapp:product_create"),
-#             {
-#                 "name": self.product_name,
-#                 "price": "123.45",
-#                 "description": "A good table",
-#                 "discount": "10",
-#             }
-#         )
-#         self.assertRedirects(response, reverse("shopapp:products_list"))
-#         self.assertTrue(
-#             Product.objects.filter(name=self.product_name).exists()
-#         )
-#
-#
-# class ProductDetailsViewTestCase(TestCase):
-#     @classmethod
-#     def setUpClass(cls):
-#         cls.product = Product.objects.create(name="Best Product")
-#
-#     @classmethod
-#     def tearDownClass(cls):
-#         cls.product.delete()
-#
-#     def test_get_product(self):
-#         response = self.client.get(
-#             reverse("shopapp:product_details", kwargs={"pk": self.product.pk})
-#         )
-#         self.assertEqual(response.status_code, 200)
-#
-#     def test_get_product_and_check_content(self):
-#         response = self.client.get(
-#             reverse("shopapp:product_details", kwargs={"pk": self.product.pk})
-#         )
-#         self.assertContains(response, self.product.name)
+class MenuItemListViewTestCase(BaseViewsTestCase):
+    """Test menu item list view"""
+
+    url_name = "frontend:menu_item_list"
+    template_name = "frontend/menu_item_list.html"
 
 
-# class AddressesListViewTestVase(TestCase):
-#     fixtures = [
-#         "db_20240918_new_address_region.json",
-#     ]
-#
-#     def test_products(self):
-#         response = self.client.get(reverse("for_page:addresses"))
-#         self.assertQuerysetEqual(
-#             qs=Address.objects.all(),
-#             values=(p.pk for p in response.json()),
-#             transform=lambda p: p.pk,
-#         )
-#         # self.assertTemplateUsed(response, "shopapp/products-list.html")
-#
-#
-# #
-# class OrdersListViewTestCase(TestCase):
-#
-#     @classmethod
-#     def setUpClass(cls):
-#         cls.user = User.objects.create_user(username="admin", password="123")
-#
-#     @classmethod
-#     def tearDownClass(cls):
-#         cls.user.delete()
-#
-#     def setUp(self) -> None:
-#         self.client.force_login(self.user)
-#
-#     def test_orders_view(self):
-#         response = self.client.get(reverse("for_page:addreses"))
-#         self.assertContains(response, "Adresses")
-#
-#     def test_orders_view_not_authenticated(self):
-#         self.client.logout()
-#         response = self.client.get(reverse("for_page:addresses"))
-#         self.assertEqual(response.status_code, 302)
-#         self.assertIn(str(settings.LOGIN_URL), response.url)
-#
+class DeviceListViewTestCase(BaseViewsTestCase):
+    """Test device list view"""
+
+    url_name = "frontend:device_list"
+    template_name = "frontend/device_list.html"
 
 #
 #
