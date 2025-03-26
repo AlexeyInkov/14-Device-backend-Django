@@ -34,29 +34,28 @@ def get_user_metering_units(user: User) -> QuerySet:
         .select_related("address__street__type_street")
         .select_related("customer")
         .select_related("tso")
+        .select_related("service_organization")
+        .only(
+            "customer__name",
+            "address__region__name",
+            "address__region__parent_region__name",
+            "address__street__type_street__name",
+            "address__street__name",
+            "address__house_number",
+            "address__corp",
+            "address__liter",
+            "address__latitude",
+            "address__longitude",
+            "itp",
+            "tso__name",
+            "service_organization__name",
+        )
         .filter(
             Q(tso__in=user_orgs)
             | Q(customer__in=user_orgs)
             | Q(service_organization__in=user_orgs)
         )
     )
-
-
-# only(
-#     "customer__name",
-#     "address__region__name",
-#     "address__region__parent_region__name",
-#     "address__street__type_street__name",
-#     "address__street__name",
-#     "address__house_number",
-#     "address__corp",
-#     "address__liter",
-#     "address__latitude",
-#     "address__longitude",
-#     "itp",
-#     "tso__name",
-#     "service_organization__name"
-# )
 
 
 def get_orgs_for_select(user: User) -> QuerySet:
@@ -77,23 +76,21 @@ def get_user_devices(user: User) -> QuerySet:
         .select_related("installation_point")
         .select_related("name")
         .select_related("metering_unit")
+        # .only(
+        #     "installation_point__name",
+        #     "installation_point__order",
+        #     "name__order",
+        #     "registry_number__registry_number",
+        #     "type__type",
+        #     "modification__modification",
+        #     "factory_number",
+        #     "notes",
+        #     "metering_unit_id",
+        #     "valid_date"
+        # )
         .order_by("metering_unit_id", "installation_point__order", "name__order")
         .filter(metering_unit__in=user_metering_units)
     )
-
-
-# .only(
-#     "installation_point__name",
-#     "installation_point__order",
-#     "name__order",
-#     "registry_number__registry_number",
-#     "type__type",
-#     "modification__modification",
-#     "factory_number",
-#     "notes",
-#     "metering_unit_id",
-#     "valid_date"
-# )
 
 
 def get_select_org(org_selected: str | None) -> Organization | None:

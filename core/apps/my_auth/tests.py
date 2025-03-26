@@ -9,7 +9,8 @@ from apps.my_auth.forms import LoginUserForm, RegisterUserForm
 
 
 class LoginUserFormTestCase(TestCase):
-    """ Tests LoginUserForm."""
+    """Tests LoginUserForm."""
+
     def test_form_valid(self):
         form_data = {
             "username": os.environ.get("ADMIN_USERNAME"),
@@ -25,7 +26,8 @@ class LoginUserFormTestCase(TestCase):
 
 
 class RegisterUserFormTestCase(TestCase):
-    """ Tests RegisterUserForm."""
+    """Tests RegisterUserForm."""
+
     def test_form_valid(self):
         form_data = {
             "username": "ADMIN_USERNAME",
