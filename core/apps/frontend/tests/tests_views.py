@@ -7,56 +7,47 @@ from django.test import TestCase
 
 from apps.frontend.servises.file_services import get_file_encoding, check_csv_file
 
+class BaseViewsTestCase(TestCase):
+    index_template_name = "frontend/index.html"
+    template_name = None
+    url_name = None
 
-class FileServicesTestCase(TestCase):
-    encoding = ["utf-8", "UTF-16", "cp1251"]
-    ext = ["csv", "txt"]
+    def setUp(self):
+        self.client.post(
+            reverse("my_auth:register"),
+            {
+                "username": "ADMIN_USERNAME",
+                "email": "ADMIN_EMAIL@gmail.com",
+                "password1": "ADMIN_password",
+                "password2": "ADMIN_password",
+            },
+        )
+        self.client.post(
+            reverse("my_auth:login"),
+            {
+                "username": "ADMIN_USERNAME",
+                "password": "ADMIN_password",
+            },
+        )
 
-    @classmethod
-    def setUpClass(cls):
-        for ext in cls.ext:
-            for encoding in cls.encoding:
-                with open(
-                    f"media/test/{encoding}.{ext}", "w", encoding=encoding, newline=""
-                ) as csv_file:
-                    fieldnames = settings.FIELDNAMES_FILE_MU
-                    writer = csv.DictWriter(
-                        csv_file, fieldnames=fieldnames, delimiter=";"
-                    )
-                    writer.writeheader()
-                    row = {}
-                    for key in settings.FIELDNAMES_FILE_MU:
-                        row[key] = key
-                    writer.writerow(row)
+    def tearDown(self):
+        self.client.get(reverse("my_auth:logout"))
 
-    @classmethod
-    def tearDownClass(cls):
-        for ext in cls.ext:
-            for encoding in cls.encoding:
-                os.remove(f"media/test/{encoding}.{ext}")
+    def test_status_code(self):
+        if self.url_name:
+            response = self.client.get(reverse(self.url_name))
+            self.assertEqual(response.status_code, 200)
 
-    def test_check_csv_file(self):
-        for ext in self.ext:
-            for encoding in self.encoding:
-                self.assertEqual(
-                    check_csv_file(
-                        f"media/test/{encoding}.{ext}",
-                        settings.FIELDNAMES_FILE_MU,
-                        encoding=encoding,
-                    ),
-                    True,
-                )
-                self.assertEqual(
-                    check_csv_file(
-                        f"media/test/{encoding}.{ext}",
-                        settings.FIELDNAMES_FILE_TYPE,
-                        encoding=encoding,
-                    ),
-                    False,
-                )
+    def test_template_with_htmx(self):
+        if self.template_name and self.url_name:
+            headers = {"HTTP_Hx-Request": True}
+            response = self.client.get(reverse(self.url_name), **headers)
+            self.assertTemplateUsed(response, self.template_name)
 
-        # self.assertEqual(check_csv_file("media/test/TypeToRegistry.csv", settings.FIELDNAMES_FILE_TYPE, 'utf-8'), True)
-        # self.assertEqual(check_csv_file("media/test/база поверок_new_.csv", settings.FIELDNAMES_FILE_TYPE, 'cp1251'), False)
+    def test_template_without_htmx(self):
+        if self.template_name and self.url_name:
+            response = self.client.get(reverse(self.url_name))
+            self.assertTemplateUsed(response, self.index_template_name)
 
     def test_get_file_encoding(self):
         for ext in self.ext:
