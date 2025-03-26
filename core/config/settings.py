@@ -16,7 +16,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
-DEBUG = "True" == os.environ.get("DJANGO_DEBUG", True)
+IS_RUNNING_TESTS = "test" in sys.argv
+
+if IS_RUNNING_TESTS:
+    DEBUG = False
+else:
+    DEBUG = "True" == os.environ.get("DJANGO_DEBUG", True)
+
+print(f"{DEBUG=}")
 
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(",")
 
@@ -39,7 +46,7 @@ INSTALLED_APPS = [
     "django_htmx",
     # Apps
     "apps.my_auth.apps.MyAuthConfig",
-    "apps.for_page.apps.ForPageConfig",
+    # "apps.for_page.apps.ForPageConfig",
     "apps.device.apps.DeviceConfig",
     "apps.frontend.apps.FrontendConfig",  # django template
 ]
@@ -75,7 +82,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 # Database
-# if DEBUG:
+
 print("sqlite")
 if not os.path.exists(BASE_DIR.parent.parent / "dc_db"):
     os.makedirs(BASE_DIR.parent.parent / "dc_db")
@@ -85,18 +92,6 @@ DATABASES = {
         "NAME": BASE_DIR.parent.parent / "dc_db/db.sqlite3",
     }
 }
-# else:
-#     print("postgresql")
-#     DATABASES = {
-#         "default": {
-#             "ENGINE": "django.db.backends.postgresql",
-#             "NAME": os.environ.get("POSTGRES_DB_NAME"),
-#             "USER": os.environ.get("POSTGRES_DB_USER"),
-#             "PASSWORD": os.environ.get("POSTGRES_DB_USER_PASSWORD"),
-#             "HOST": os.environ.get("POSTGRES_HOST"),
-#             "PORT": os.environ.get("POSTGRES_PORT"),
-#         }
-#     }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -218,7 +213,7 @@ CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
 # Development options
-IS_RUNNING_TESTS = "test" in sys.argv
+
 
 INTERNAL_IPS = ("127.0.0.1", "localhost")
 
