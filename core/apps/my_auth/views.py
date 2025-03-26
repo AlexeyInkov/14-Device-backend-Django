@@ -95,7 +95,7 @@ class RegisterUserView(CreateView):
     form_class = RegisterUserForm
     template_name = "my_auth/auth.html"
     extra_context = {"title": "Регистрация", "button_name": "Ok"}
-    success_url = reverse_lazy("apps.frontend:home")
+    success_url = reverse_lazy("my_auth:login")
 
 
 class MyLogoutView(LogoutView):
