@@ -12,6 +12,7 @@ class LoginUserFormTestCase(TestCase):
     """Tests LoginUserForm."""
 
     def test_form_valid(self):
+        """valid form"""
         form_data = {
             "username": os.environ.get("ADMIN_USERNAME"),
             "password": os.environ.get("ADMIN_PASSWORD"),
@@ -20,6 +21,7 @@ class LoginUserFormTestCase(TestCase):
         self.assertTrue(form.is_valid())
 
     def test_form_invalid(self):
+        """invalid form"""
         form_data = {"password": os.environ.get("ADMIN_PASSWORD")}
         form = LoginUserForm(data=form_data)
         self.assertFalse(form.is_valid())
@@ -29,6 +31,7 @@ class RegisterUserFormTestCase(TestCase):
     """Tests RegisterUserForm."""
 
     def test_form_valid(self):
+        """valid form"""
         form_data = {
             "username": "ADMIN_USERNAME",
             "email": "ADMIN_EMAIL@gmail.com",
@@ -39,6 +42,7 @@ class RegisterUserFormTestCase(TestCase):
         self.assertTrue(form.is_valid())
 
     def test_form_invalid(self):
+        """invalid form"""
         form_data = {
             "username": "ADMIN_USERNAME",
             "email": "ADMIN_EMAIL@gmail.com",
@@ -49,6 +53,7 @@ class RegisterUserFormTestCase(TestCase):
 
 
 class ViewsTestCase(TestCase):
+    """Tests Views."""
 
     def test_not_authentication(self):
         """

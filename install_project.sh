@@ -1,6 +1,6 @@
 #!/bin/bash
 base_python_interpreter=/home/www/.python/bin/python3.11
-project_domain=inkov.online
+project_domain=device-control.site
 project_path=`pwd`
 
 sudo apt update && sudo apt upgrade -y

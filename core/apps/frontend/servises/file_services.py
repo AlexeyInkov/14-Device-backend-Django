@@ -43,7 +43,7 @@ def check_csv_file(file_path: str, fieldnames: list, encoding: str) -> bool:
 
 def create_excel_from_dict_list(
     dict_list: list, output_filename: str, sheet_name="Sheet1"
-):
+) -> os.path:
 
     filepath = os.path.join(settings.FILE_UPLOAD_DIR, output_filename)
 

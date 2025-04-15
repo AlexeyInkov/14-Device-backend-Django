@@ -24,10 +24,12 @@ logger = logging.getLogger(__name__)
 
 
 def get_user_orgs(user: User) -> QuerySet:
+    logger.info("Running get_user_orgs")
     return Organization.objects.filter(user_to_org__user=user, user_to_org__actual=True)
 
 
 def get_user_metering_units(user: User) -> QuerySet:
+    logger.info("Running get_user_metering_units")
     user_orgs = get_user_orgs(user)
     return (
         MeteringUnit.objects.select_related("address__region__parent_region")
@@ -59,6 +61,7 @@ def get_user_metering_units(user: User) -> QuerySet:
 
 
 def get_orgs_for_select(user: User) -> QuerySet:
+    logger.info("Running get_orgs_for_select")
     user_metering_units = get_user_metering_units(user)
     return Organization.objects.filter(
         Q(mu_c__in=user_metering_units)
@@ -68,6 +71,7 @@ def get_orgs_for_select(user: User) -> QuerySet:
 
 
 def get_user_devices(user: User) -> QuerySet:
+    logger.info("Running get_user_devices")
     user_metering_units = get_user_metering_units(user)
     return (
         Device.objects.select_related("registry_number")
@@ -94,6 +98,7 @@ def get_user_devices(user: User) -> QuerySet:
 
 
 def get_select_org(org_selected: str | None) -> Organization | None:
+    logger.info("Running get_select_org")
     if org_selected is not None and org_selected != "all":
         return Organization.objects.get(slug=org_selected)
 
@@ -104,6 +109,7 @@ def get_metering_units(
     tso_selected: str | None,
     cust_selected: str | None,
 ) -> QuerySet:
+    logger.info("Running get_metering_units")
     filters = {}
     metering_units = get_user_metering_units(user)
     select_org = get_select_org(org_selected)
@@ -129,6 +135,7 @@ def get_devices(
     cust_selected: str | None,
     mu_selected: int | None,
 ) -> QuerySet:  #
+    logger.info("Running get_devices")
     devices = get_user_devices(user)
     if mu_selected is not None:
         return devices.filter(metering_unit=mu_selected)
@@ -142,6 +149,7 @@ def get_devices(
 
 
 def get_verifications(device: Device) -> QuerySet:
+    logger.info("Running get_verifications")
     return (
         Verification.objects.filter(device=device)
         .filter(is_published=True)
@@ -150,7 +158,7 @@ def get_verifications(device: Device) -> QuerySet:
 
 
 def save_verification(device_id: int, verification_fields: dict) -> None:
-    logger.info("run_save_verification")
+    logger.info("Running save_verification")
     model_fields = convert_verification_field(device_id, verification_fields)
     with transaction.atomic():
         # print(DeviceVerification.objects.filter(device=device_id))
@@ -161,6 +169,7 @@ def save_verification(device_id: int, verification_fields: dict) -> None:
 def convert_verification_field(
     device_id: int, verification_fields: Dict[str, str]
 ) -> Dict[str, str]:
+    logger.info("Running convert_verification_field")
     logger.debug(f"{verification_fields=}")
     model_fields = {}
     for field_name in verification_fields:
@@ -174,6 +183,7 @@ def convert_verification_field(
 
 
 def write_row_to_db(row, user):
+    logger.info("Running write_row_to_db")
     with transaction.atomic():
         customer = {
             "name": row["Наименование абонента"].strip(),
@@ -285,28 +295,28 @@ def write_row_to_db(row, user):
 
 
 def create_dict_from_db(metering_units: QuerySet) -> list:
+    logger.info("Running create_dict_from_db")
     lst = []
     for metering_unit in metering_units:
         for device in Device.objects.filter(metering_unit=metering_unit):
-            lst.append(
-                {
-                    "№ п/п": metering_unit.id,
-                    "Наименование абонента": metering_unit.customer.name,
-                    "Город": metering_unit.address.region.name,
-                    "Наименование улицы": metering_unit.address.street.name,
-                    "Тип улицы": metering_unit.address.street.type_street.name,
-                    "№ дома": metering_unit.address.house_number,
-                    "Корп": metering_unit.address.corp,
-                    "Лит": metering_unit.address.liter,
-                    "ТЦ": metering_unit.itp,
-                    "Труба": device.installation_point.name,
-                    "Тип": device.type.type,
-                    "Ду": "",
-                    "Номер": device.factory_number,
-                    "Дата": device.valid_date,
-                    "МПИ": "",
-                    "ТСО": metering_unit.tso.name,
-                    "№ Тотэм": "",
-                }
-            )
+            dct = {
+                "№ п/п": metering_unit.id,
+                "Наименование абонента": metering_unit.customer.name,
+                "Город": metering_unit.address.region.name,
+                "Наименование улицы": metering_unit.address.street.name,
+                "Тип улицы": metering_unit.address.street.type_street.name,
+                "№ дома": metering_unit.address.house_number,
+                "Корп": metering_unit.address.corp,
+                "Лит": metering_unit.address.liter,
+                "ТЦ": metering_unit.itp,
+                "Труба": device.installation_point.name,
+                "Тип": device.type.type,
+                "Ду": "",
+                "Номер": device.factory_number,
+                "Дата": device.valid_date,
+                "МПИ": "",
+                "ТСО": metering_unit.tso.name,
+                "№ Тотэм": "",
+            }
+            lst.append(dct)
     return lst

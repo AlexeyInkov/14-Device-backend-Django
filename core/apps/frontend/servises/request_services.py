@@ -6,6 +6,12 @@ logger = logging.getLogger(__name__)
 
 
 def get_org_selected(request: HttpRequest) -> str:
+    """
+    Returns the organization selected from the request.
+    If the organization is not selected, returns the last selected organization.
+    If the organization is not selected and there is no last selected organization, returns None.
+    """
+    logger.info("Running get_org_selected")
     org_selected_request = request.GET.get("organization")
     org_selected = request.session.get("org_selected")
     logger.debug(f"org_selected_request: {org_selected_request}")
@@ -20,6 +26,8 @@ def get_org_selected(request: HttpRequest) -> str:
 
 
 def get_tso_selected(request: HttpRequest) -> str:
+    """Returns the TSO selected from the request."""
+    logger.info("Running get_tso_selected")
     tso_selected_request = request.GET.get("tso")
     tso_selected = request.session.get("tso_selected")
     logger.debug(f"tso_selected_request: {tso_selected_request}")
@@ -33,6 +41,8 @@ def get_tso_selected(request: HttpRequest) -> str:
 
 
 def get_cust_selected(request: HttpRequest) -> str:
+    """Returns the CUST selected from the request."""
+    logger.info("Running get_cust_selected")
     cust_selected_request = request.GET.get("customer")
     cust_selected = request.session.get("cust_selected")
     logger.debug(f"cust_selected_request: {cust_selected_request}")
@@ -46,6 +56,8 @@ def get_cust_selected(request: HttpRequest) -> str:
 
 
 def get_mu_selected(request: HttpRequest) -> int:
+    """Returns the MU selected from the request."""
+    logger.info("Running get_mu_selected")
     mu_selected_request = request.GET.get("metering_unit")
     mu_selected = request.session.get("mu_selected")
     logger.debug(f"mu_selected_request: {mu_selected_request}")
@@ -57,6 +69,8 @@ def get_mu_selected(request: HttpRequest) -> int:
 
 
 def reset_selected_param(request: HttpRequest, param_name: str) -> None:
+    """Resets the selected parameter from the request."""
+    logger.info(f"resetting {param_name}")
     param = request.session.pop(param_name, None)
     logger.debug(f"reset {param_name} = {param}")
     logger.debug(f"org_selected_session: {request.session.get('org_selected')}")

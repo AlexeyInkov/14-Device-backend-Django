@@ -106,5 +106,57 @@ class FileServicesTestCase(TestCase):
         self.assertTrue(os.path.exists(file_path))
 
 
-# class RequestServiceTestCase(TestCase):
-#     pass
+class DBServiceTestCase(TestCase):
+    pass
+
+
+class RequestServiceTestCase(TestCase):
+    pass
+    # fixtures = []
+    # query_params_list = [
+    #     {'organization': '',
+    #      'tso': '',
+    #      'customer': '',
+    #      'metering_unit': ''
+    #      },
+    #     {'organization': 'galax',
+    #      'tso': 'te',
+    #      'customer': 'sad',
+    #      'metering_unit': '1'
+    #      },
+    #     {'organization': '',
+    #      'tso': '',
+    #      'customer': '',
+    #      'metering_unit': ''
+    #      },
+    #     {'organization': '',
+    #      'tso': '',
+    #      'customer': '',
+    #      'metering_unit': ''
+    #      },
+    # ]
+    #
+    # def test_get_org_selected(self):
+    #     pass
+    #
+    # def test_get_tso_selected(self):
+    #     pass
+    #
+    # def test_get_cust_selected(self):
+    #     pass
+    #
+    # def test_get_mu_selected(self):
+    #     pass
+    #
+    # def test_reset_selected_param(self):
+    #     self.client.post(
+    #         reverse("my_auth:login"),
+    #         {
+    #             "username": os.environ.get("ADMIN_USERNAME"),
+    #             "password": os.environ.get("ADMIN_PASSWORD"),
+    #         },
+    #     )
+    #     url = reverse('frontend:home')
+    #     print(self.client.get(url, query_params=self.query_params_list[1]))
+    #     org=get_org_selected(self.client.get(url, query_params=self.query_params_list[1]))
+    #     print(org)
