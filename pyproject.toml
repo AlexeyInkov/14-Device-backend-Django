@@ -1,0 +1,43 @@
+[project]
+name = "backend-django"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Alexey Inkov",email = "alex0982@mail.ru"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "django (>=5.1.4, <6.0)",
+    "celery (>=5.3.6, <6.0)",
+    "django-celery-beat (>=2.0, <3.0)",
+    "django-celery-results (==2.6.0)",
+    "flower (==2.0.1)",
+    "django-redis (==5.4.0)",
+    "redis (==5.2.0)",
+    "requests (==2.32.3)",
+    "chardet (==5.2.0)",
+    "python_slugify (==8.0.4)",
+    "djangorestframework (==3.16.0)",
+    "psycopg2-binary (==2.9.10)",
+    "python-dotenv (==1.0.1)",
+    "gunicorn (==23.0.0)",
+    "django-htmx (==1.23.0)",
+    "django-cachalot (==2.7.0)",
+    "xlsxwriter (==3.2.2)",
+    "openpyxl (==3.1.5)",
+]
+
+[tool.poetry]
+package-mode = false
+
+[tool.poetry.group.dev.dependencies]
+django-debug-toolbar = "^4.4.6"
+django-rest-swagger = "^2.2.0"
+drf-yasg = "^1.21.10"
+gevent = "^24.11.1"
+black = "25.1.0"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
