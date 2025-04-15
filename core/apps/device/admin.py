@@ -26,8 +26,8 @@ from .models import (
     Verification,
     TypeToRegistryImport,
 )
-from ..frontend.servises.file_services import check_csv_file, get_file_encoding
-from ..frontend.tasks import download_type_from_file_into_db
+from apps.device.servises.file_services import check_csv_file, get_file_encoding
+from apps.device.tasks.file_tasks import download_type_from_file_into_db
 
 logger = logging.getLogger(__name__)
 

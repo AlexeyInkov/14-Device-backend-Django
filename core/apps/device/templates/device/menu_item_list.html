@@ -1,0 +1,33 @@
+{% load context_tags %}
+{% load static %}
+
+{% for tso in menu_items %}
+  <div class="accordion-item">
+    <div class="accordion-header">
+      <button class="accordion-button collapsed"
+              id="menu-accordion-button"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#flush-collapse{{ tso|dictitem:'tso__slug' }}"
+              aria-expanded="false"
+              aria-controls="flush-collapseOne"
+              hx-get="{% url 'device:metering_unit_list' %}?tso={{ tso|dictitem:'tso__slug' }}{% if org_selected %}&organization={{ org_selected }}{% endif %}"
+              hx-target="#addresses-content"
+              hx-indicator="#spinner"
+      >
+        {{ tso|dictitem:'tso__name' }}
+      </button>
+    </div>
+    <div id="flush-collapse{{ tso|dictitem:'tso__slug' }}" class="accordion-collapse collapse" data-bs-parent="#accordionFlushMenu">
+      <div class="accordion-body">
+        <img id="spinner" class="htmx-indicator" src="{% static 'device/images/3-dots-scale.svg' %}"/>
+        <div class="list-group"
+             hx-get="{% url 'device:menu_item' %}?tso={{ tso|dictitem:'tso__slug' }}{% if org_selected %}&organization={{ org_selected }}{% endif %}"
+             hx-target="this"
+            {#             <!--при раскрытии тела аккордеона, получать список организаций, связанных с ТСО-->#}
+             hx-trigger="intersect div:#flush-collapse{{ tso|dictitem:'tso__slug' }}"
+        ></div>
+      </div>
+    </div>
+  </div>
+{% endfor %}

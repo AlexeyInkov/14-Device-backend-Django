@@ -46,9 +46,7 @@ INSTALLED_APPS = [
     "django_htmx",
     # Apps
     "apps.my_auth.apps.MyAuthConfig",
-    # "apps.for_page.apps.ForPageConfig",
     "apps.device.apps.DeviceConfig",
-    "apps.frontend.apps.FrontendConfig",  # django template
 ]
 
 MIDDLEWARE = [
@@ -198,7 +196,7 @@ LOGGING = {
     },
 }
 
-LOGIN_REDIRECT_URL = "frontend:home"
+LOGIN_REDIRECT_URL = "device:home"
 LOGOUT_REDIRECT_URL = "my_auth:login"
 LOGIN_URL = "my_auth:login"
 

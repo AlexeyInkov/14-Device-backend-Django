@@ -1,7 +1,7 @@
-from django.urls import path, include
+from django.urls import path
 from rest_framework import routers
 
-from .views import (
+from .views.drf_views import (
     # metering_unit
     MeteringUnitViewSet,
     OrganizationViewSet,
@@ -15,6 +15,25 @@ from .views import (
     TypeToRegistryViewSet,
     DeviceViewSet,
     DeviceVerificationViewSet,
+)
+
+# from .views.for_page import (
+#     MenuListAPIView,
+#     AddressListAPIView,
+#     DeviceListAPIView,
+# )
+from .views.frontend import (
+    IndexView,
+    UserOrganizationsListView,
+    upload_device_from_file_view,
+    download_device_to_file_view,
+    MeteringUnitListView,
+    MenuItemListView,
+    MenuItemDetailView,
+    DeviceListView,
+    DeviceDetailView,
+    refresh_valid_date_view,
+    device_verifications_update_view,
 )
 
 app_name = "device"
@@ -45,6 +64,46 @@ router.register(
     r"device_verification", DeviceVerificationViewSet, basename="device_verification"
 )
 
-urlpatterns = [
-    path("", include(router.urls)),
+urlpatterns = []
+
+# frontend_urls
+urlpatterns += [
+    path("", IndexView.as_view(), name="home"),
+    path(
+        "user-organizations/",
+        UserOrganizationsListView.as_view(),
+        name="user_organization_list",
+    ),
+    path("metering-units/", MeteringUnitListView.as_view(), name="metering_unit_list"),
+    path("menu-items/", MenuItemListView.as_view(), name="menu_item_list"),
+    path("menu-item/", MenuItemDetailView.as_view(), name="menu_item"),
+    path("devices/", DeviceListView.as_view(), name="device_list"),
+    path("device/<int:pk>/", DeviceDetailView.as_view(), name="device_detail"),
+    path(
+        "device-verifications/update/<int:pk>/",
+        device_verifications_update_view,
+        name="update_device_verification",
+    ),
+    path("refresh-valid-date/", refresh_valid_date_view, name="refresh_valid_date"),
+    path(
+        "upload-data-from-file/",
+        upload_device_from_file_view,
+        name="load_data_from_file",
+    ),
+    path(
+        "download-data-to-file/", download_device_to_file_view, name="load_data_to_file"
+    ),
 ]
+
+# DRF_URLS
+# urlpatterns += [
+#     path("", include(router.urls)),
+# ]
+
+# for_page
+# urlpatterns += [
+#     path("menu/", MenuListAPIView.as_view(), name="menu"),
+#     path("addresses/", AddressListAPIView.as_view(), name="addresses"),
+#     path("devices/", DeviceListAPIView.as_view(), name="devices"),
+#     # path("organizations/", OrganizationListAPIView.as_view(), name="organizations"),
+# ]

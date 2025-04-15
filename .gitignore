@@ -34,9 +34,9 @@ dist-ssr
 *.sln
 *.sw?
 
-/core/apps/frontend/static/frontend/images/logo.svg
-/core/apps/frontend/static/frontend/images/палитра.png
-/core/apps/frontend/templates/frontend/includes/offcanvas.html
+/core/apps/device/static/device/images/logo.svg
+/core/apps/device/static/device/images/палитра.png
+/core/apps/device/templates/device/includes/offcanvas.html
 
 /core/htmlcov/
 /core/.coverage

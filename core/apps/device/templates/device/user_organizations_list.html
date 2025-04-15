@@ -1,0 +1,16 @@
+<li>
+  <a class="dropdown-item btn btn-secondary"
+      {% if org_selected %}
+     href="{% url 'device:home' %}?organization={{ org_selected }}"
+      {% else %}
+     href="{% url 'device:home' %}"
+      {% endif %}
+  > Все организации </a>
+</li>
+{% for org in user_orgs_for_select %}
+  {% if org.slug == org_selected %}
+    <li>{{ org.name }}</li>
+  {% else %}
+    <li><a class="dropdown-item btn btn-secondary" href="{% url 'device:home' %}?organization={{ org.slug }}">{{ org.name }}</a></li>
+  {% endif %}
+{% endfor %}

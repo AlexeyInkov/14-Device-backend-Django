@@ -7,10 +7,10 @@ from django.urls import path, include
 urlpatterns = (
     [
         path("admin/", admin.site.urls),
-        path("", include("apps.frontend.urls")),
+        path("", include("apps.device.urls")),
         path("auth/", include("apps.my_auth.urls")),
         # path("v1/page/", include("apps.for_page.urls")),
-        path("v1/device_control/", include("apps.device.urls")),
+        # path("v1/device_control/", include("apps.device.urls")),
     ]
     + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -1,0 +1,7 @@
+<a class="link-dark" href="{% url 'device:home' %}">Все организации</a>
+<div class="accordion accordion-flush" id="accordionFlushMenu"
+     hx-get="{% url 'device:menu_item_list' %}{% if org_selected %}?organization={{ org_selected }}{% endif %}"
+     hx-trigger="load">
+</div>
+
+  

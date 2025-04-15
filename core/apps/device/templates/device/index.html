@@ -1,0 +1,35 @@
+{% extends "device/base/base.html" %}
+
+{% block content %}
+  <div class="row top_bar">
+    <div class="col-12">
+      {% include 'device/includes/header-nav-bar.html' %}
+    </div>
+  </div>
+  <div class="row content">
+    <div id="sidebar-content" class="col-2 menu-bar collapse">
+      <!--- sidebar menu --->
+      {% include "device/includes/sidebarMenu.html" %}
+    </div>
+    <div class="col">
+      <div class="row">
+        <div id="addresses-content" class="col addresses">
+          <!--- Addresses --->
+          <div
+              hx-get="{% url 'device:metering_unit_list' %}{% if org_selected %}?organization={{ org_selected }}{% endif %}"
+              hx-trigger="load"
+          ></div>
+        </div>
+      </div>
+      <div class="row ">
+        <div id="devices-content" class="col devices">
+          <!--- Devices --->
+          <div
+              hx-get="{% url 'device:device_list' %}{% if org_selected %}?organization={{ org_selected }}{% endif %}"
+              hx-trigger="load"
+          ></div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
