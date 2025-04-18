@@ -47,3 +47,10 @@ dist-ssr
 /core/media/
 /core/static/*
 /core/staticfiles/
+/db_data/
+/db-data/
+/env/.env_docker
+/env/.env_local
+/env/.env_prod
+/log/
+/log/

@@ -1,1 +1,4 @@
-../.venv/
+/.dev-venv/
+/files
+/TODO
+
