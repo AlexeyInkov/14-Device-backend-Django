@@ -1,0 +1,15 @@
+FROM python:3.11.9-slim
+LABEL authors="AlexeyInkov"
+RUN apt-get update -y
+RUN apt-get upgrade -y
+
+RUN pip install poetry
+COPY poetry.lock pyproject.toml ./
+RUN poetry config virtualenvs.create false
+RUN poetry install --no-interaction --no-root
+
+COPY core /core
+
+WORKDIR core
+
+EXPOSE 8000
