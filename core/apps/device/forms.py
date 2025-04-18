@@ -1,5 +1,5 @@
 from django import forms
-from django.forms import ModelForm
+from django.forms import ModelForm, Form
 from django.forms import inlineformset_factory
 
 from apps.device.models import TypeToRegistryImport
@@ -30,7 +30,7 @@ class MultipleFileField(forms.FileField):
         return result
 
 
-class UploadFileForm(forms.Form):
+class UploadFileForm(Form):
     file_field = MultipleFileField()
 
 

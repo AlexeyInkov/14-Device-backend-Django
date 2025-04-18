@@ -49,7 +49,9 @@ def upload_device_from_file_view(request):
             for f in files:
                 handle_uploaded_file(f)
                 download_device_from_file_into_db.delay(f.name, request.user.id)
-        return HttpResponse(status=204)
+            else:
+                return HttpResponse(status=200)
+        return HttpResponse(status=400)
     else:
         form = UploadFileForm()
     return render(request, "device/modal-load-file.html", {"form": form})

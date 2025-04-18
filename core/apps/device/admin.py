@@ -121,7 +121,7 @@ class TypeRegistryAdmin(admin.ModelAdmin):
                 # сохраняем загруженный файл и делаем запись в базу
                 form_object = form.save()
                 file_path = form_object.csv_file.path
-                file_encoding = get_file_encoding(form_object.csv_file.path)
+                file_encoding = get_file_encoding(file_path)
                 if not check_csv_file(
                     file_path,
                     settings.FIELDNAMES_FILE_TYPE,
@@ -133,6 +133,7 @@ class TypeRegistryAdmin(admin.ModelAdmin):
                     return HttpResponseRedirect(request.path_info)
 
                 # обработка csv файла
+                logger.debug(f"{file_path=}")
                 download_type_from_file_into_db.delay(file_path, file_encoding)
             # возвращаем пользователя на главную с сообщением об успехе
             url = reverse("admin:index")

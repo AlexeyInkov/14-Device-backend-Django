@@ -1,5 +1,5 @@
 <div class="modal-content">
-  <form hx-post="{{ request.path }}" class="form-control">
+  <form hx-post="{{ request.path }}" class="form-control" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="modal-header">
       <h5 class="modal-title" id="loadFileLabel">Загрузка данных по узлам</h5>
@@ -12,7 +12,7 @@
 
     </div>
     <div class="modal-footer">
-      <button type="submit" class="btn btn-secondary">Загрузить</button>
+      <button type="submit" class="btn btn-secondary" data-bs-dismiss="modal">Загрузить</button>
       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
     </div>
   </form>

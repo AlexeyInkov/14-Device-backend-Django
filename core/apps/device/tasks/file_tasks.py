@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 @shared_task(name="tasks.download_device_from_file_into_db")
 def download_device_from_file_into_db(filename: str, user_id: str):
-    filename = os.path.join(settings.FILE_UPLOAD_DIR, filename)
+    filename = os.path.join(settings.MEDIA_ROOT, 'uploads', filename)
 
     logger.info(filename)
 
@@ -105,7 +105,7 @@ def download_type_from_file_into_db(file_path: str, file_encoding: str) -> None:
 def create_excel_file(metering_units):
     # template = os.path.sep.join((settings.FILE_TEMPLATES_DIR, "template.xlsx"))
     file_name = os.path.sep.join(
-        (settings.FILE_UPLOAD_DIR, f'{str(uuid.uuid4()).split("-")[-1]}.xlsx')
+        (settings.MEDIA_ROOT, "download", f'{str(uuid.uuid4()).split("-")[-1]}.xlsx')
     )
     # # копируем шаблон
     # shutil.copyfile(template, file_name)
