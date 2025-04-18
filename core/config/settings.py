@@ -81,15 +81,27 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 # Database
 
-print("sqlite")
-if not os.path.exists(BASE_DIR.parent.parent / "dc_db"):
-    os.makedirs(BASE_DIR.parent.parent / "dc_db")
+print("postgres")
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR.parent.parent / "dc_db/db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.environ.get("POSTGRES_DB"),
+        'USER': os.environ.get("POSTGRES_USER"),
+        'PASSWORD': os.environ.get("POSTGRES_PASSWORD"),
+        'HOST': os.environ.get("POSTGRES_HOST"),
+        'PORT': os.environ.get("POSTGRES_PORT")
     }
 }
+
+# print("sqlite")
+# # if not os.path.exists(BASE_DIR.parent.parent / "dc_db"):
+# #     os.makedirs(BASE_DIR.parent.parent / "dc_db")
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR.parent / "db_data/sqlite/db.sqlite3",
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -132,9 +144,9 @@ if not os.path.exists(BASE_DIR / "media"):
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "media/"
 
-if not os.path.exists(BASE_DIR.parent / "files"):
-    os.makedirs(BASE_DIR.parent / "files")
-FILE_UPLOAD_DIR = os.path.join(BASE_DIR.parent, "files/")
+# if not os.path.exists(BASE_DIR.parent / "files"):
+#     os.makedirs(BASE_DIR.parent / "files")
+# FILE_UPLOAD_DIR = os.path.join(BASE_DIR.parent, "files/")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -156,6 +168,9 @@ REST_FRAMEWORK = {
     ]
 }
 
+if not os.path.exists(BASE_DIR.parent / "log"):
+    os.makedirs(BASE_DIR.parent / "log")
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -169,7 +184,7 @@ LOGGING = {
         "file": {
             "class": "logging.FileHandler",
             "level": "WARNING",
-            "filename": BASE_DIR.parent / "log/django_info.log",
+            "filename": f"{BASE_DIR.parent}/log/django_warning.log",
             "formatter": "django.server",
         },
         "console": {
@@ -213,7 +228,7 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 # Development options
 
 
-INTERNAL_IPS = ("127.0.0.1", "localhost")
+INTERNAL_IPS = ("127.0.0.1", "localhost", '172.19.0.1')
 
 
 def show_toolbar(request: HttpRequest) -> bool:
