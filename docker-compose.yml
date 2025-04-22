@@ -1,4 +1,50 @@
 services:
+#  tg_bot:
+#    container_name: tg_bot
+#    build:
+#      context: .
+#      dockerfile: ./tg_bot/dockerfile
+#    restart: unless-stopped
+#    env_file:
+#      - env/.env_docker
+#    volumes:
+#      - ./tg_bot:/tg_bot
+
+#  nginx:
+#    container_name: nginx
+#    image: nginx:stable-alpine
+#    restart: unless-stopped
+#    env_file:
+#      - .env_docker
+#    ports:
+#      - 80:80
+#      - 443:443
+#    volumes:
+#      - ./etc/nginx:/etc/nginx
+#      - ./etc/nginx/templates:/etc/etc/templates:ro
+#      - ./etc/letsencrypt:/etc/letsencrypt:ro
+#      - ./certbot/data:/var/www/certbot
+#    depends_on:
+#      - web-app
+#    networks:
+#      - app-network
+#
+#  certbot:
+#    container_name: certbot
+#    env_file:
+#      - env/.env_docker
+#    build:
+#      context: ./certbot
+#      dockerfile: Dockerfile
+#    command: >-
+#      certbot certonly --reinstall --webroot --webroot-path=/var/www/certbot
+#      --email ${DOMAIN_EMAIL} --agree-tos --no-eff-email -d ${DOMAIN_URL}
+#    volumes:
+#      - ./etc/letsencrypt:/etc/letsencrypt
+#      - ./certbot/data:/var/www/certbot
+#    depends_on:
+#      - nginx
+
 
   redis:
     container_name: redis
@@ -19,6 +65,11 @@ services:
     ports:
       - "5432:5432"
     restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 5s
+      timeout: 3s
+      retries: 3
 
   web-app:
     container_name: web-app
@@ -37,8 +88,9 @@ services:
 #      sh -c "python manage.py migrate && python manage.py loaddata fixtures/20241125.json && python manage.py runserver 0.0.0.0:8000"
 
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
 
   celery-worker:
     container_name: celery-worker
@@ -52,9 +104,10 @@ services:
       - ./core:/core
     command: ['celery', '-A', 'config', 'worker', '-l', 'DEBUG']
     depends_on:
-      - postgres
-      - redis
-      - web-app
+      postgres:
+        condition: service_healthy
+      redis:
+      web-app:
 
   celery-flower:
     container_name: celery-flower
