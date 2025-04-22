@@ -1,10 +1,12 @@
 from django.urls import path
 
-from .views import (
+from .views.drf_views import (
     UserRegisterAPIView,
     UserLoginAPIView,
     UserLogoutAPIView,
     UserMeAPIView,
+)
+from .views.temp_views import (
     LoginUserView,
     RegisterUserView,
     MyLogoutView,

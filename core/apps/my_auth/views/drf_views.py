@@ -1,9 +1,6 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from django.contrib.auth.views import LoginView, LogoutView
 from django.core.exceptions import ObjectDoesNotExist
-from django.urls import reverse_lazy
-from django.views.generic import CreateView
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import CreateAPIView
@@ -11,8 +8,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .forms import LoginUserForm, RegisterUserForm
-from .serializers import UserSerializer, UserTokenSerializer, UserOrganizationSerializer
+from apps.my_auth.serializers import (
+    UserSerializer,
+    UserTokenSerializer,
+    UserOrganizationSerializer,
+)
 
 
 class UserMeAPIView(APIView):
@@ -83,23 +83,3 @@ class UserLogoutAPIView(APIView):
             return Response(
                 {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
-
-
-class LoginUserView(LoginView):
-    form_class = LoginUserForm
-    template_name = "my_auth/auth.html"
-    extra_context = {"title": "Авторизация", "button_name": "Войти"}
-
-
-class RegisterUserView(CreateView):
-    form_class = RegisterUserForm
-    template_name = "my_auth/auth.html"
-    extra_context = {"title": "Регистрация", "button_name": "Ok"}
-    success_url = reverse_lazy("my_auth:login")
-
-
-class MyLogoutView(LogoutView):
-    http_method_names = ["get", "post", "options"]
-
-    def get(self, request, *args, **kwargs):
-        return self.post(request, *args, **kwargs)
