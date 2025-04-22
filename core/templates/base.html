@@ -4,18 +4,18 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  {% include "device/base/head.html" %}
+  {% include "base_include/head.html" %}
   <title>{{ title }}</title>
 </head>
 <body>
-{% include "device/base/debug_tool_bar_script_before.html" %}
+{% include "base_include/debug_tool_bar_script_before.html" %}
 <div class="container main-container">
 
   {% block content %}{% endblock %}
 
-  {% include "device/base/footer.html" %}
+  {% include "base_include/footer.html" %}
 </div>
-{% include "device/base/scripts.html" %}
-{% include "device/base/debug_tool_bar_script_end.html" %}
+{% include "base_include/scripts.html" %}
+{% include "base_include/debug_tool_bar_script_end.html" %}
 </body>
 </html>
