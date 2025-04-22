@@ -1,4 +1,4 @@
-{% extends 'device/base/base.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
   <div class="row login">
@@ -15,6 +15,16 @@
           {% endfor %}
           <div class="d-grid">
             <button type="submit" class="btn btn-secondary mb-3">{{ button_name }}</button>
+          </div>
+          <div class="d-grid">
+            <script
+                async
+                src="https://telegram.org/js/telegram-widget.js?22"
+                data-telegram-login="device_control_auth_bot"
+                data-size="large" data-radius="50"
+                data-auth-url="http://test.device-control.site/social/complete/telegram/"
+                data-request-access="write">
+            </script>
           </div>
         </form>
       </div>

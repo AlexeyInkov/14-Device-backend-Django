@@ -27,6 +27,8 @@ print(f"{DEBUG=}")
 
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(",")
 
+INTERNAL_IPS = os.environ.get("DJANGO_INTERNAL_IPS").split(",")
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -42,8 +44,14 @@ INSTALLED_APPS = [
     # Celery
     "django_celery_beat",
     "django_celery_results",
+    # Cache
     "cachalot",
     "django_htmx",
+    # Auth
+    "oauth2_provider",
+    "social_django",
+    # Prometheus
+    "django_prometheus",
     # Apps
     "apps.my_auth.apps.MyAuthConfig",
     "apps.device.apps.DeviceConfig",
@@ -52,12 +60,16 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+
 ]
+
+SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin-allow-popups"
 
 ROOT_URLCONF = "config.urls"
 
@@ -72,6 +84,8 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -80,28 +94,17 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 # Database
-
 print("postgres")
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get("POSTGRES_DB"),
-        'USER': os.environ.get("POSTGRES_USER"),
-        'PASSWORD': os.environ.get("POSTGRES_PASSWORD"),
-        'HOST': os.environ.get("POSTGRES_HOST"),
-        'PORT': os.environ.get("POSTGRES_PORT")
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": os.environ.get("POSTGRES_DB"),
+        "USER": os.environ.get("POSTGRES_USER"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
+        "HOST": os.environ.get("POSTGRES_HOST"),
+        "PORT": os.environ.get("POSTGRES_PORT"),
     }
 }
-
-# print("sqlite")
-# # if not os.path.exists(BASE_DIR.parent.parent / "dc_db"):
-# #     os.makedirs(BASE_DIR.parent.parent / "dc_db")
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR.parent / "db_data/sqlite/db.sqlite3",
-#     }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -120,6 +123,15 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.telegram.TelegramAuth',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_JSONFIELD_ENABLED = True
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+SOCIAL_AUTH_TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 
 LANGUAGE_CODE = "en-us"
 
@@ -215,6 +227,10 @@ LOGIN_REDIRECT_URL = "device:home"
 LOGOUT_REDIRECT_URL = "my_auth:login"
 LOGIN_URL = "my_auth:login"
 
+TELEGRAM_BOT_NAME = os.environ.get("TELEGRAM_BOT_NAME")
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
+# TELEGRAM_LOGIN_REDIRECT_URL = os.environ.get("TELEGRAM_LOGIN_REDIRECT_URL")
+
 # celery setting.
 CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND")
@@ -225,20 +241,18 @@ CELERY_TIMEZONE = "UTC"
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
+
 # Development options
-
-
-INTERNAL_IPS = ("127.0.0.1", "localhost", '172.19.0.1')
-
-
 def show_toolbar(request: HttpRequest) -> bool:
     if DEBUG and not IS_RUNNING_TESTS:
         if request.META.get("REMOTE_ADDR") not in INTERNAL_IPS:
             logger.error(
                 "Local address is not in INTERNAL_IPs",
-                error={
-                    "remote_addr": request.META.get("REMOTE_ADDR"),
-                    "INTERNAL_IPs": INTERNAL_IPS,
+                {
+                    "error": {
+                        "remote_addr": request.META.get("REMOTE_ADDR"),
+                        "INTERNAL_IPs": INTERNAL_IPS,
+                    }
                 },
             )
         return True
@@ -288,7 +302,6 @@ if DEBUG and not IS_RUNNING_TESTS:
 
     # Cachalot
     CACHALOT_ENABLED = False
-
 
 # Пауза между запросами для fgis.arshin
 TIME_DDOS_FOR_REQUEST = 1
