@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 @shared_task(name="tasks.download_device_from_file_into_db")
 def download_device_from_file_into_db(filename: str, user_id: str):
-    filename = os.path.join(settings.MEDIA_ROOT, 'uploads', filename)
+    filename = os.path.join(settings.MEDIA_ROOT, "uploads", filename)
 
     logger.info(filename)
 

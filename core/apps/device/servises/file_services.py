@@ -11,7 +11,7 @@ from config import settings
 
 def handle_uploaded_file(f: InMemoryUploadedFile) -> None:
     """Загрузка файла"""
-    filename = os.path.join(settings.MEDIA_ROOT, 'uploads', f.name)
+    filename = os.path.join(settings.MEDIA_ROOT, "uploads", f.name)
     with open(filename, "wb+") as destination:
         for chunk in f.chunks():
             destination.write(chunk)
