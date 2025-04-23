@@ -29,3 +29,11 @@ class Profile(models.Model):
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
+
+
+@receiver(post_save, sender=UserSocialAuth)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        profile = Profile.objects.get(user=instance.user)
+        profile.telegram_id = instance.uid
+        profile.save()
