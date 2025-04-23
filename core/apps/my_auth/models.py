@@ -1,8 +1,8 @@
 from django.conf import settings
 from django.db import models
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from social_django.models import UserSocialAuth
+
+from apps.device.models import Organization, UserToOrganization
 
 
 class Profile(models.Model):
@@ -19,17 +19,3 @@ class Profile(models.Model):
 
     def __str__(self) -> str:
         return str(self.user)
-
-
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
-
-
-@receiver(post_save, sender=UserSocialAuth)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        profile = Profile.objects.get(user=instance.user)
-        profile.telegram_id = instance.uid
-        profile.save()
