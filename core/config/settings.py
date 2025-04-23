@@ -97,7 +97,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 print("postgres")
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "ENGINE": "django.db.backends.postgresql",
         "NAME": os.environ.get("POSTGRES_DB"),
         "USER": os.environ.get("POSTGRES_USER"),
         "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
@@ -105,6 +105,9 @@ DATABASES = {
         "PORT": os.environ.get("POSTGRES_PORT"),
     }
 }
+
+CACHALOT_TABLE_KEYGEN = 'cachalot.utils.get_table_cache_key'
+CACHALOT_DATABASES = ('default',)  # 'supported_only')
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
