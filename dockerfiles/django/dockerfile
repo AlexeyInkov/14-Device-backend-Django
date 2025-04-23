@@ -1,5 +1,9 @@
 FROM python:3.11.9-slim
 LABEL authors="AlexeyInkov"
+
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+
 RUN apt-get update -y
 RUN apt-get upgrade -y
 

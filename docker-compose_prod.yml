@@ -48,7 +48,7 @@ services:
     container_name: web-app
     build:
       context: .
-      dockerfile: dockerfiles/docker_django.conf
+      dockerfile: dockerfiles/dockerfile.conf
     restart: unless-stopped
     env_file:
       - env/.env_docker

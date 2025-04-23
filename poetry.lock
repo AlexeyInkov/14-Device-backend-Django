@@ -758,18 +758,6 @@ openapi-codec = ">=1.3.1"
 simplejson = "*"
 
 [[package]]
-name = "django-telegram-login"
-version = "0.2.3"
-description = "The reusable Django application for Telegram authorization (also known as Telegram login)."
-optional = false
-python-versions = "*"
-groups = ["main"]
-files = [
-    {file = "django-telegram-login-0.2.3.tar.gz", hash = "sha256:690196527b78127f059842fe7aa689ee134f594d184ebdf478554011a7471088"},
-    {file = "django_telegram_login-0.2.3-py3-none-any.whl", hash = "sha256:e0c0aeafab55f33bca1b5a5f33b06fc257d286c7a3911ec8517df83a716d3371"},
-]
-
-[[package]]
 name = "django-timezone-field"
 version = "4.2.3"
 description = "A Django app providing database and form fields for pytz timezone objects."
@@ -2181,4 +2169,4 @@ testing = ["coverage[toml]", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11"
-content-hash = "5662be5750d678c294a4315d4bbf7dc701b275d46dd93373cc00983cfc5bb311"
+content-hash = "7e2d042cfebc5b0d9569a6c327a4082f095d515ff366341dcd104e81d4d7bc8f"

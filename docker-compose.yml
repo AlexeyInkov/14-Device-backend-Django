@@ -45,7 +45,6 @@ services:
 #    depends_on:
 #      - nginx
 
-
   redis:
     container_name: redis
     image: redis:7.4.1-alpine
@@ -75,7 +74,7 @@ services:
     container_name: web-app
     build:
       context: .
-      dockerfile: ./dockerfiles/docker_django
+      dockerfile: dockerfiles/django/dockerfile
     restart: unless-stopped
     env_file:
       - env/.env_docker
@@ -89,14 +88,15 @@ services:
 
     depends_on:
       postgres:
-        condition: service_healthy
+        condition: "service_healthy"
       redis:
+        condition: "service_started"
 
   celery-worker:
     container_name: celery-worker
     build:
       context: .
-      dockerfile: ./dockerfiles/docker_django
+      dockerfile: dockerfiles/django/dockerfile
     restart: unless-stopped
     env_file:
       - env/.env_docker
@@ -104,17 +104,14 @@ services:
       - ./core:/core
     command: ['celery', '-A', 'config', 'worker', '-l', 'DEBUG']
     depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-      web-app:
+      - web-app
 
   celery-flower:
     container_name: celery-flower
     restart: unless-stopped
     build:
       context: .
-      dockerfile: ./dockerfiles/docker_django
+      dockerfile: dockerfiles/django/dockerfile
     env_file:
       - env/.env_docker
     ports:
@@ -183,7 +180,6 @@ services:
 
 volumes:
   db-data:
-  #  pgadmin-data:
   uploads:
   grafanadata:
   prometheusdata:
