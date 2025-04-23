@@ -162,11 +162,13 @@ if not os.path.exists(BASE_DIR / "media"):
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "media/"
 
-# if not os.path.exists(BASE_DIR.parent / "files"):
-#     os.makedirs(BASE_DIR.parent / "files")
-# FILE_UPLOAD_DIR = os.path.join(BASE_DIR.parent, "files/")
+if not os.path.exists(BASE_DIR / "media/download"):
     logger.info("Creating media/download directory")
+    os.makedirs(BASE_DIR / "media/download")
+
+if not os.path.exists(BASE_DIR / "media/uploads"):
     logger.info("Creating media/uploads directory")
+    os.makedirs(BASE_DIR / "media/uploads")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
