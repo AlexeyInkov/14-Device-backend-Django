@@ -145,16 +145,19 @@ USE_I18N = True
 USE_TZ = True
 
 if not os.path.exists(BASE_DIR / "static"):
+    logger.info("Creating static directory")
     os.makedirs(BASE_DIR / "static")
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
 if not os.path.exists(BASE_DIR / "staticfiles"):
+    logger.info("Creating staticfiles directory")
     os.makedirs(BASE_DIR / "staticfiles")
 STATICFILES_DIRS = [BASE_DIR / "staticfiles"]
 
 if not os.path.exists(BASE_DIR / "media"):
+    logger.info("Creating media directory")
     os.makedirs(BASE_DIR / "media")
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "media/"
@@ -162,6 +165,8 @@ MEDIA_URL = "media/"
 # if not os.path.exists(BASE_DIR.parent / "files"):
 #     os.makedirs(BASE_DIR.parent / "files")
 # FILE_UPLOAD_DIR = os.path.join(BASE_DIR.parent, "files/")
+    logger.info("Creating media/download directory")
+    logger.info("Creating media/uploads directory")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -215,7 +220,7 @@ LOGGING = {
     "loggers": {
         "django": {
             "handlers": ["file", "console"],
-            "level": "INFO",
+            "level": "WARNING",
             "propagate": True,
         },
         "django.db": {
@@ -223,6 +228,11 @@ LOGGING = {
             "level": "DEBUG",
             "propagate": False,
         },
+        "django.server": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+            "propagate": False,
+        }
     },
 }
 
