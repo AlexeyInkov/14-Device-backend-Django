@@ -66,7 +66,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-
 ]
 
 SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin-allow-popups"
@@ -84,8 +83,8 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                'social_django.context_processors.backends',
-                'social_django.context_processors.login_redirect',
+                "social_django.context_processors.backends",
+                "social_django.context_processors.login_redirect",
             ],
         },
     },
@@ -106,8 +105,8 @@ DATABASES = {
     }
 }
 
-CACHALOT_TABLE_KEYGEN = 'cachalot.utils.get_table_cache_key'
-CACHALOT_DATABASES = ('default',)  # 'supported_only')
+CACHALOT_TABLE_KEYGEN = "cachalot.utils.get_table_cache_key"
+CACHALOT_DATABASES = ("default",)  # 'supported_only')
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -128,12 +127,12 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTHENTICATION_BACKENDS = (
-    'social_core.backends.telegram.TelegramAuth',
-    'django.contrib.auth.backends.ModelBackend',
+    "social_core.backends.telegram.TelegramAuth",
+    "django.contrib.auth.backends.ModelBackend",
 )
 
 SOCIAL_AUTH_JSONFIELD_ENABLED = True
-SOCIAL_AUTH_URL_NAMESPACE = 'social'
+SOCIAL_AUTH_URL_NAMESPACE = "social"
 SOCIAL_AUTH_TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 
 LANGUAGE_CODE = "en-us"
@@ -234,7 +233,7 @@ LOGGING = {
             "handlers": ["console"],
             "level": "DEBUG",
             "propagate": False,
-        }
+        },
     },
 }
 

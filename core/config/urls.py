@@ -4,17 +4,17 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 
 urlpatterns = (
-        [
-            path("admin/", admin.site.urls),
-            path("", include("apps.device.urls")),
-            path("prometheus/", include("django_prometheus.urls")),
-            path("auth/", include("apps.my_auth.urls")),
-            re_path(r"^social/", include('social_django.urls', namespace="social")),
-            # path("v1/page/", include("apps.for_page.urls")),
-            # path("v1/device_control/", include("apps.device.urls")),
-        ]
-        + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-        + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    [
+        path("admin/", admin.site.urls),
+        path("", include("apps.device.urls")),
+        path("prometheus/", include("django_prometheus.urls")),
+        path("auth/", include("apps.my_auth.urls")),
+        re_path(r"^social/", include("social_django.urls", namespace="social")),
+        # path("v1/page/", include("apps.for_page.urls")),
+        # path("v1/device_control/", include("apps.device.urls")),
+    ]
+    + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 )
 
 if settings.DEBUG and not settings.IS_RUNNING_TESTS:

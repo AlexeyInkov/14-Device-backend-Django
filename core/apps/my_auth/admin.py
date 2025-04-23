@@ -9,7 +9,7 @@ class ProfileAdmin(admin.ModelAdmin):
         "telegram_id",
         "full_name",
     )
-    ordering = ("user", )
+    ordering = ("user",)
 
 
 admin.site.register(Profile, ProfileAdmin)

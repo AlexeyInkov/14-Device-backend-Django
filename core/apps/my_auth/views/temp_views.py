@@ -1,21 +1,11 @@
-import json
 import logging
-import secrets
 
-from django.conf import settings
-from django.contrib.auth import get_user_model, login
+from django.contrib.auth import get_user_model
 from django.contrib.auth.views import LoginView, LogoutView
-from django.core.cache import cache
-from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
-from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import CreateView, TemplateView
-from django_telegram_login.widgets.constants import MEDIUM
-from django_telegram_login.widgets.generator import create_redirect_login_widget, create_callback_login_widget
-from requests import Response
+from django.views.generic import CreateView
 
 from apps.my_auth.forms import LoginUserForm, RegisterUserForm
-from apps.my_auth.models import Profile
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
