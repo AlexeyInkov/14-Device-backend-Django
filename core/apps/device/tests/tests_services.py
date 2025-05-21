@@ -4,8 +4,8 @@ import os
 from django.conf import settings
 from django.test import TestCase
 
-from apps.device.servises.arshin_servises import request_to_arshin
-from apps.device.servises.file_services import (
+from utils.arshin_api import request_to_arshin
+from utils.file_utils import (
     get_file_encoding,
     check_csv_file,
     create_excel_from_dict_list,

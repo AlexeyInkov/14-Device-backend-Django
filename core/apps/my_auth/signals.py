@@ -1,6 +1,5 @@
 import logging
 
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -12,7 +11,7 @@ from apps.my_auth.models import Profile
 logger = logging.getLogger(__name__)
 
 
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+@receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)

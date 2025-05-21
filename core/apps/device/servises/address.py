@@ -1,6 +1,6 @@
 """Модификация адреса и региона при импорте из файла"""
 
-from core.apps.device.models import Address, Region, TypeStreet, Street
+from apps.device.models import Address, Region, TypeStreet, Street
 
 
 def change_street(address, street, tp):

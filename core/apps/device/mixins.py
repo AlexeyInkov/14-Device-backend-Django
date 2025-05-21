@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 
-from apps.device.servises.request_services import (
+from utils.request_query_params import (
     get_tso_selected,
     get_org_selected,
     get_cust_selected,

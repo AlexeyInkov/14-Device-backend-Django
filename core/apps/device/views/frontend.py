@@ -2,21 +2,24 @@ import os
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
-from django.shortcuts import redirect, get_object_or_404, render
+from django.http import HttpResponse, Http404
+from django.shortcuts import redirect, render
 from django.views.generic import TemplateView, ListView, DetailView
 
-import apps.device.servises.db_services as db_services
-import apps.device.servises.request_services as request_services
+import utils.request_query_params as request_utils
 from apps.device.forms import UploadFileForm, DeviceVerificationFormset
 from apps.device.mixins import ContextDataMixin, TemplateMixin
 from apps.device.models import Device
-from apps.device.servises.file_services import handle_uploaded_file
+from apps.device.servises.device import DeviceServices
+from apps.device.servises.metering_unit import MeteringUnitServices
+from apps.device.servises.organization import OrganizationServices
+from apps.device.servises.verification import VerificationServices
 from apps.device.tasks import (
     download_device_from_file_into_db,
     refresh_valid_date,
     create_excel_file,
 )
+from utils.file_utils import handle_uploaded_file
 
 
 class IndexView(ContextDataMixin, LoginRequiredMixin, TemplateView):
@@ -25,9 +28,9 @@ class IndexView(ContextDataMixin, LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        org_selected = request_services.get_org_selected(self.request)
+        org_selected = request_utils.get_org_selected(self.request)
         if org_selected:
-            context["select_org"] = db_services.get_select_org(org_selected)
+            context["select_org"] = OrganizationServices.get_by_slug(slug=org_selected)
         return context
 
 
@@ -37,7 +40,7 @@ class UserOrganizationsListView(TemplateMixin, LoginRequiredMixin, ListView):
     context_object_name = "user_orgs_for_select"
 
     def get_queryset(self):
-        return db_services.get_orgs_for_select(user=self.request.user)
+        return OrganizationServices.get_by_user(user=self.request.user)
 
 
 @login_required
@@ -59,11 +62,11 @@ def upload_device_from_file_view(request):
 
 @login_required
 def download_device_to_file_view(request):
-    metering_units = db_services.get_metering_units(
+    metering_units = MeteringUnitServices.get_filter_metering_units(
         user=request.user,
-        org_selected=request_services.get_org_selected(request),
-        tso_selected=request_services.get_tso_selected(request),
-        cust_selected=request_services.get_cust_selected(request),
+        org_selected=request_utils.get_org_selected(request),
+        tso_selected=request_utils.get_tso_selected(request),
+        cust_selected=request_utils.get_cust_selected(request),
     )
     file_path = create_excel_file(metering_units)
     if file_path is not None and os.path.exists(file_path):
@@ -95,11 +98,11 @@ class MeteringUnitListView(
     context_object_name = "metering_units"
 
     def get_queryset(self):
-        return db_services.get_metering_units(
+        return MeteringUnitServices.get_filter_metering_units(
             user=self.request.user,
-            org_selected=request_services.get_org_selected(self.request),
-            tso_selected=request_services.get_tso_selected(self.request),
-            cust_selected=request_services.get_cust_selected(self.request),
+            org_selected=request_utils.get_org_selected(self.request),
+            tso_selected=request_utils.get_tso_selected(self.request),
+            cust_selected=request_utils.get_cust_selected(self.request),
         )
 
 
@@ -109,15 +112,11 @@ class MenuItemListView(TemplateMixin, ContextDataMixin, LoginRequiredMixin, List
     context_object_name = "menu_items"
 
     def get_queryset(self):
-        return (
-            db_services.get_metering_units(
-                user=self.request.user,
-                org_selected=request_services.get_org_selected(self.request),
-                tso_selected=request_services.get_tso_selected(self.request),
-                cust_selected=request_services.get_cust_selected(self.request),
-            )
-            .values("tso__name", "tso__slug")
-            .distinct()
+        return MeteringUnitServices.get_menu_list(
+            user=self.request.user,
+            org_selected=request_utils.get_org_selected(self.request),
+            tso_selected=request_utils.get_tso_selected(self.request),
+            cust_selected=request_utils.get_cust_selected(self.request),
         )
 
 
@@ -127,15 +126,11 @@ class MenuItemDetailView(TemplateMixin, ContextDataMixin, LoginRequiredMixin, Li
     context_object_name = "menu_item"
 
     def get_queryset(self):
-        return (
-            db_services.get_metering_units(
-                user=self.request.user,
-                org_selected=request_services.get_org_selected(self.request),
-                tso_selected=request_services.get_tso_selected(self.request),
-                cust_selected=request_services.get_cust_selected(self.request),
-            )
-            .values("customer__name", "customer__slug")
-            .distinct()
+        return MeteringUnitServices.get_menu_items(
+            user=self.request.user,
+            org_selected=request_utils.get_org_selected(self.request),
+            tso_selected=request_utils.get_tso_selected(self.request),
+            cust_selected=request_utils.get_cust_selected(self.request),
         )
 
 
@@ -145,12 +140,12 @@ class DeviceListView(TemplateMixin, ContextDataMixin, LoginRequiredMixin, ListVi
     context_object_name = "devices"
 
     def get_queryset(self):
-        return db_services.get_devices(
+        return DeviceServices.get_devices(
             user=self.request.user,
-            org_selected=request_services.get_org_selected(self.request),
-            tso_selected=request_services.get_tso_selected(self.request),
-            cust_selected=request_services.get_cust_selected(self.request),
-            mu_selected=request_services.get_mu_selected(self.request),
+            org_selected=request_utils.get_org_selected(self.request),
+            tso_selected=request_utils.get_tso_selected(self.request),
+            cust_selected=request_utils.get_cust_selected(self.request),
+            mu_selected=request_utils.get_mu_selected(self.request),
         )
 
 
@@ -162,15 +157,18 @@ class DeviceDetailView(ContextDataMixin, LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         device = self.get_object()
-        context["verifications"] = db_services.get_verifications(device)
+        context["verifications"] = VerificationServices.get_by_device(device=device)
         return context
 
 
+# TODO: преобразовать в класс
 @login_required
 def device_verifications_update_view(request, pk):
     """Edit children and their addresses for a single parent."""
 
-    device = get_object_or_404(Device, id=pk)
+    device = DeviceServices.get(id=pk)
+    if not device:
+        raise Http404("No Device found matching the query")
 
     if request.method == "POST":
         formset = DeviceVerificationFormset(request.POST, instance=device)

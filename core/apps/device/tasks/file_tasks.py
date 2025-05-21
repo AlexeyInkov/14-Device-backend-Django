@@ -4,15 +4,18 @@ import os
 import uuid
 
 from celery import shared_task
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import transaction
 
-import apps.device.servises.db_services as db_services
-import apps.device.servises.file_services as file_services
+import apps.device.servises.database as database_services
+from utils.file_utils import (
+    check_csv_file,
+    get_file_encoding,
+    create_excel_from_dict_list,
+)
 from apps.device.models import TypeRegistry, SIName, TypeName, RegistryNumber
-from apps.device.servises.db_services import write_row_to_db
-from apps.device.servises.file_services import check_csv_file, get_file_encoding
-from config import settings
+
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +56,7 @@ def download_device_from_file_into_db(filename: str, user_id: str):
             user = get_user_model().objects.get(id=user_id)
             for row in reader:
                 try:
-                    write_row_to_db(row, user)
+                    database_services.write_row_to_db(row, user)
                 except BaseException as e:
                     logger.info(e)
                     writer.writerow(row)
@@ -109,6 +112,6 @@ def create_excel_file(metering_units):
     )
     # # копируем шаблон
     # shutil.copyfile(template, file_name)
-    dict_list = db_services.create_dict_from_db(metering_units)
-    file_services.create_excel_from_dict_list(dict_list, file_name, sheet_name="Sheet1")
+    dict_list = database_services.create_dict_from_db(metering_units)
+    create_excel_from_dict_list(dict_list, file_name, sheet_name="Sheet1")
     return file_name

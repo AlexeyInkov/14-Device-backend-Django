@@ -4,9 +4,8 @@ from celery import shared_task
 from django.db.models import Max
 
 from apps.device.models import Device
-from apps.device.servises.arshin_servises import request_to_arshin
-from apps.device.servises.db_services import save_verification
-
+from utils.arshin_api import request_to_arshin
+from apps.device.servises.verification import VerificationServices
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +52,8 @@ def refresh_valid_date() -> str:
                     if verifications:
                         for verification in verifications:
                             logger.debug(verification)
-                            save_verification(device.id, verification)
+                            VerificationServices.save_verification(
+                                device.id, verification
+                            )
                             logger.info("verification saved")
     return "Done"
