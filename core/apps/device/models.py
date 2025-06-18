@@ -181,13 +181,13 @@ class TypeName(BaseTimeModel):
 
 
 class Modification(BaseTimeModel):
-    modification = models.CharField(max_length=100, unique=True)
     type = models.ForeignKey(
         TypeName,
         null=True,
         on_delete=models.PROTECT,
         related_name="modifications",
     )
+    modification = models.CharField(max_length=100, unique=True)
 
     class Meta:
         verbose_name_plural = "mods"
@@ -209,6 +209,8 @@ class InstallationPoint(BaseTimeModel):
 
 
 class TypeRegistry(BaseTimeModel):
+    """Связь Тип - Номер в реестре"""
+
     type = models.ForeignKey(
         TypeName,
         null=True,
@@ -238,45 +240,43 @@ class Device(BaseTimeModel):
     metering_unit = models.ForeignKey(
         MeteringUnit,
         on_delete=models.PROTECT,
-        null=True,
+        blank=True,
         related_name="devices",
     )
     installation_point = models.ForeignKey(
         InstallationPoint,
         on_delete=models.PROTECT,
-        null=True,
+        blank=True,
         related_name="devices",
     )
-    name = models.ForeignKey(
-        SIName,
-        on_delete=models.PROTECT,
-        null=True,
-        related_name="devices",
-    )
-    registry_number = models.ForeignKey(
+
+    mit_number = models.ForeignKey(
         RegistryNumber,
         on_delete=models.PROTECT,
         null=True,
         blank=True,
         related_name="devices",
+        verbose_name="registry_number",
     )
-    type = models.ForeignKey(
+    mit_notation = models.ForeignKey(
         TypeName,
         on_delete=models.PROTECT,
         null=True,
         blank=True,
         related_name="devices",
+        verbose_name="type",
     )
-    modification = models.ForeignKey(
+    mi_modification = models.ForeignKey(
         Modification,
         on_delete=models.PROTECT,
         null=True,
         blank=True,
         related_name="devices",
+        verbose_name="modification",
     )
-
-    factory_number = models.CharField(max_length=100, unique=True)
-
+    mi_number = models.CharField(
+        max_length=20, unique=True, verbose_name="factory_number"
+    )
     valid_date = models.DateField(default="1900-01-01")
 
     notes = models.CharField(
@@ -291,7 +291,7 @@ class Device(BaseTimeModel):
         verbose_name_plural = "devices"
 
     def __str__(self):
-        return f"{str(self.type)} №{self.factory_number}"
+        return f"{str(self.mit_notation)} №{self.mi_number}"
 
 
 class Verification(BaseTimeModel):
@@ -301,12 +301,27 @@ class Verification(BaseTimeModel):
         null=True,
         related_name="verifications",
     )
-    mit_title = models.CharField(max_length=200, blank=True, null=True)
-    mit_number = models.CharField(max_length=10, blank=True, null=True)
-    mit_notation = models.CharField(max_length=100, blank=True, null=True)
-    mi_modification = models.CharField(max_length=100, blank=True, null=True)
-    mi_number = models.CharField(max_length=20, blank=True, null=True)
-    org_title = models.CharField(max_length=100, blank=True, null=True)
+    mit_title = models.CharField(
+        max_length=200, blank=True, null=True, verbose_name="device_title"
+    )
+    mit_number = models.CharField(
+        max_length=10, blank=True, null=True, verbose_name="registry_number"
+    )
+    mit_notation = models.CharField(
+        max_length=100, blank=True, null=True, verbose_name="type"
+    )
+    mi_modification = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name="modification",
+    )
+    mi_number = models.CharField(
+        max_length=20, blank=True, null=True, verbose_name="factory_number"
+    )
+    org_title = models.CharField(
+        max_length=100, blank=True, null=True, verbose_name="verification_organization"
+    )
     verification_date = models.DateField(default="1900-01-01")
     valid_date = models.DateField(default="1900-01-01")
     is_actual = models.BooleanField(default=False)
@@ -314,41 +329,6 @@ class Verification(BaseTimeModel):
 
     class Meta:
         verbose_name_plural = "verifications"
-
-    def save(self, *args, **kwargs):
-        """
-        device have single is_actual verification
-        """
-        # TODO перенести в celery tasks и atomic transactions
-        if self.is_actual:
-            with transaction.atomic():
-                for verification in Verification.objects.filter(device=self.device):
-                    verification.is_actual = False
-                    verification.save()
-                self.is_actual = True
-                # device = Device.objects.get(pk=self.device.pk)
-                if self.mit_number:
-                    device_registry_number = RegistryNumber.objects.get_or_create(
-                        registry_number=self.mit_number
-                    )[0]
-                    self.device.registry_number = device_registry_number
-                if self.mit_notation:
-                    device_type = TypeName.objects.get_or_create(
-                        type=self.mit_notation
-                    )[0]
-                    self.device.type = device_type
-                if self.mi_modification:
-                    device_modification = Modification.objects.get_or_create(
-                        modification=self.mi_modification, type=self.device.type
-                    )[0]
-                    self.device.modification = device_modification
-                if self.mit_number and self.mit_notation:
-                    TypeRegistry.objects.get_or_create(
-                        type=device_type, number_registry=device_registry_number
-                    )
-                self.device.save()
-
-        super().save(*args, **kwargs)
 
 
 def __str__(self):

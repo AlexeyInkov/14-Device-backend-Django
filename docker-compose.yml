@@ -1,10 +1,21 @@
 services:
+#  tg_bot:
+#    container_name: tg_bot
+#    build:
+#      context: .
+#      dockerfile: ./tg_bot/dockerfile
+#    restart: unless-stopped
+#    env_file:
+#      - env/.env_docker
+#    volumes:
+#      - ./tg_bot:/tg_bot
+
 #  nginx:
 #    container_name: nginx
 #    image: nginx:stable-alpine
 #    restart: unless-stopped
 #    env_file:
-#      - .env
+#      - .env_docker
 #    ports:
 #      - 80:80
 #      - 443:443
@@ -17,12 +28,11 @@ services:
 #      - web-app
 #    networks:
 #      - app-network
-
-
+#
 #  certbot:
 #    container_name: certbot
 #    env_file:
-#      - .env
+#      - env/.env_docker
 #    build:
 #      context: ./certbot
 #      dockerfile: Dockerfile
@@ -39,133 +49,149 @@ services:
     container_name: redis
     image: redis:7.4.1-alpine
     restart: unless-stopped
+    volumes:
+      - ./db-data/redis:/data
     ports:
-      - 6379:6379
-    networks:
-      - app-network
+      - "6379:6379"
+
+  postgres:
+    container_name: postgres
+    image: postgres:14.8-alpine
+    env_file:
+      - env/.env_docker
+    volumes:
+      - ./db-data/postgresql:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 5s
+      timeout: 3s
+      retries: 3
 
   web-app:
     container_name: web-app
     build:
       context: .
+      dockerfile: dockerfiles/django/dockerfile
     restart: unless-stopped
     env_file:
-      - .env
-    environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - env/.env_docker
     volumes:
       - ./core:/core
+      - ./static:/code/static
+      - ./media:/code/media
     ports:
       - 8000:8000
-    command: >
-      sh -c "python manage.py migrate && python manage.py loaddata fixtures/20241125.json && python manage.py runserver 0.0.0.0:8000"
-#      sh -c "python manage.py migrate && python manage.py loaddata fixtures/20241125.json && gunicorn -b 0.0.0.0:8000 config.wsgi:application"
+#    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000
+    command: ['python3', 'manage.py', 'runserver', '0.0.0.0:8000']
+##    python manage.py migrate && gunicorn -b 0.0.0.0:8000 config.wsgi:application"
+
     depends_on:
-#      - postgres
-      - redis
-    networks:
-      - app-network
+      postgres:
+        condition: "service_healthy"
+      redis:
+        condition: "service_started"
 
   celery-worker:
     container_name: celery-worker
-    restart: unless-stopped
     build:
       context: .
+      dockerfile: dockerfiles/django/dockerfile
+    command: celery -A config worker -l "debug"
+    restart: unless-stopped
     env_file:
-      - .env
-    environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - env/.env_docker
     volumes:
-      - ./cats:/app/src/cats
-    command: ['celery', '-A', 'config', 'worker', '-l', 'DEBUG', "-P", "gevent"]
+      - ./core:/core
     depends_on:
-#      - postgres
-#      - redis
-      - web-app
-    networks:
-      - app-network
+      web-app:
+        condition: "service_started"
+      postgres:
+        condition: "service_healthy"
+      redis:
+        condition: "service_started"
 
   celery-flower:
     container_name: celery-flower
     restart: unless-stopped
     build:
       context: .
+      dockerfile: dockerfiles/django/dockerfile
     env_file:
-      - .env
-    environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - env/.env_docker
     ports:
       - 5555:5555
-    command: ['celery', '-A', 'config', 'flower', '-l', 'DEBUG']  #, "-P", "gevent"]
+    command: ['celery', '-A', 'config', 'flower', '-l', 'DEBUG', "-P", "gevent"]
     depends_on:
       - celery-worker
-    networks:
-      - app-network
-
-  celery-beat:
-    container_name: celery-beat
-    restart: unless-stopped
-    build:
-      context: .
-    env_file:
-      - .env
-    environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
-    volumes:
-      - ./cats:/app/src/cats
-    command: ['celery', '-A', 'config', 'beat', '-l', 'DEBUG']
-    depends_on:
+#
+#  celery-beat:
+#    container_name: celery-beat
+#    restart: unless-stopped
+#    build:
+#      context: .
+#    env_file:
+#      - .env_docker
+#    environment:
+#      - CELERY_BROKER_URL=redis://redis:6379/0
+#      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+#    command: ['celery', '-A', 'config', 'beat', '-l', 'DEBUG']
+#    depends_on:
 #      - postgres
 #      - redis
-      - celery-worker
-    networks:
-      - app-network
-#
-#  postgres:
-#    container_name: postgres
-#    image: postgres:14.8-alpine
-#    environment:
-#      POSTGRES_DB: ${POSTGRES_DB_NAME}
-#      POSTGRES_USER: ${POSTGRES_DB_USER}
-#      POSTGRES_PASSWORD: ${POSTGRES_DB_USER_PASSWORD}
-##      PGDATA: "/var/lib/postgresql/data/pgdata"
-#    volumes:
-#      - ../2. Init Database:/docker-entrypoint-initdb.d
-##      - pg-data:/var/lib/postgresql/data
-#    ports:
-#      - "5432:5432"
-#    restart: unless-stopped
-#    networks:
+#      - celery-worker
 #      - app-network
 
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+    ports:
+      - "9080:9080"
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./configurations/promtail-config.yaml:/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/config.yml
+    privileged: true
 
-##    networks:
-#      - net
-#
-#  pgadmin:
-#    container_name: pgadmin_container
-#    image: dpage/pgadmin4:8.10
-#    environment:
-#      PGADMIN_DEFAULT_EMAIL: "alex0982@mail.ru"
-#      PGADMIN_DEFAULT_PASSWORD: "pgadminpassword"
-#      PGADMIN_CONFIG_SERVER_MODE: "False"
-#    volumes:
-#      - pgadmin-data:/var/lib/pgadmin
-#    ports:
-#      - "5050:80"
-#    restart: unless-stopped
-#    networks:
-#      - net
-#
-##
-#volumes:
-#  pg-data:
-#  pgadmin-data:
-networks:
-  app-network:
-    name: app-network # I specified this line to be able to find my network by its name
-    driver: bridge
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./configurations/loki-config.yaml:/etc/loki/local-config.yaml
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./configurations/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheusdata:/prometheus
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./configurations/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+      - grafanadata:/var/lib/grafana
+
+volumes:
+  grafanadata:
+  prometheusdata:
+

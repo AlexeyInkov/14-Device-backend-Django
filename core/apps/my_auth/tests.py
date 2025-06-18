@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 
-from apps.frontend.urls import urlpatterns as frontend_urls
+from apps.device.urls import urlpatterns as frontend_urls
 from apps.my_auth.forms import LoginUserForm, RegisterUserForm
 
 
@@ -61,9 +61,9 @@ class ViewsTestCase(TestCase):
         """
         for frontend_url in frontend_urls:
             if frontend_url.name in ("device_detail", "update_device_verification"):
-                url = reverse(f"frontend:{frontend_url.name}", args=(1,))
+                url = reverse(f"device:{frontend_url.name}", args=(1,))
             else:
-                url = reverse(f"frontend:{frontend_url.name}")
+                url = reverse(f"device:{frontend_url.name}")
             response = self.client.get(url)
             self.assertRedirects(
                 response,
@@ -87,7 +87,7 @@ class ViewsTestCase(TestCase):
             },
         )
         self.assertRedirects(
-            response, reverse("frontend:home"), status_code=302, target_status_code=200
+            response, reverse("device:home"), status_code=302, target_status_code=200
         )
         self.assertEqual(self.client.session["_auth_user_id"], "1")
 

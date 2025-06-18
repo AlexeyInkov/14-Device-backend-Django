@@ -1,0 +1,11 @@
+{% load context_tags %}
+
+
+{% for customer in menu_item %}
+  <a href="#" class="list-group-item list-group-item-action list-group-item-light"
+     hx-get="{% url 'device:metering_unit_list' %}?tso={{ tso_selected }}&customer={{ customer|dictitem:'customer__slug' }}{% if org_selected %}&organization={{ org_selected }}{% endif %}"
+     hx-target="#addresses-content"
+  >{{ customer|dictitem:'customer__name' }}</a>
+{% endfor %}  
+
+

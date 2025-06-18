@@ -3,7 +3,7 @@ services:
     container_name: nginx
     image: nginx:stable-alpine
     env_file:
-      - .env
+      - env/.env_docker
     environment:
       - DOMAIN_URL
     ports:
@@ -20,7 +20,7 @@ services:
     depends_on:
       - nginx
     env_file:
-      - .env
+      - env/.env_docker
     environment:
       - DOMAIN_URL
       - DOMAIN_EMAIL

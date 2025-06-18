@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html"
+      xmlns="http://www.w3.org/1999/html">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% include "base_include/head.html" %}
+  <title>{{ title }}</title>
+</head>
+<body>
+{% include "base_include/debug_tool_bar_script_before.html" %}
+<div class="container main-container">
+
+  {% block content %}{% endblock %}
+
+  {% include "base_include/footer.html" %}
+</div>
+{% include "base_include/scripts.html" %}
+{% include "base_include/debug_tool_bar_script_end.html" %}
+</body>
+</html>
