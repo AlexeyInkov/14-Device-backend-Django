@@ -12,18 +12,11 @@ logger = logging.getLogger(__name__)
 
 load_dotenv()
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
 IS_RUNNING_TESTS = "test" in sys.argv
-
-if IS_RUNNING_TESTS:
-    DEBUG = False
-else:
-    DEBUG = "True" == os.environ.get("DJANGO_DEBUG", True)
-
-print(f"{DEBUG=}")
 
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(",")
 
@@ -44,14 +37,11 @@ INSTALLED_APPS = [
     # Celery
     "django_celery_beat",
     "django_celery_results",
-    # Cache
-    "cachalot",
+    # HTMX
     "django_htmx",
     # Auth
     "oauth2_provider",
     "social_django",
-    # Prometheus
-    "django_prometheus",
     # Apps
     "apps.my_auth.apps.MyAuthConfig",
     "apps.device.apps.DeviceConfig",
@@ -93,7 +83,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 # Database
-print("postgres")
+logger.debug("postgres")
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -104,9 +94,6 @@ DATABASES = {
         "PORT": os.environ.get("POSTGRES_PORT"),
     }
 }
-
-CACHALOT_TABLE_KEYGEN = "cachalot.utils.get_table_cache_key"
-CACHALOT_DATABASES = ("default",)  # 'supported_only')
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -126,14 +113,17 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
+    ]
+}
+
 AUTHENTICATION_BACKENDS = (
     "social_core.backends.telegram.TelegramAuth",
     "django.contrib.auth.backends.ModelBackend",
 )
-
-SOCIAL_AUTH_JSONFIELD_ENABLED = True
-SOCIAL_AUTH_URL_NAMESPACE = "social"
-SOCIAL_AUTH_TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 
 LANGUAGE_CODE = "en-us"
 
@@ -143,104 +133,51 @@ USE_I18N = True
 
 USE_TZ = True
 
-if not os.path.exists(BASE_DIR / "static"):
-    logger.info("Creating static directory")
-    os.makedirs(BASE_DIR / "static")
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
-STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "static"]
-
-if not os.path.exists(BASE_DIR / "staticfiles"):
-    logger.info("Creating staticfiles directory")
-    os.makedirs(BASE_DIR / "staticfiles")
-STATICFILES_DIRS = [BASE_DIR / "staticfiles"]
-
-if not os.path.exists(BASE_DIR / "media"):
-    logger.info("Creating media directory")
-    os.makedirs(BASE_DIR / "media")
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-MEDIA_URL = "media/"
-
-if not os.path.exists(BASE_DIR / "media/download"):
-    logger.info("Creating media/download directory")
-    os.makedirs(BASE_DIR / "media/download")
-
-if not os.path.exists(BASE_DIR / "media/uploads"):
-    logger.info("Creating media/uploads directory")
-    os.makedirs(BASE_DIR / "media/uploads")
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-if not DEBUG:
-    CACHES = {
-        "default": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": os.environ.get("REDIS_URL"),
-            "OPTIONS": {
-                "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            },
-        }
-    }
+# Create directory
 
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.TokenAuthentication",
-        "rest_framework.authentication.BasicAuthentication",
-    ]
-}
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+if not os.path.exists(STATIC_ROOT):
+    logger.info("Creating static directory")
+    os.makedirs(STATIC_ROOT)
+
+
+static_dirs = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_DIRS = [static_dirs]
+if not os.path.exists(static_dirs):
+    logger.info("Creating staticfiles directory")
+    os.makedirs(static_dirs)
+
+MEDIA_URL = "media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+if not os.path.exists(MEDIA_ROOT):
+    logger.info("Creating media directory")
+    os.makedirs(MEDIA_ROOT)
+
+media_download = os.path.join(MEDIA_ROOT, "download")
+if not os.path.exists(media_download):
+    logger.info("Creating media/download directory")
+    os.makedirs(media_download)
+
+media_upload = os.path.join(MEDIA_ROOT, "uploads")
+if not os.path.exists(media_upload):
+    logger.info("Creating media/uploads directory")
+    os.makedirs(media_upload)
 
 if not os.path.exists(BASE_DIR.parent / "log"):
     os.makedirs(BASE_DIR.parent / "log")
 
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "django.server": {
-            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
-            "style": "{",
-        },
-    },
-    "handlers": {
-        "file": {
-            "class": "logging.FileHandler",
-            "level": "WARNING",
-            "filename": f"{BASE_DIR.parent}/log/django_warning.log",
-            "formatter": "django.server",
-        },
-        "console": {
-            "level": "DEBUG",
-            "class": "logging.StreamHandler",
-            "formatter": "django.server",
-        },
-    },
-    "root": {
-        "handlers": ["console"],
-        "level": "DEBUG",
-    },
-    "loggers": {
-        "django": {
-            "handlers": ["file", "console"],
-            "level": "WARNING",
-            "propagate": True,
-        },
-        "django.db": {
-            "handlers": ["console"],
-            "level": "DEBUG",
-            "propagate": False,
-        },
-        "django.server": {
-            "handlers": ["console"],
-            "level": "DEBUG",
-            "propagate": False,
-        },
-    },
-}
 
 LOGIN_REDIRECT_URL = "device:home"
 LOGOUT_REDIRECT_URL = "my_auth:login"
 LOGIN_URL = "my_auth:login"
 
+# SOCIAL_AUTH
+SOCIAL_AUTH_JSONFIELD_ENABLED = True
+SOCIAL_AUTH_URL_NAMESPACE = "social"
+SOCIAL_AUTH_TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 TELEGRAM_BOT_NAME = os.environ.get("TELEGRAM_BOT_NAME")
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
 # TELEGRAM_LOGIN_REDIRECT_URL = os.environ.get("TELEGRAM_LOGIN_REDIRECT_URL")
@@ -253,72 +190,11 @@ CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_TIMEZONE = "UTC"
 CELERY_TASK_TRACK_STARTED = True
-CELERY_TASK_TIME_LIMIT = 30 * 60
-
-
-# Development options
-def show_toolbar(request: HttpRequest) -> bool:
-    if DEBUG and not IS_RUNNING_TESTS:
-        if request.META.get("REMOTE_ADDR") not in INTERNAL_IPS:
-            logger.error(
-                "Local address is not in INTERNAL_IPs",
-                {
-                    "error": {
-                        "remote_addr": request.META.get("REMOTE_ADDR"),
-                        "INTERNAL_IPs": INTERNAL_IPS,
-                    }
-                },
-            )
-        return True
-
-
-if DEBUG and not IS_RUNNING_TESTS:
-    # Swagger
-    INSTALLED_APPS += [
-        "rest_framework_swagger",
-        "drf_yasg",
-    ]
-    # Debug toolbar
-    INSTALLED_APPS += [
-        "debug_toolbar",
-    ]
-    MIDDLEWARE += [
-        "debug_toolbar.middleware.DebugToolbarMiddleware",
-    ]
-
-    DEBUG_TOOLBAR_PANELS = (
-        # "debug_toolbar.panels.versions.VersionsPanel",
-        "debug_toolbar.panels.history.HistoryPanel",
-        "debug_toolbar.panels.timer.TimerPanel",
-        "debug_toolbar.panels.settings.SettingsPanel",
-        "debug_toolbar.panels.headers.HeadersPanel",
-        "debug_toolbar.panels.request.RequestPanel",
-        "debug_toolbar.panels.sql.SQLPanel",
-        "debug_toolbar.panels.staticfiles.StaticFilesPanel",
-        "debug_toolbar.panels.templates.TemplatesPanel",
-        "debug_toolbar.panels.alerts.AlertsPanel",
-        "debug_toolbar.panels.cache.CachePanel",
-        "debug_toolbar.panels.signals.SignalsPanel",
-        # "debug_toolbar.panels.redirects.RedirectsPanel",
-        # "debug_toolbar.panels.profiling.ProfilingPanel",
-        "cachalot.panels.CachalotPanel",  # Cachalot
-    )
-
-    DEBUG_TOOLBAR_CONFIG = {
-        "SHOW_TOOLBAR_CALLBACK": show_toolbar,
-        # 'INSERT_BEFORE': '<head>',
-        "UPDATE_ON_FETCH": True,
-        "SQL_WARNING_THRESHOLD": 20,
-        "ROOT_TAG_EXTRA_ATTRS": "hx-preserve",
-        # 'EXCLUDE_URLS': ('/admin',),  # не работает, но в разработке есть...
-        "INTERCEPT_REDIRECTS": False,
-    }
-
-    # Cachalot
-    CACHALOT_ENABLED = False
+CELERY_TASK_TIME_LIMIT = 60 * 60
 
 # Пауза между запросами для fgis.arshin
-TIME_DDOS_FOR_REQUEST = 1
+TIMEOUT_BETWEEN_REQUEST_TO_ARSHIN = 1
+TIMEOUT_FOR_REQUEST_TO_ARSHIN = 3
 
 # Heades table for frontend
 HEADERS_ADDRESS = {
