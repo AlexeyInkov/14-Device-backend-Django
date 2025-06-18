@@ -16,7 +16,7 @@ from apps.device.models import (
     InstallationPoint,
     TypeName,
 )
-from apps.device.servises.device import DeviceServices
+from apps.device.services.device import DeviceServices
 
 logger = logging.getLogger(__name__)
 
@@ -109,16 +109,15 @@ def write_row_to_db(row, user):
         device = {
             "metering_unit": metering_unit_id,
             "installation_point": installation_point_id,
-            "type": type_id,
+            "mit_notation": type_id,
             "valid_date": valid_date,
-            "name": type_id.name,
         }
         factory_number = row["Номер"].strip()
         # TODO обработать номер для СПТ, КТПТР, СДВ-И
 
         logger.debug(device)
         device_id, create = Device.objects.get_or_create(
-            factory_number=factory_number, defaults=device
+            mi_number=factory_number, defaults=device
         )
 
         if not create:
@@ -150,7 +149,7 @@ def create_dict_from_db(metering_units: QuerySet) -> list[dict]:
                 "Лит": metering_unit.address.liter,
                 "ТЦ": metering_unit.itp,
                 "Труба": device.installation_point.name,
-                "Тип": device.type.type,
+                "Тип": device.mit_notation.mit_notation,
                 "Ду": "",
                 "Номер": device.factory_number,
                 "Дата": device.valid_date,

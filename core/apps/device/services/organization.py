@@ -5,7 +5,7 @@ from django.db.models import QuerySet, Q, Model
 
 
 from apps.device.repository import Repository
-from apps.device.servises.base_service import BaseService
+from apps.device.services.base_service import BaseService
 
 logger = logging.getLogger(__name__)
 

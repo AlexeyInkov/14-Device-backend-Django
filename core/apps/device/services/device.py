@@ -4,9 +4,9 @@ from django.contrib.auth.models import User
 from django.db.models import QuerySet
 
 from apps.device.repository import Repository
-from apps.device.servises.base_service import BaseService
-from apps.device.servises.organization import OrganizationServices
-from apps.device.servises.metering_unit import MeteringUnitServices
+from apps.device.services.base_service import BaseService
+from apps.device.services.organization import OrganizationServices
+from apps.device.services.metering_unit import MeteringUnitServices
 
 logger = logging.getLogger(__name__)
 
@@ -19,11 +19,10 @@ class DeviceServices(BaseService):
         logger.info("Running get_by_metering_unit")
         return (
             cls.repository.get_all()
-            .select_related("registry_number")
-            .select_related("type")
-            .select_related("modification")
+            .select_related("mit_number")
+            .select_related("mit_notation")
+            .select_related("mi_modification")
             .select_related("installation_point")
-            .select_related("name")
             .select_related("metering_unit")
             # .only(
             #     "installation_point__name",
@@ -37,7 +36,11 @@ class DeviceServices(BaseService):
             #     "metering_unit_id",
             #     "valid_date"
             # )
-            .order_by("metering_unit_id", "installation_point__order", "name__order")
+            .order_by(
+                "metering_unit_id",
+                "installation_point__order",
+                "mit_notation__name__order",
+            )
             .filter(metering_unit__in=metering_units)
         )
 
@@ -67,3 +70,7 @@ class DeviceServices(BaseService):
                 )
             )
         return devices
+
+    @classmethod
+    def get_devices_without_verification(cls) -> QuerySet:
+        return cls.repository.get_all().filter(verifications__isnull=True)

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load context_tags %}
+{% block content %}
+  <div class="row top_bar">
+    <div class="col-12">
+      {% include 'device/includes/header-nav-bar.html' %}
+    </div>
+  </div>
+ <div class="row content">
+    <div id="sidebar-content" class="col-2 menu-bar collapse">
+      <!--- sidebar menu --->
+      {% include "device/includes/sidebarMenu.html" %}
+    </div>
+    <div class="col">
+      <div class="row">
+        <div id="addresses-content" class="col addresses">
+  {% if devices %}
+  <table class="table table-bordered table-hover" id="devices">
+    {% get_headers_device as HEADERS_DEVICE %}
+    <thead>
+    <tr>
+      {% for header in HEADERS_DEVICE.values %}
+        <th>{{ header }}</th>
+      {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+    {% for device in devices %} 
+        <tr>
+          {% for key in HEADERS_DEVICE.keys %}
+            {% if key == 'id' and device|attr:'attention' %}
+            <td style="background: red;">
+              {{ device|attr:key }}
+            </td>
+            {% else %}
+              <td>
+              {{ device|attr:key }}
+           </td>
+            {% endif %}
+          {% endfor %}
+        </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+        </div>
+      </div> 
+    </div>
+      </div>
+  
+    {% endblock %}

@@ -35,6 +35,7 @@ from .views.frontend import (
     DeviceDetailView,
     refresh_valid_date_view,
     device_verifications_update_view,
+    DeviceWithoutVerificationListView,
 )
 
 app_name = "device"
@@ -93,6 +94,11 @@ urlpatterns += [
     ),
     path(
         "download-data-to-file/", download_device_to_file_view, name="load_data_to_file"
+    ),
+    path(
+        "devices-without-verification/",
+        DeviceWithoutVerificationListView.as_view(),
+        name="device_without_verification_list",
     ),
 ]
 

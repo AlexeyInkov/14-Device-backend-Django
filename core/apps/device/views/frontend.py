@@ -10,10 +10,10 @@ import utils.request_query_params as request_utils
 from apps.device.forms import UploadFileForm, DeviceVerificationFormset
 from apps.device.mixins import ContextDataMixin, TemplateMixin
 from apps.device.models import Device
-from apps.device.servises.device import DeviceServices
-from apps.device.servises.metering_unit import MeteringUnitServices
-from apps.device.servises.organization import OrganizationServices
-from apps.device.servises.verification import VerificationServices
+from apps.device.services.device import DeviceServices
+from apps.device.services.metering_unit import MeteringUnitServices
+from apps.device.services.organization import OrganizationServices
+from apps.device.services.verification import VerificationServices
 from apps.device.tasks import (
     download_device_from_file_into_db,
     refresh_valid_date,
@@ -183,3 +183,12 @@ def device_verifications_update_view(request, pk):
         "device/device_update_verification_list_modal.html",
         {"device": device, "formset": formset},
     )
+
+
+class DeviceWithoutVerificationListView(ListView):
+    model = Device
+    template_name = "device/devices-without-verifications.html"
+    context_object_name = "devices"
+
+    def get_queryset(self):
+        return DeviceServices.get_devices_without_verification()

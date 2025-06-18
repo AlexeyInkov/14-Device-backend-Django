@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 from django.db.models import QuerySet, Q
 
 from apps.device.repository import Repository
-from apps.device.servises.base_service import BaseService
-from apps.device.servises.organization import OrganizationServices
+from apps.device.services.base_service import BaseService
+from apps.device.services.organization import OrganizationServices
 
 logger = logging.getLogger(__name__)
 

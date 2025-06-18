@@ -5,9 +5,9 @@ from django.db.models import QuerySet
 
 from apps.device.models import Device, Verification
 from apps.device.repository import Repository
-from apps.device.servises.base_service import BaseService
-from apps.device.servises.database import logger
-from apps.device.servises.device import DeviceServices
+from apps.device.services.base_service import BaseService
+from apps.device.services.database import logger
+from apps.device.services.device import DeviceServices
 
 
 class VerificationServices(BaseService):
@@ -43,6 +43,8 @@ class VerificationServices(BaseService):
                 model_fields[field_name] = "-".join(
                     verification_fields[field_name][:10].split(".")[-1::-1]
                 )
+            elif field_name in [attr.name for attr in Verification._meta.get_fields()]:
+                model_fields[field_name] = verification_fields[field_name]
         model_fields["device"] = DeviceServices.get(pk=device_id)
         logger.debug(f"{model_fields=}")
         return model_fields
