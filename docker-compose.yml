@@ -63,6 +63,12 @@ services:
       - ./db-data/postgresql:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_PORT=${POSTGRES_PORT}
     restart: unless-stopped
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready" ]
@@ -80,11 +86,13 @@ services:
       - env/.env_docker
     volumes:
       - ./core:/core
+      - ./static:/code/static
+      - ./media:/code/media
     ports:
       - 8000:8000
-    command: sh -c "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"
-#    python manage.py migrate && gunicorn -b 0.0.0.0:8000 config.wsgi:application"
-#      sh -c "python manage.py migrate && python manage.py loaddata fixtures/20241125.json && python manage.py runserver 0.0.0.0:8000"
+#    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000
+    command: ['python3', 'manage.py', 'runserver', '0.0.0.0:8000']
+##    python manage.py migrate && gunicorn -b 0.0.0.0:8000 config.wsgi:application"
 
     depends_on:
       postgres:
@@ -97,14 +105,19 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/django/dockerfile
+    command: celery -A config worker -l "debug"
     restart: unless-stopped
     env_file:
       - env/.env_docker
     volumes:
       - ./core:/core
-    command: ['celery', '-A', 'config', 'worker', '-l', 'DEBUG']
     depends_on:
-      - web-app
+      web-app:
+        condition: "service_started"
+      postgres:
+        condition: "service_healthy"
+      redis:
+        condition: "service_started"
 
   celery-flower:
     container_name: celery-flower
@@ -179,8 +192,6 @@ services:
       - grafanadata:/var/lib/grafana
 
 volumes:
-  db-data:
-  uploads:
   grafanadata:
   prometheusdata:
 
