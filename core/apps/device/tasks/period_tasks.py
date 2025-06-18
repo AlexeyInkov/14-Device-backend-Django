@@ -2,10 +2,11 @@ import logging
 
 from celery import shared_task
 from django.db.models import Max
+from requests.exceptions import ReadTimeout
 
 from apps.device.models import Device
 from utils.arshin_api import request_to_arshin
-from apps.device.servises.verification import VerificationServices
+from apps.device.services.verification import VerificationServices
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +22,8 @@ def refresh_valid_date() -> str:
     )  # [:count_devices_in_task]
     logger.debug(f"{devices=}")
 
-    for device_id in devices:
+    for dev in devices:
+        device_id = dev["id"]
         logger.info(f"{device_id=}")
         try:
             device = Device.objects.get(id=device_id)
@@ -30,17 +32,21 @@ def refresh_valid_date() -> str:
             logger.error(f"Device with id={device_id} not found")
             continue
         logger.info("get device numbers_registry")
-        numbers_registry = device.type.numbers_registry.all()
+        numbers_registry = device.mit_notation.numbers_registry.all()
         logger.debug(f"{numbers_registry=}")
         for reg_number in numbers_registry:
-            logger.info(reg_number.number_registry.registry_number)
+            logger.info(reg_number.number_registry.mit_number)
             logger.info("request_to_arshin")
 
             # TODO добавить начало поиска в arshin
 
-            response = request_to_arshin(
-                reg_number.number_registry.registry_number, device.factory_number
-            )
+            try:
+                response = request_to_arshin(
+                    reg_number.number_registry.mit_number, device.factory_number
+                )
+            except ReadTimeout:
+                logger.error("TimeoutError")
+                continue
             if response.status_code == 200:
                 logger.info(f"response={response.status_code}")
                 logger.debug(f"response={response}")

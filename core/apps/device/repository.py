@@ -41,14 +41,7 @@ class Repository(AbstractRepository):
         return self.model.objects.create(**kwargs)
 
     def get_or_create(self, defaults=None, **kwargs) -> tuple[Model, bool]:
-        if defaults is None:
-            defaults = {}
-        instance = self.get(**kwargs)
-        if instance is not None:
-            return self.get(**kwargs), False
-        else:
-            with transaction.atomic():
-                return self.create(**kwargs, **defaults), True
+        return self.model.objects.get_or_create(defaults=None, **kwargs)
 
     @staticmethod
     def update(obj, **kwargs) -> Model:

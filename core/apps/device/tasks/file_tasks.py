@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import transaction
 
-import apps.device.servises.database as database_services
+import apps.device.services.database as database_services
 from utils.file_utils import (
     check_csv_file,
     get_file_encoding,

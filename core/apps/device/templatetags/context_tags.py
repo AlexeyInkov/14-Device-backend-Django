@@ -1,34 +1,31 @@
 from django import template
 from django.db.models import QuerySet
 
-from config.settings import (
-    HEADERS_ADDRESS,
-    HEADERS_DEVICE,
-    HEADERS_VERIFICATION,
-    HEADERS_VERIFICATION_UPDATE,
-)
+
+from django.conf import settings
+
 
 register = template.Library()
 
 
 @register.simple_tag(name="get_headers_address")
 def get_headers_address() -> dict:
-    return HEADERS_ADDRESS
+    return settings.HEADERS_ADDRESS
 
 
 @register.simple_tag(name="get_headers_device")
 def get_headers_device() -> dict:
-    return HEADERS_DEVICE
+    return settings.HEADERS_DEVICE
 
 
 @register.simple_tag(name="get_headers_verification")
 def get_headers_verification() -> dict:
-    return HEADERS_VERIFICATION
+    return settings.HEADERS_VERIFICATION
 
 
 @register.simple_tag(name="get_headers_verification_update")
 def get_headers_verification_update() -> dict:
-    return HEADERS_VERIFICATION_UPDATE
+    return settings.HEADERS_VERIFICATION_UPDATE
 
 
 @register.filter
