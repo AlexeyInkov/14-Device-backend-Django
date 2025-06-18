@@ -6,7 +6,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from openpyxl.styles import NamedStyle, Font, Alignment, PatternFill, Border, Side
 from openpyxl.workbook import Workbook
 
-from config import settings
+from django.conf import settings
 
 
 def handle_uploaded_file(f: InMemoryUploadedFile) -> None:

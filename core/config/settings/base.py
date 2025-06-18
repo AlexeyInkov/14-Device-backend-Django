@@ -156,7 +156,7 @@ if not os.path.exists(MEDIA_ROOT):
     logger.info("Creating media directory")
     os.makedirs(MEDIA_ROOT)
 
-media_download = os.path.join(MEDIA_ROOT, "download")
+media_download = os.path.join(MEDIA_ROOT, "downloads")
 if not os.path.exists(media_download):
     logger.info("Creating media/download directory")
     os.makedirs(media_download)

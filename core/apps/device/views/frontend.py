@@ -185,7 +185,7 @@ def device_verifications_update_view(request, pk):
     )
 
 
-class DeviceWithoutVerificationListView(ListView):
+class DeviceWithoutVerificationListView(LoginRequiredMixin, ListView):
     model = Device
     template_name = "device/devices-without-verifications.html"
     context_object_name = "devices"
